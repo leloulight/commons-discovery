@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 /**
  * @author Richard A. Sitze
  */
-class JDK12Hooks extends JDKHooks {
+public class JDK12Hooks extends JDKHooks {
     
     /**
      * Logger

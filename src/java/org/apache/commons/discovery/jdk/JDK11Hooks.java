@@ -23,7 +23,7 @@ import java.util.Enumeration;
 /**
  * @author Richard A. Sitze
  */
-class JDK11Hooks extends JDKHooks {
+public class JDK11Hooks extends JDKHooks {
     private static final ClassLoader systemClassLoader
         = new PsuedoSystemClassLoader();
 
