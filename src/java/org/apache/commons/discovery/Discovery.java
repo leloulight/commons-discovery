@@ -1001,7 +1001,7 @@ public class Discovery {
 
                 if (spis == null) {
                     spis = new HashMap(smallHashSize);
-                    root_cache.put(spiContext.getGroupContext(), spis);
+                    groups.put(spiContext.getGroupContext(), spis);
                 }
 
                 spis.put(spiContext.getSPI().getName(), service);
