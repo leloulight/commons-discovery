@@ -132,6 +132,6 @@ public abstract class ServiceDiscovery
      */
     public abstract ClassLoader getThreadClassLoader();
  
-    public abstract ServiceInfo[] findServices( String name );
+    public abstract ResourceInfo[] findServices( String name );
 
 }

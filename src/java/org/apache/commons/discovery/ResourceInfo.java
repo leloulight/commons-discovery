@@ -72,17 +72,17 @@ import java.net.URL;
  * @author Craig R. McClanahan
  * @author Costin Manolache
  */
-public class ServiceInfo 
+public class ResourceInfo 
 {
-    String implName;
+    String      resourceName;
     ClassLoader loader;
-    URL location;
+    URL         location;
 
-    public ServiceInfo() {
+    public ResourceInfo() {
     }
 
-    public ServiceInfo(String implName, ClassLoader loader, URL location) {
-        setImplName( implName );
+    public ResourceInfo(String resourceName, ClassLoader loader, URL location) {
+        setResourceName( resourceName );
         setLoader( loader );
         setURL( location );
     }
@@ -105,19 +105,19 @@ public class ServiceInfo
     
 
     /**
-     * Get the value of implName.
-     * @return value of implName.
+     * Get the value of resourceName.
+     * @return value of resourceName.
      */
-    public String getImplName() {
-        return implName;
+    public String getResourceName() {
+        return resourceName;
     }
     
     /**
-     * Set the value of implName.
-     * @param v  Value to assign to implName.
+     * Set the value of resourceName.
+     * @param v  Value to assign to resourceName.
      */
-    public void setImplName(String  v) {
-        this.implName = v;
+    public void setResourceName(String  v) {
+        this.resourceName = v;
     }
     
     /**
@@ -137,7 +137,6 @@ public class ServiceInfo
     }
     
     public String toString() {
-        return "Service " + implName + " " + loader + " " + location;
+        return "Resource " + resourceName + " " + loader + " " + location;
     }
-
 }

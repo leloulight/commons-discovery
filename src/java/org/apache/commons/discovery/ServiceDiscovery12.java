@@ -82,7 +82,7 @@ public class ServiceDiscovery12 extends ServiceDiscovery
         return Thread.currentThread().getContextClassLoader();
     }
  
-    public ServiceInfo[] findServices( String name ) {
+    public ResourceInfo[] findServices( String name ) {
         // use each loader to find if META-INF/services.
         // find all resources, etc.
     
@@ -130,10 +130,7 @@ public class ServiceDiscovery12 extends ServiceDiscovery
                                         continue;
                                     if( serviceImplName.startsWith( "#" ))
                                         continue;
-                                    ServiceInfo sinfo=new ServiceInfo();
-                                    sinfo.setImplName( serviceImplName );
-                                    sinfo.setLoader( loader );
-                                    sinfo.setURL( baseURL );
+                                    ResourceInfo sinfo=new ResourceInfo(serviceImplName, loader, baseURL);
                                     results.add(sinfo);
                                     System.out.println("XXX " + sinfo.toString());
                                 }
@@ -152,7 +149,7 @@ public class ServiceDiscovery12 extends ServiceDiscovery
             }
         }
 
-        ServiceInfo resultA[]=new ServiceInfo[ results.size() ];
+        ResourceInfo resultA[]=new ResourceInfo[ results.size() ];
         results.copyInto( resultA );
         return resultA;
     }

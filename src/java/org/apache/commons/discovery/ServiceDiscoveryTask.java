@@ -77,7 +77,7 @@ public class ServiceDiscoveryTask
 {
     String name;
     int debug=0;
-    ServiceInfo drivers[]=null;
+    ResourceInfo drivers[]=null;
         
     public void setServiceName(String name ) {
         this.name=name;
@@ -87,7 +87,7 @@ public class ServiceDiscoveryTask
         this.debug=debug;
     }
 
-    public ServiceInfo[] getServiceInfo() {
+    public ResourceInfo[] getServiceInfo() {
         return drivers;
     }
 
