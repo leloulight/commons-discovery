@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Rod Waldhoff
  * @author Robert Burrell Donkin
  *
- * @version $Id: SimpleLog.java,v 1.4 2002/06/15 20:54:48 craigmcc Exp $
+ * @version $Id$
  */
 public class DiscoveryLogFactory {
     private static LogFactory logFactory = null;

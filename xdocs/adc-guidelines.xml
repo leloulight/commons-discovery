@@ -22,7 +22,7 @@
 
 
 <section name="Architecture/Design/Coding Guidelines for Jakarta Commons &quot;Discovery&quot; Component">
-$Id: adc-guidelines.xml,v 1.2 2004/02/28 00:02:54 scolebourne Exp $<br/>
+$Id$<br/>
 <a href="#Introduction">[Introduction]</a>
 <a href="#Security and doPrivileged()">[Security and doPrivileged()]</a>
 <br/><br/>

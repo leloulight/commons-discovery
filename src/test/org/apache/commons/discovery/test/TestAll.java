@@ -41,7 +41,7 @@ import org.apache.commons.discovery.tools.SPInterface;
 
 /**
   * @author Richard A. Sitze
-  * @version $Revision: 1.2 $
+  * @version $Revision$
  */
 public class TestAll extends TestCase {
     private static final int logLevel =

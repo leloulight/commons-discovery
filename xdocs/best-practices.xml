@@ -22,7 +22,7 @@
 
 
 <section name="Best Practices for using Jakarta Commons &quot;Discovery&quot; Component">
-$Id: best-practices.xml,v 1.2 2004/02/28 00:02:54 scolebourne Exp $<br />
+$Id$<br />
 <a href="#Introduction">[Introduction]</a>
 <a href="#Discovery Services">[Discovery Services]</a>
 <a href="#Additional Tools">[Additional Tools]</a>

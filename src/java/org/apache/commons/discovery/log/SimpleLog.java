@@ -42,7 +42,7 @@ import org.apache.commons.logging.Log;
  * @author Rod Waldhoff
  * @author Robert Burrell Donkin
  *
- * @version $Id: SimpleLog.java,v 1.4 2002/06/15 20:54:48 craigmcc Exp $
+ * @version $Id$
  */
 public class SimpleLog implements Log {
       // ---------------------------------------------------- Log Level Constants
