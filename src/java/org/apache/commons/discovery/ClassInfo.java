@@ -57,58 +57,71 @@
 
 package org.apache.commons.discovery;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
-import org.apache.commons.discovery.jdk.JDKHooks;
+import java.net.URL;
 
 
 /**
- * Small ant task that will use discovery to locate a particular impl.
- * and display all values.
- *
- * You can execute this and save it with an id, then other classes can use it.
- *
+ * 'Resource' located by discovery.
+ * 
+ * @author Craig R. McClanahan
  * @author Costin Manolache
+ * @author Richard A. Sitze
  */
-public class ServiceDiscoveryTask
+public class ClassInfo extends ResourceInfo
 {
-    String name;
-    int debug=0;
-    ResourceInfo[] drivers = null;
-        
-    public void setServiceName(String name ) {
-        this.name=name;
+    private static final boolean debug = false;
+
+    protected Class       resourceClass;
+
+    public ClassInfo() {
+        super();
     }
 
-    public void setDebug(int i) {
-        this.debug=debug;
+    public ClassInfo(String className, ClassLoader loader, URL location) {
+        super(className, loader, location);
+        this.resourceClass = null;
     }
 
-    public ResourceInfo[] getServiceInfo() {
-        return drivers;
+    public ClassInfo(Class resourceClass, ClassLoader loader, URL location) {
+        super(resourceClass.getName(), loader, location);
+        this.resourceClass = resourceClass;
     }
 
-    public void execute() throws Exception {
-        System.out.println("XXX ");
-        
-        ResourceDiscovery disc = new ResourceDiscovery();
-        disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
-        disc.addClassLoader( this.getClass().getClassLoader() );
-        
-        Enumeration enum = disc.findResources(name);
-
-        Vector vector = new Vector();
-        while (enum.hasMoreElements()) {
-            ResourceInfo resourceInfo = (ResourceInfo)enum.nextElement();
-            vector.add(resourceInfo);
-            if( debug > 0 ) {
-                System.out.println("Found " + resourceInfo);
+    /**
+     * Get the value of resourceClass.
+     * @return value of resourceClass.
+     */
+    public Class getResourceClass() {
+        if (resourceClass == null) {
+            if (debug)
+                System.out.println("Loading class '" + getResourceName() + "' with " + loader);
+    
+            try {
+                setResourceClass(getLoader().loadClass(getResourceName()));
+            } catch (ClassNotFoundException e) {
+                setResourceClass(null);
             }
         }
-        
-        drivers = new ResourceInfo[vector.size()];
-        vector.copyInto(drivers);
+        return resourceClass;
     }
-        
+    
+    /**
+     * Set the value of resourceClass.
+     * @param v  Value to assign to resourceClass.
+     */
+    public void setResourceClass(Class resourceClass) {
+        this.resourceClass = resourceClass;
+    }
+    
+    public ClassInfo toClassInfo(ResourceInfo resourceInfo) {
+        if (resourceInfo instanceof ClassInfo) {
+            return (ClassInfo)resourceInfo;
+        } else {
+            return new ClassInfo(resourceInfo.resourceName, resourceInfo.loader, resourceInfo.location);
+        }
+    }
+    
+    public String toString() {
+        return "ClassResource " + resourceName + " " + loader + " " + location;
+    }
 }

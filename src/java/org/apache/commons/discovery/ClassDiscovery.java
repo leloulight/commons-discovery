@@ -61,7 +61,6 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.commons.discovery.base.ClassLoaders;
 
 
 /**
@@ -98,7 +97,7 @@ public class ClassDiscovery extends ResourceDiscovery
      * Find upto one class per class loader, and don't load duplicates
      * from different class loaders (first one wins).
      * 
-     * @return Enumeration of ResourceInfo
+     * @return Enumeration of ClassInfo
      */
     public Enumeration findResources(final String className) {
         final String resourceName = className.replace('.','/') + ".class";
@@ -106,10 +105,10 @@ public class ClassDiscovery extends ResourceDiscovery
         return new Enumeration() {
             private Vector history = new Vector();
             private int idx = 0;
-            private ResourceInfo resource = null;
+            private ClassInfo resource = null;
             
             public boolean hasMoreElements() {
-                if (resource != null) {
+                if (resource == null) {
                     resource = getNextResource();
                 }
                 return resource != null;
@@ -121,13 +120,13 @@ public class ClassDiscovery extends ResourceDiscovery
                 return element;
             }
             
-            private ResourceInfo getNextResource() {
+            private ClassInfo getNextResource() {
                 while (idx < getClassLoaders().size()) {
                     ClassLoader loader = getClassLoaders().get(idx++);
                     URL url = loader.getResource(resourceName);
                     if (url != null  &&  !history.contains(url)) {
                         history.addElement(url);
-                        return new ResourceInfo(className, loader, url);
+                        return new ClassInfo(className, loader, url);
                     }
                 }
                 return null;

@@ -64,7 +64,6 @@ package org.apache.commons.discovery.tools;
 import java.util.HashMap;
 
 import org.apache.commons.discovery.jdk.JDKHooks;
-import org.apache.commons.discovery.base.Environment;
 
 
 /**
@@ -104,42 +103,26 @@ public class EnvironmentCache {
     /**
      * Get object keyed by classLoader.
      */
-    public static synchronized Object get(Environment env)
+    public static synchronized Object get(ClassLoader classLoader)
     {
         /**
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
-//        HashMap groups =
-//            (HashMap)root_cache.get(env.getThreadContextClassLoader());
-//
-//        return (groups != null)
-//               ? (HashMap)groups.get(env.getGroupContext())
-//               : null;
-        return root_cache.get(env.getThreadContextClassLoader());
+        return root_cache.get(classLoader);
     }
     
     /**
      * Put service keyed by spi & classLoader.
      */
-    public static synchronized void put(Environment env, Object object)
+    public static synchronized void put(ClassLoader classLoader, Object object)
     {
         /**
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
-        if (object != null)
-        {
-//            HashMap groups =
-//                (HashMap)root_cache.get(env.getThreadContextClassLoader());
-//                
-//            if (groups == null) {
-//                groups = new HashMap(smallHashSize);
-//                root_cache.put(env.getThreadContextClassLoader(), groups);
-//            }
-//
-//            groups.put(env.getGroupContext(), object);
-            root_cache.put(env.getThreadContextClassLoader(), object);
+        if (object != null) {
+            root_cache.put(classLoader, object);
         }
     }
 
@@ -162,21 +145,7 @@ public class EnvironmentCache {
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
-        ClassLoader threadContextClassLoader =
-            JDKHooks.getJDKHooks().getThreadContextClassLoader();
-
-//        HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
-//
-//        if (groups != null) {
-//            Iterator groupIter = groups.values().iterator();
-//
-//            while (groupIter.hasNext()) {
-//                Object object = groupIter.next();
-//            }
-//            groups.clear();
-//        }
-
-        root_cache.remove(threadContextClassLoader);
+        root_cache.remove(JDKHooks.getJDKHooks().getThreadContextClassLoader());
     }
     
     
@@ -186,18 +155,11 @@ public class EnvironmentCache {
      * If the SPI instance implements <code>Service</code>, then call
      * <code>release()</code>.
      */
-    public static synchronized void release(Environment env) {
+    public static synchronized void release(ClassLoader classLoader) {
         /**
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
-//        HashMap groups =
-//            (HashMap)root_cache.get(env.getThreadContextClassLoader());
-//
-//        if (groups != null) {
-//            groups.remove(env.getGroupContext());
-//        }
-
-        root_cache.remove(env.getThreadContextClassLoader());
+        root_cache.remove(classLoader);
     }
 }

@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -59,49 +55,62 @@
  *
  */
 
-package org.apache.commons.discovery.strategy;
+package org.apache.commons.discovery.ant;
 
-import java.util.Properties;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import org.apache.commons.discovery.base.Environment;
-import org.apache.commons.discovery.base.SPInterface;
+import org.apache.commons.discovery.ResourceDiscovery;
+import org.apache.commons.discovery.ResourceInfo;
+import org.apache.commons.discovery.jdk.JDKHooks;
 
 
 /**
- * <p>The strategy for discovering the class name.  Someday this might be pluggable..
- * </p>
- * 
- * @author Richard A. Sitze
- * @version $Revision$ $Date$
+ * Small ant task that will use discovery to locate a particular impl.
+ * and display all values.
+ *
+ * You can execute this and save it with an id, then other classes can use it.
+ *
+ * @author Costin Manolache
  */
-public interface DiscoverStrategy {
-    /**
-     * Discover names of SPI implementation Classes.
-     * 
-     * @param properties Properties that may define the implementation
-     *                   class name(s).
-     * 
-     * @return String[] Name of classes implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found.
-     */
-    public String discoverClassName(Environment env,
-                                    SPInterface spi,
-                                    Properties properties);
+public class ServiceDiscoveryTask
+{
+    String name;
+    int debug=0;
+    ResourceInfo[] drivers = null;
+        
+    public void setServiceName(String name ) {
+        this.name=name;
+    }
 
-    /**
-     * Discover names of SPI implementation Classes.
-     * 
-     * @param properties Properties that may define the implementation
-     *                   class name(s).
-     * 
-     * @return String[] Name of classes implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found.
-     */
-    public String[] discoverClassNames(Environment env,
-                                       SPInterface spi,
-                                       Properties properties);
+    public void setDebug(int i) {
+        this.debug=debug;
+    }
+
+    public ResourceInfo[] getServiceInfo() {
+        return drivers;
+    }
+
+    public void execute() throws Exception {
+        System.out.println("XXX ");
+        
+        ResourceDiscovery disc = new ResourceDiscovery();
+        disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
+        disc.addClassLoader( this.getClass().getClassLoader() );
+        
+        Enumeration enum = disc.findResources(name);
+
+        Vector vector = new Vector();
+        while (enum.hasMoreElements()) {
+            ResourceInfo resourceInfo = (ResourceInfo)enum.nextElement();
+            vector.add(resourceInfo);
+            if( debug > 0 ) {
+                System.out.println("Found " + resourceInfo);
+            }
+        }
+        
+        drivers = new ResourceInfo[vector.size()];
+        vector.copyInto(drivers);
+    }
+        
 }

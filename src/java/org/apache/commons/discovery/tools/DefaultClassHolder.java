@@ -59,48 +59,67 @@
  *
  */
 
-package org.apache.commons.discovery.strategy;
+package org.apache.commons.discovery.tools;
 
-import java.util.Properties;
+import java.util.Enumeration;
 
-import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.base.ImplClass;
+import org.apache.commons.discovery.ClassDiscovery;
+import org.apache.commons.discovery.ClassInfo;
+import org.apache.commons.discovery.ClassLoaders;
 
 
 /**
- * <p>The strategy for loading resources.  Someday this might be pluggable..
- * </p>
+ * Holder for a default class.
+ * 
+ * Class may be specified by name (String) or class (Class).
+ * Using the holder complicates the users job, but minimized # of API's.
  * 
  * @author Richard A. Sitze
- * @version $Revision$ $Date$
  */
-public interface LoadStrategy {
-    /**
-     * Load SPI implementation's Class.
-     * 
-     * @param properties May use, but must pass to implementation.init() method
-     *                   if implementation implements Service interface.
-     * 
-     * @param defaultImpl Default implementation.
-     * 
-     * @return Class class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, or if the class cannot be loaded.
-     */
-    public ImplClass loadClass(String ClassName, ImplClass defaultImpl)
-        throws DiscoveryException;
+public class DefaultClassHolder {
+    private Class        defaultClass;
+    private final String defaultName;
     
+    public DefaultClassHolder(Class defaultClass) {
+        this.defaultClass = defaultClass;
+        this.defaultName = defaultClass.getName();
+    }
+    
+    public DefaultClassHolder(String defaultName) {
+        this.defaultClass = null;
+        this.defaultName = defaultName;
+    }
+
     /**
-     * Load property file.
+     * @param spi non-null SPI
+     * @param loaders Used only if class needs to be loaded.
      * 
-     * @param propertiesFileName The property file name.
-     * 
-     * @return Properties loaded from <code>propertiesFileName</code> if found,
-     *         otherwise <code>null</code>.
-     * 
-     * @exception DiscoveryException
-     */    
-    public Properties loadProperties(String propertiesFileName)
-        throws DiscoveryException;
+     * @return Default Class.  Load the class if necessary,
+     *         and verify that it implements the SPI.
+     *         (this forces the check, no way out..).
+     */
+    public Class getDefaultClass(SPInterface spi, ClassLoaders loaders) {
+        if (defaultClass == null) {
+            ClassDiscovery classDiscovery = new ClassDiscovery(loaders);
+            Enumeration classes = classDiscovery.findResources(getDefaultName());
+            if (classes.hasMoreElements()) {
+                ClassInfo info = (ClassInfo)classes.nextElement();
+                try {
+                    defaultClass = info.getResourceClass();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        }
+        
+        if (defaultClass != null) {
+            spi.verifyAncestory(defaultClass);
+        }
+
+        return defaultClass;
+    }
+
+    public String getDefaultName() {
+        return defaultName;
+    }
 }

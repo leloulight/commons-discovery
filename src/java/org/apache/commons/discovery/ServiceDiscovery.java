@@ -66,7 +66,6 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.commons.discovery.base.ClassLoaders;
 
 
 /**
@@ -112,7 +111,7 @@ public class ServiceDiscovery extends ResourceDiscovery
      * a) it preserves the desired behaviour
      * b) it defers file I/O and class loader lookup until necessary.
      * 
-     * @return Enumeration of ResourceInfo
+     * @return Enumeration of ClassInfo
      */
     public Enumeration findResources(final String resourceName) {
         final Enumeration files =
@@ -125,7 +124,7 @@ public class ServiceDiscovery extends ResourceDiscovery
             private int idx = 0;
             private Vector classNames = null;
             private Enumeration classResources = null;
-            private ResourceInfo resource = null;
+            private ClassInfo resource = null;
             
             public boolean hasMoreElements() {
                 if (resource == null) {
@@ -140,7 +139,7 @@ public class ServiceDiscovery extends ResourceDiscovery
                 return element;
             }
             
-            private ResourceInfo getNextResource() {
+            private ClassInfo getNextResource() {
                 if (classResources == null || !classResources.hasMoreElements()) {
                     classResources = getNextClassResources();
                     if (classResources == null) {
@@ -148,9 +147,9 @@ public class ServiceDiscovery extends ResourceDiscovery
                     }
                 }
 
-                ResourceInfo resourceInfo = (ResourceInfo)classResources.nextElement();
-                System.out.println("XXX " + resourceInfo.toString());
-                return resourceInfo;
+                ClassInfo classInfo = (ClassInfo)classResources.nextElement();
+                System.out.println("XXX " + classInfo.toString());
+                return classInfo;
             }
 
             private Enumeration getNextClassResources() {

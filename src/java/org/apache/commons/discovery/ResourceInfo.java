@@ -71,9 +71,9 @@ import java.util.Vector;
  */
 public class ResourceInfo
 {
-    String      resourceName;
-    ClassLoader loader;
-    URL         location;
+    protected String      resourceName;
+    protected ClassLoader loader;
+    protected URL         location;
 
     public ResourceInfo() {
     }

@@ -1,4 +1,8 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -55,80 +59,52 @@
  *
  */
 
-package org.apache.commons.discovery.base;
+package org.apache.commons.discovery.tools;
 
-import java.util.Vector;
+import java.util.Properties;
+
+import org.apache.commons.discovery.ClassLoaders;
 
 
 /**
- * There are many different contexts in which
- * loaders can be used.  This provides a holder
- * for a set of class loaders, so that they
- * don't have to be build back up everytime...
- *
+ * Holder for a default class.
+ * 
+ * Class may be specified by name (String) or class (Class).
+ * Using the holder complicates the users job, but minimized # of API's.
+ * 
  * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
  */
-public class ClassLoaders
-{
-    protected Vector classLoaders = new Vector();
+public class PropertiesHolder {
+    private Properties   properties;
+    private final String propertiesFileName;
     
-    /** Construct a new class loader set
-     */
-    public ClassLoaders() {
+    public PropertiesHolder(Properties properties) {
+        this.properties = properties;
+        this.propertiesFileName = null;
     }
     
-    public int size() {
-        return classLoaders.size();
-    }
-    
-    public ClassLoader get(int idx) {
-        return (ClassLoader)classLoaders.elementAt(idx);
+    public PropertiesHolder(String propertiesFileName) {
+        this.properties = null;
+        this.propertiesFileName = propertiesFileName;
     }
 
     /**
-     * Specify a new class loader to be used in searching.
-     * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
+     * @param spi Optional SPI (may be null).
+     *            If provided, an attempt is made to load the
+     *            property file as-per Class.getResource().
+     * 
+     * @param loaders Used only if properties need to be loaded.
+     * 
+     * @return Properties.  Load the properties if necessary.
      */
-    public void put(ClassLoader classLoader) {
-        boolean isNew = true;
-        
-        for (int idx = 0; idx < size(); idx++) {
-            if (wouldUseClassLoader(get(idx), classLoader)) {
-                isNew = false;
-                break;
-            }
+    public Properties getProperties(SPInterface spi, ClassLoaders loaders) {
+        if (properties == null) {
+            properties = ResourceUtils.loadProperties(spi.getSPClass(), getPropertiesFileName(), loaders);
         }
-
-        if (isNew) {
-            classLoaders.addElement(classLoader);
-        }
+        return properties;
     }
-    
-    
-    /**
-     * Would <code>thisClassLoader</code> use <code>classLoader</code>?
-     * Return <code>true</code> if <code>classLoader</code> is the same
-     * as </code>thisClassLoader</code> or if <code>classLoader</code>
-     * is an ancestor of </code>thisClassLoader</code>.
-     */
-    private static final boolean wouldUseClassLoader(final ClassLoader thisClassLoader,
-                                                     final ClassLoader classLoader) {
-        /* bootstrap classloader, at root of all trees! */
-        if (classLoader == null)
-            return true;
-                        
-        for(ClassLoader walker = thisClassLoader;
-            walker != null;
-            walker = walker.getParent())
-        {
-            if (walker == classLoader) {
-                return true;
-            }
-        }
-        
-        return true;
+
+    public String getPropertiesFileName() {
+        return propertiesFileName;
     }
 }

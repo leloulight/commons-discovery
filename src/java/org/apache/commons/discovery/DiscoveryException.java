@@ -122,4 +122,19 @@ public class DiscoveryException extends RuntimeException {
     public Throwable getCause() {
         return this.cause;
     }
+    
+    public String toString() {
+        String ls = System.getProperty("line.separator");
+        return super.toString() + ls +
+               "*****" + ls +
+               stackToString(cause);
+    }
+
+    private static String stackToString(Throwable e){
+      java.io.StringWriter sw= new java.io.StringWriter(1024); 
+      java.io.PrintWriter pw= new java.io.PrintWriter(sw); 
+      e.printStackTrace(pw);
+      pw.close();
+      return sw.toString();
+    }
 }

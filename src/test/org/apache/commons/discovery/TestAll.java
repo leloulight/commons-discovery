@@ -68,9 +68,11 @@ import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
+import org.apache.commons.discovery.tools.DefaultClassHolder;
+import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.discovery.tools.ManagedProperties;
-
+import org.apache.commons.discovery.tools.PropertiesHolder;
+import org.apache.commons.discovery.tools.SPInterface;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.LogFactoryImpl;
@@ -237,10 +239,10 @@ public class TestAll extends TestCase {
         LogFactory factory = null;
         
         try {
-            factory = (LogFactory)DiscoverSingleton.find((String)null /* groupContext */,
-                                   LogFactory.class,
-                                   LogFactory.FACTORY_PROPERTIES,
-                                   LogFactory.FACTORY_DEFAULT);
+            factory = (LogFactory)DiscoverSingleton.find(null,
+                                   new SPInterface(LogFactory.class),
+                                   new PropertiesHolder(LogFactory.FACTORY_PROPERTIES),
+                                   new DefaultClassHolder(LogFactory.FACTORY_DEFAULT));
 
             assertTrue(factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
                        factory.getClass().getName().equals(LogFactoryImpl.class.getName()));

@@ -59,7 +59,12 @@
  *
  */
 
-package org.apache.commons.discovery.base;
+package org.apache.commons.discovery.tools;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import org.apache.commons.discovery.DiscoveryException;
 
 
 /**
@@ -77,16 +82,11 @@ package org.apache.commons.discovery.base;
  */
 public class SPInterface {
     /**
-     * The service programming interface name
-     */
-    private final String name;
-    
-    /**
      * The service programming interface: intended to be
      * an interface or abstract class, but not limited
      * to those two.
      */        
-    private final Class provider;
+    private final Class spi;
     
     /**
      * The property name to be used for finding the name of
@@ -118,9 +118,8 @@ public class SPInterface {
      *        (system or other) properties having either the name of the class
      *        (provider) or the <code>propertyName</code>.
      */
-    public SPInterface(Class provider, String propertyName) {
-        this.name = provider.getName();
-        this.provider = provider;
+    public SPInterface(Class spi, String propertyName) {
+        this.spi = spi;
         this.propertyName = propertyName;
     }
 
@@ -161,24 +160,23 @@ public class SPInterface {
      * @param constructorParams objects representing the
      *        constructor arguments.
      */
-    public SPInterface(Class provider,
+    public SPInterface(Class spi,
                        String propertyName,
                        Class constructorParamClasses[],
                        Object constructorParams[])
     {
-        this.name = provider.getName();
-        this.provider = provider;
+        this.spi = spi;
         this.propertyName = propertyName;
         this.paramClasses = constructorParamClasses;
         this.params = constructorParams;
     }
 
     public String getSPName() {
-        return name;
+        return spi.getName();
     }
 
     public Class getSPClass() {
-        return provider;
+        return spi;
     }
     
     public String getPropertyName() {
@@ -186,22 +184,37 @@ public class SPInterface {
     }
 
     /**
-     * Create an ImplClass representing the SPI and,
-     * if set, the constructor type/object arguments.
+     * Instantiate a new 
      */    
-    public ImplClass createImplClass(String className) {
-        return (className == null)
-               ? null
-               : new ImplClass(getSPClass(), className, paramClasses, params);
-    }
+    public Object newInstance(Class impl)
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
+    {
+        if (impl == null) {
+            throw new DiscoveryException("No implementation defined for " + getSPName());
+        }
 
+        verifyAncestory(impl);            
+
+        if (paramClasses == null || params == null) {
+            return impl.newInstance();
+        } else {
+            Constructor constructor = impl.getConstructor(paramClasses);
+            return constructor.newInstance(params);
+        }
+    }
+    
     /**
-     * Create an ImplClass representing the SPI and,
-     * if set, the constructor type/object arguments.
-     */    
-    public ImplClass createImplClass(Class clazz) {
-        return (clazz == null)
-               ? null
-               : new ImplClass(getSPClass(), clazz, paramClasses, params);
+     * Throws exception if <code>impl</code> does not
+     * implement or extend the SPI.
+     */
+    public void verifyAncestory(Class impl) {
+        if (!getSPClass().isAssignableFrom(impl)) {
+            throw new DiscoveryException("Class " + impl.getName() +
+                                         " does not implement " + getSPName());
+        }
     }
 }

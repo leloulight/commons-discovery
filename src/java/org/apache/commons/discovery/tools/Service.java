@@ -55,14 +55,13 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.tools;
 
 import java.util.Enumeration;
 
-import org.apache.commons.discovery.base.Environment;
-import org.apache.commons.discovery.base.ImplClass;
-import org.apache.commons.discovery.base.SPInterface;
-import org.apache.commons.discovery.strategy.DefaultLoadStrategy;
+import org.apache.commons.discovery.ClassInfo;
+import org.apache.commons.discovery.ClassLoaders;
+import org.apache.commons.discovery.ServiceDiscovery;
 
 
 /**
@@ -103,16 +102,27 @@ public class Service
      * @return Enumeration of class instances (<code>Object</code>)
      */
     public static Enumeration providers(Class spiClass) {
-        return providers(new SPInterface(spiClass));
+        return providers(new SPInterface(spiClass), null);
     }
     
     /**
      * This version lets you specify constructor arguments..
+     * 
+     * @param spi SPI to look for and load.
+     * @param classLoaders loaders to use in search.
+     *        If <code>null</code> then use ClassLoaders.getAppLoaders().
      */
-    public static Enumeration providers(final SPInterface spi) {
-        Environment env = new Environment();
-        DefaultLoadStrategy dls = new DefaultLoadStrategy(env, spi);
-        ServiceDiscovery serviceDiscovery = new ServiceDiscovery(dls.getAppLoaders());
+    public static Enumeration providers(final SPInterface spi,
+                                        ClassLoaders classLoaders)
+    {
+        if (classLoaders == null) {
+            classLoaders = ClassLoaders.getAppLoaders(spi.getSPClass(),
+                                                      Service.class,
+                                                      true);
+        }
+        
+        ServiceDiscovery serviceDiscovery =
+            new ServiceDiscovery(classLoaders);
 
         final Enumeration services = serviceDiscovery.findResources(spi.getSPName());
         
@@ -134,11 +144,9 @@ public class Service
 
             private Object getNextClassInstance() {
                 while (services.hasMoreElements()) {
-                    ResourceInfo info = (ResourceInfo)services.nextElement();
-                    ImplClass implClass = spi.createImplClass(info.getResourceName());
-                    implClass.load(info.getLoader());
+                    ClassInfo info = (ClassInfo)services.nextElement();
                     try {
-                        return implClass.newInstance();
+                        return spi.newInstance(info.getResourceClass());
                     } catch (Exception e) {
                         // ignore
                     }

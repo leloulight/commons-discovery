@@ -61,10 +61,16 @@
 
 package org.apache.commons.discovery.tools;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Properties;
 
+import org.apache.commons.discovery.ClassLoaders;
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.base.ClassLoaders;
+import org.apache.commons.discovery.ResourceDiscovery;
+import org.apache.commons.discovery.ResourceInfo;
 
 
 /**
@@ -77,9 +83,7 @@ import org.apache.commons.discovery.base.ClassLoaders;
  * @author Craig R. McClanahan
  * @author Costin Manolache
  */
-public class ClassLoaderUtils {
-    private static final boolean debug = false;
-    
+public class ResourceUtils {
     /**
      * Get package name.
      * Not all class loaders 'keep' package information,
@@ -99,33 +103,6 @@ public class ClassLoaderUtils {
         return packageName;
     }
     
-    /**
-     * Load the resource <code>resourceName</code>.
-     * Try each classloader in succession,
-     * until first succeeds, or all fail.
-     * 
-     * @param resourceName The name of the resource to load.
-     */
-    public static InputStream getResourceAsStream(String resourceName,
-                                                  ClassLoaders loaders)
-        throws DiscoveryException
-    {
-        InputStream stream = null;
-        
-        if (resourceName != null  &&  resourceName.length() > 0) {
-            if (debug)
-                System.out.println("Loading resource '" + resourceName + "'");
-
-            for (int i = 0; i < loaders.size() && stream == null; i++)
-            {
-                ClassLoader loader = loaders.get(i);
-                if (loader != null)
-                    stream = loader.getResourceAsStream(resourceName);
-            }
-        }
-        
-        return stream;
-    }
     
     /**
      * Load the resource <code>resourceName</code>.
@@ -138,33 +115,114 @@ public class ClassLoaderUtils {
      * 
      * @param resourceName The name of the resource to load.
      */
-    public static InputStream getResourceAsStream(String packageName,
+    public static URL getResource(Class spi,
+                                  String resourceName,
+                                  ClassLoaders loaders)
+        throws DiscoveryException
+    {
+        ResourceDiscovery explorer = new ResourceDiscovery(loaders);
+        Enumeration resources = explorer.findResources(resourceName);
+        
+        if (spi != null  &&
+            !resources.hasMoreElements()  &&
+            resourceName.charAt(0) != '/')
+        {
+            /**
+             * If we didn't find the resource, and if the resourceName
+             * isn't an 'absolute' path name, then qualify with
+             * package name of the spi.
+             */
+            resourceName = getPackageName(spi).replace('.','/') + "/" + resourceName;
+            resources = explorer.findResources(resourceName);
+        }
+        
+        return resources.hasMoreElements()
+               ? ((ResourceInfo)resources.nextElement()).getURL()
+               : null;
+    }
+
+    /**
+     * Load the resource <code>resourceName</code>.
+     * Try each classloader in succession,
+     * until first succeeds, or all fail.
+     * If all fail and <code>resouceName</code> is not absolute
+     * (doesn't start with '/' character), then retry with
+     * <code>packageName/resourceName</code> after changing all
+     * '.' to '/'.
+     * 
+     * @param resourceName The name of the resource to load.
+     */
+    public static InputStream getResourceAsStream(Class spi,
                                                   String resourceName,
                                                   ClassLoaders loaders)
         throws DiscoveryException
     {
-        InputStream stream = getResourceAsStream(resourceName, loaders);
+        URL url = getResource(spi, resourceName, loaders);
+        InputStream stream = null;
         
-        /**
-         * If we didn't find the resource, and if the resourceName
-         * isn't an 'absolute' path name, then qualify with
-         * package name of the spi.
-         */
-        return (stream == null)
-               ? getResourceAsStream(qualifyName(packageName, resourceName),
-                                     loaders)
-               : stream;
+        if (url != null) {
+            try {
+                stream = url.openStream();
+            } catch (IOException e) {
+                stream = null;  // ignore
+            }
+        }
+        
+        return stream;
     }
     
-    
     /**
-     * If <code>name</code> represents an absolute path name, then return null.
-     * Otherwise, prepend packageName to name, convert all '.' to '/', and
-     * return results.
-     */
-    private static final String qualifyName(String packageName, String name) {
-        return (name.charAt(0)=='/')
-               ? null
-               : packageName.replace('.','/') + "/" + name;
+     * Load named property file, optionally qualifed by spi's package name
+     * as per Class.getResource.
+     * 
+     * A property file is loaded using the following sequence of class loaders:
+     *   <ul>
+     *     <li>Thread Context Class Loader</li>
+     *     <li>DiscoverSingleton's Caller's Class Loader</li>
+     *     <li>SPI's Class Loader</li>
+     *     <li>DiscoverSingleton's (this class) Class Loader</li>
+     *     <li>System Class Loader</li>
+     *   </ul>
+     * 
+     * @param
+     * @param propertiesFileName The property file name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */    
+    public static Properties loadProperties(Class spi,
+                                            String propertiesFileName,
+                                            ClassLoaders classLoaders)
+        throws DiscoveryException
+    {
+        Properties properties = null;
+        
+        if (propertiesFileName != null) {
+            try {
+                InputStream stream =
+                    ResourceUtils.getResourceAsStream(spi,
+                                                         propertiesFileName,
+                                                         classLoaders);
+    
+                if (stream != null) {
+                    properties = new Properties();
+                    try {
+                        properties.load(stream);
+                    } finally {
+                        stream.close();
+                    }
+                }
+            } catch (IOException e) {
+                ;  // ignore
+            } catch (SecurityException e) {
+                ;  // ignore
+            }
+        }
+        
+        return properties;
     }
 }
