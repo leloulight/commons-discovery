@@ -677,9 +677,7 @@ public class Discovery {
         ClassLoader[] allLoaders = classFinder.getAllLoaders();
 
         for (int idx = 0; service == null  &&  idx < allLoaders.length; idx++) {
-            service = get(classFinder.getGroupContext(),
-                          classFinder.getSPIContext().getSPI().getName(),
-                          allLoaders[idx]);
+            service = get(classFinder.getSPIContext());
         }
 
         if (service != null) {        
@@ -715,10 +713,7 @@ public class Discovery {
             if (clazz != null) {
                 try {
                     service = clazz.newInstance();
-                    put(classFinder.getGroupContext(),
-                        classFinder.getSPIContext().getSPI().getName(),
-                        clazz.getClassLoader(),
-                        service);
+                    put(classFinder.getSPIContext(), service);
                 } catch (Exception e) {
                     throw new DiscoveryException("Unable to instantiate " + classFinder.getSPIContext().getSPI().getName(), e);
                 }
@@ -778,70 +773,71 @@ public class Discovery {
     /************************* SPI LIFE-CYCLE SUPPORT *************************/
     
     /**
-     * Release any internal references to previously created service instances
-     * associated with the 'null' (default) groupContext.  The
-     * <code>release()</code> method is called for service instances that
+     * Release all internal references to previously created service
+     * instances associated with the current thread context class loader.
+     * The <code>release()</code> method is called for service instances that
      * implement the <code>Service</code> interface.
-     * 
-     * Equivalent to calling releaseAll(null) for the default groupContext.
      *
      * This is useful in environments like servlet containers,
      * which implement application reloading by throwing away a ClassLoader.
      * Dangling references to objects in that class loader would prevent
      * garbage collection.
      */
-    public static void releaseAll() {
-        releaseAll(nullGroupContext);
-    }
-    
-    /**
-     * Release any internal references to previously created service instances
-     * associated with the <code>groupContext</code>.  The
-     * <code>release()</code> method is called for service instances that
-     * implement the <code>Service</code> interface.
-     * 
-     * This is useful in environments like servlet containers,
-     * which implement application reloading by throwing away a ClassLoader.
-     * Dangling references to objects in that class loader would prevent
-     * garbage collection.
-     */
-    public static void releaseAll(String groupContext) {
-        synchronized (group_caches) {
-            HashMap service_caches = (HashMap)group_caches.get(groupContext);
+    public static void release() {
+        ClassLoader threadContextClassLoader =
+            ClassLoaderUtils.getThreadContextClassLoader();
 
-            if (service_caches != null) {
-                java.util.Iterator caches = service_caches.values().iterator();
+        /**
+         * 'null' (bootstrap/system class loader) thread context class loader
+         * is ok...  Until we learn otherwise.
+         */
+        synchronized (spi_caches) {
+            HashMap spis =
+                (HashMap)spi_caches.get(threadContextClassLoader);
 
-                while (caches.hasNext()) {
-                    ((ServiceCache)caches.next()).releaseAll();
+            if (spis != null) {
+                Iterator it = spis.values().iterator();
+
+                while (it.hasNext()) {
+                    Object service = (Object)it.next();
+                    
+                    if (service instanceof Service)
+                        ((Service)service).release();
                 }
 
-                service_caches.clear();
+                spis.clear();
 
-                group_caches.remove(groupContext);
+                spi_caches.remove(threadContextClassLoader);
             }
         }
     }
     
     /**
-     * Release any internal references to a previously created service instances
-     * associated with the <code>groupContext</code>.
-     * Release any internal references to previously created instances of SPI,
-     * after calling the instance method <code>release()</code> on each of them.
+     * Release any internal references to a previously created service
+     * instance associated with the current thread context class loader.
+     * If the SPI instance implements <code>Service</code>, then call
+     * <code>release()</code>.
      */
-    public static void releaseAll(String groupContext, Class spi) {
+    public static void release(Class spi) {
+        ClassLoader threadContextClassLoader =
+            ClassLoaderUtils.getThreadContextClassLoader();
+
+        /**
+         * 'null' (bootstrap/system class loader) thread context class loader
+         * is ok...  Until we learn otherwise.
+         */
         if (spi != null) {
-            synchronized (group_caches) {
-                HashMap service_caches = (HashMap)group_caches.get(groupContext);
+            synchronized (spi_caches) {
+                HashMap spis =
+                    (HashMap)spi_caches.get(threadContextClassLoader);
 
-                if (service_caches != null) {
-                    ServiceCache cache = (ServiceCache)service_caches.get(spi.getName());
-
-                    if (cache != null) {
-                        cache.releaseAll();
-                    }
+                if (spis != null) {
+                    Object service = (Object)spis.get(spi.getName());
                     
-                    service_caches.remove(spi.getName());
+                    if (service instanceof Service)
+                        ((Service)service).release();
+                    
+                    spis.remove(spi.getName());
                 }
             }
         }
@@ -850,45 +846,57 @@ public class Discovery {
     
     /************************* SPI CACHE SUPPORT *************************
      * 
-     * Cache by
-     * - Group : Cache is a <code>HashMap</code> (unsynchronized, allows null
-     *           keys(required))  keyed by groupContext (<code>String</code>).
-     *           Each element is a <code>HashMap</code>.
+     * Cache services by a 'key' unique to the requesting class/environment:
+     * - ONE way to do this is by thread context class loader.
+     * - ANOTHER way is to allow caching by an ID that crossing the thread
+     *   context boundries... much like the <code>'groupContext'</code>.
      * 
-     * - SPI : Cache is a <code>HashMap</code>
-     *         keyed by interface (<code>Class</code>).
-     *         Each element is a <code>ServiceCache</code>.
+     * Until such time as we can see more clearly the benefits of the second,
+     * will only cache by the first (thread context class loader).
      * 
-     * - ClassLoader : Cache is a <code>ServiceCache</code>
-     *                 keyed by class loader (<code>ClassLoader</code>)
-     *                 Each element is an SPI implementation (<code>Object</code>).
+     * When we 'release', it is expected that the caller of the 'release'
+     * have the same thread context class loader... as that will be used
+     * to identify all cached entries to be released.
+     * 
+     * We will manage synchronization directly, so all caches are implemented
+     * as HashMap (unsynchronized).
+     * 
+     * - Cache of SPI Caches, by ClassLoader:
+     *         Cache : HashMap
+     *         Key   : Thread Context Class Loader (<code>ClassLoader</code>).
+     *         Value : SPI Cache (<code>HashMap</code>).
+     * 
+     * - Cache of SPIs :
+     *         Cache : HashMap
+     *         Key   : SPI Interface/Class Name (<code>String</code>).
+     *         Value : SPI Implementation (<code>Object</code>.
      */
 
     /**
      * Allows null key, important as default groupContext is null.
      */
-    private static final HashMap group_caches = new HashMap(13);
-//    private static final Hashtable service_caches = new Hashtable(13);
+    private static final HashMap spi_caches = new HashMap(13);
 
     
     /**
      * Get service keyed by spi & classLoader.
-     * Special cases null bootstrap classloader (classLoader == null)
-     * via ServiceCache.get().
      */
-    private static Object get(String groupContext, String spi, ClassLoader classLoader)
+    private static Object get(SPIContext spiContext)
     {
         Object service = null;
 
-        if (spi != null) {
-            synchronized (group_caches) {
-                HashMap service_caches = (HashMap)group_caches.get(groupContext);
+        /**
+         * 'null' (bootstrap/system class loader) thread context class loader
+         * is ok...  Until we learn otherwise.
+         */
+        if (spiContext.getSPI() != null)
+        {
+            synchronized (spi_caches) {
+                HashMap spis =
+                    (HashMap)spi_caches.get(spiContext.getThreadContextClassLoader());
 
-                if (service_caches != null) {
-                    ServiceCache cache = (ServiceCache)service_caches.get(spi);
-
-                    if (cache != null)
-                        service = cache.get(classLoader);
+                if (spis != null) {
+                    service = (Object)spis.get(spiContext.getSPI().getName());
                 }
             }
         }
@@ -898,28 +906,26 @@ public class Discovery {
     
     /**
      * Put service keyed by spi & classLoader.
-     * Special cases null bootstrap classloader (classLoader == null)
-     * via ServiceCache.put().
      */
-    private static void put(String groupContext, String spi, ClassLoader classLoader, Object service)
+    private static void put(SPIContext spiContext, Object service)
     {
-        if (spi != null  &&  service != null) {
-            synchronized (group_caches) {
-                HashMap service_caches = (HashMap)group_caches.get(groupContext);
-                
-                if (service_caches == null) {
-                    service_caches = new HashMap(13);
-                    group_caches.put(groupContext, service_caches);
+        /**
+         * 'null' (bootstrap/system class loader) thread context class loader
+         * is ok...  Until we learn otherwise.
+         */
+        if (spiContext.getSPI() != null  &&
+            service != null)
+        {
+            synchronized (spi_caches) {
+                HashMap spis =
+                    (HashMap)spi_caches.get(spiContext.getThreadContextClassLoader());
+
+                if (spis == null) {
+                    spis = new HashMap(13);
+                    spi_caches.put(spiContext.getThreadContextClassLoader(), spis);
                 }
 
-                ServiceCache cache = (ServiceCache)service_caches.get(spi);
-
-                if (cache == null) {
-                    cache = new ServiceCache();
-                    service_caches.put(spi, cache);
-                }
-
-                cache.put(classLoader, service);
+                spis.put(spiContext.getSPI().getName(), service);
             }
         }
     }

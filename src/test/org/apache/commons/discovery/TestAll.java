@@ -98,7 +98,7 @@ public class TestAll extends TestCase {
             log.info("got log!");
         } finally {
             LogFactory.releaseAll();
-            Discovery.releaseAll();
+            Discovery.release();
         }
     }
     
@@ -117,7 +117,7 @@ public class TestAll extends TestCase {
             log.info("got log factory via service");
         } finally {
             LogFactory.releaseAll();
-            Discovery.releaseAll();
+            Discovery.release();
         }
     }
 
