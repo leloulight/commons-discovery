@@ -58,6 +58,8 @@
 package org.apache.commons.discovery;
 
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
@@ -111,11 +113,16 @@ public class ResourceClass extends Resource
             if (log.isDebugEnabled())
                 log.debug("loadClass: Loading class '" + getName() + "' with " + getClassLoader());
 
-            try {
-                resourceClass = getClassLoader().loadClass(getName());
-            } catch (ClassNotFoundException e) {
-                resourceClass = null;
-            }
+            resourceClass = (Class)AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        try {
+                            return getClassLoader().loadClass(getName());
+                        } catch (ClassNotFoundException e) {
+                            return null;
+                        }
+                    }
+                });
         }
         return resourceClass;
     }
