@@ -61,6 +61,9 @@
 
 package org.apache.commons.discovery;
 
+import java.net.URL;
+import java.io.InputStream;
+
 
 /**
  * A wrapper class that gives us a "bootstrap" loader.
@@ -101,6 +104,14 @@ public class BootstrapLoader {
             throws ClassNotFoundException
         {
             return findSystemClass(className);
+        }
+        
+        public URL getResource(String resName) {
+            return getSystemResource(resName);
+        }
+        
+        public InputStream getResourceAsStream(String resName) {
+            return getSystemResourceAsStream(resName);
         }
     }
 }
