@@ -62,24 +62,19 @@
       <resources>
         <resource>
           <directory>${basedir}/src</directory>
-          <includes><include>**/testResource</include></includes>
+          <includes>
+            <include>**/testResource</include>
+          </includes>
         </resource>
         <resource>
           <directory>${basedir}/src/test</directory>
-          <excludes>
-            <exclude>**/*.java</exclude>
-          </excludes>
+          <includes>
+            <include>**/*.properties</include>
+            <include>META-INF/**</include>
+          </includes>
         </resource>
       </resources>  
     </unitTest>
-
-    <resources>
-      <resource>
-        <includes>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-    </resources>
   </build>
 
 
