@@ -97,7 +97,7 @@ public class TestAll extends TestCase {
         
         try {
             factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
-                                                 LogFactoryImpl.class.getName());
+                                                         LogFactoryImpl.class.getName());
 
             assertTrue(factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
                        factory.getClass().getName().equals(LogFactoryImpl.class.getName()));
@@ -114,7 +114,7 @@ public class TestAll extends TestCase {
 
         try {
             factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
-                                                 MyFactory.class.getName());
+                                                         MyFactory.class.getName());
 
             assertTrue(factory.getClass().getName() + "!=" + MyFactory.class.getName(),
                        factory.getClass().getName().equals(MyFactory.class.getName()));
@@ -131,7 +131,7 @@ public class TestAll extends TestCase {
         
         try {
             factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
-                                                 LogFactoryImpl.class.getName());
+                                                         LogFactoryImpl.class.getName());
 
             assertTrue("1. " + factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
                        factory.getClass().getName().equals(LogFactoryImpl.class.getName()));
@@ -157,7 +157,7 @@ public class TestAll extends TestCase {
         
         try {
             factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
-                                                 LogFactoryImpl.class.getName());
+                                                         LogFactoryImpl.class.getName());
 
             assertTrue("1. " + factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
                        factory.getClass().getName().equals(LogFactoryImpl.class.getName()));
@@ -165,7 +165,7 @@ public class TestAll extends TestCase {
             DiscoverSingleton.release();
             
             factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
-                                                 MyFactory.class.getName());
+                                                         MyFactory.class.getName());
 
             // Cache flushed, get new factory:
             assertTrue("2. " + factory.getClass().getName() + "!=" + MyFactory.class.getName(),
@@ -227,6 +227,26 @@ public class TestAll extends TestCase {
              */
             ManagedProperties.setProperty(LogFactory.class.getName(), null);
             ManagedProperties.setProperty(Log.class.getName(), null);
+        }
+    }
+    
+
+    public void testFindGroupLogFactoryImplPropFileDefault() {
+        LogFactory factory = null;
+        
+        try {
+            factory = (LogFactory)DiscoverSingleton.find((String)null /* groupContext */,
+                                   LogFactory.class,
+                                   LogFactory.FACTORY_PROPERTIES,
+                                   LogFactory.FACTORY_DEFAULT);
+
+            assertTrue(factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
+                       factory.getClass().getName().equals(LogFactoryImpl.class.getName()));
+        } finally {
+            if (factory != null)
+                factory.releaseAll();
+
+            DiscoverSingleton.release();
         }
     }
 
