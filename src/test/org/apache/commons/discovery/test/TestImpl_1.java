@@ -1,9 +1,13 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,83 +58,19 @@
  * <http://www.apache.org/>.
  *
  */
-
-package org.apache.commons.discovery;
-
-import java.net.URL;
-
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
-import org.apache.commons.logging.Log;
+ 
+ 
+package org.apache.commons.discovery.test;
 
 
 /**
- * 'Resource' located by discovery.
- * 
- * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author Richard A. Sitze
+  * @author Richard A. Sitze
+  * @version $Revision$
  */
-public class ClassInfo extends ResourceInfo
-{
-    private static Log log = DiscoveryLogFactory.newLog(ClassInfo.class);
-
-    private static final boolean debug = false;
-
-    protected Class       resourceClass;
-
-    public ClassInfo() {
-        super();
+public class TestImpl_1 implements TestInterface {
+    public TestImpl_1() {
     }
 
-    public ClassInfo(String className, ClassLoader loader, URL location) {
-        super(className, loader, location);
-        this.resourceClass = null;
-    }
-
-    public ClassInfo(Class resourceClass, ClassLoader loader, URL location) {
-        super(resourceClass.getName(), loader, location);
-        this.resourceClass = resourceClass;
-    }
-
-    /**
-     * Get the value of resourceClass.
-     * @return value of resourceClass.
-     */
-    public Class getResourceClass() {
-        if (resourceClass == null) {
-            if (log.isDebugEnabled())
-                log.debug("getResourceClass: Loading class '" + getResourceName() + "' with " + loader);
-    
-            try {
-                setResourceClass(getLoader().loadClass(getResourceName()));
-            } catch (ClassNotFoundException e) {
-                setResourceClass(null);
-            }
-        }
-        return resourceClass;
-    }
-    
-    /**
-     * Set the value of resourceClass.
-     * @param v  Value to assign to resourceClass.
-     */
-    public void setResourceClass(Class resourceClass) {
-        this.resourceClass = resourceClass;
-    }
-    
-    public ClassInfo toClassInfo(ResourceInfo resourceInfo) {
-        if (resourceInfo instanceof ClassInfo) {
-            return (ClassInfo)resourceInfo;
-        } else {
-            return new ClassInfo(resourceInfo.resourceName, resourceInfo.loader, resourceInfo.location);
-        }
-    }
-    
-    public String toString() {
-        return "ClassResource " + resourceName + " " + loader + " " + location;
-    }
-    
-    public static void setLog(Log _log) {
-        log = _log;
+    public void method() {
     }
 }

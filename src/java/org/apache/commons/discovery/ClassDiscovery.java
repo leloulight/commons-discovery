@@ -61,6 +61,9 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.logging.Log;
+
 
 
 /**
@@ -76,6 +79,8 @@ import java.util.Vector;
  */
 public class ClassDiscovery extends ResourceDiscovery
 {
+    private static Log log = DiscoveryLogFactory.newLog(ClassDiscovery.class);
+
     protected static final String SERVICE_HOME = "META-INF/services/";
     
     /** Construct a new class discoverer
@@ -102,6 +107,9 @@ public class ClassDiscovery extends ResourceDiscovery
     public Enumeration findResources(final String className) {
         final String resourceName = className.replace('.','/') + ".class";
         
+        if (log.isDebugEnabled())
+            log.debug("findResources: className='" + className + "'");
+
         return new Enumeration() {
             private Vector history = new Vector();
             private int idx = 0;
@@ -109,7 +117,7 @@ public class ClassDiscovery extends ResourceDiscovery
             
             public boolean hasMoreElements() {
                 if (resource == null) {
-                    resource = getNextResource();
+                    resource = getNextClass();
                 }
                 return resource != null;
             }
@@ -120,17 +128,27 @@ public class ClassDiscovery extends ResourceDiscovery
                 return element;
             }
             
-            private ClassInfo getNextResource() {
+            private ClassInfo getNextClass() {
                 while (idx < getClassLoaders().size()) {
                     ClassLoader loader = getClassLoaders().get(idx++);
                     URL url = loader.getResource(resourceName);
                     if (url != null  &&  !history.contains(url)) {
                         history.addElement(url);
+
+                        if (log.isDebugEnabled())
+                            log.debug("getNextClass: next URL='" + url + "'");
+
                         return new ClassInfo(className, loader, url);
                     }
+                    if (log.isDebugEnabled())
+                        log.debug("getNextClass: duplicate URL='" + url + "'");
                 }
                 return null;
             }
         };
+    }
+    
+    public static void setLog(Log _log) {
+        log = _log;
     }
 }

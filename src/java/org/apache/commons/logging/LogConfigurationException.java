@@ -1,4 +1,8 @@
 /*
+ * $Header: /home/cvs/jakarta-commons/logging/src/java/org/apache/commons/logging/LogConfigurationException.java,v 1.1 2002/02/13 02:18:30 craigmcc Exp $
+ * $Revision: 1.1 $
+ * $Date: 2002/02/13 02:18:30 $
+ *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -55,82 +59,84 @@
  *
  */
 
-package org.apache.commons.discovery;
-
-import java.net.URL;
-
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
-import org.apache.commons.logging.Log;
+package org.apache.commons.logging;
 
 
 /**
- * 'Resource' located by discovery.
- * 
+ * <p>An exception that is thrown only if a suitable <code>LogFactory</code>
+ * or <code>Log</code> instance cannot be created by the corresponding
+ * factory methods.</p>
+ *
  * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author Richard A. Sitze
+ * @version $Revision: 1.1 $ $Date: 2002/02/13 02:18:30 $
  */
-public class ClassInfo extends ResourceInfo
-{
-    private static Log log = DiscoveryLogFactory.newLog(ClassInfo.class);
 
-    private static final boolean debug = false;
+public class LogConfigurationException extends RuntimeException {
 
-    protected Class       resourceClass;
 
-    public ClassInfo() {
+    /**
+     * Construct a new exception with <code>null</code> as its detail message.
+     */
+    public LogConfigurationException() {
+
         super();
+
     }
 
-    public ClassInfo(String className, ClassLoader loader, URL location) {
-        super(className, loader, location);
-        this.resourceClass = null;
-    }
-
-    public ClassInfo(Class resourceClass, ClassLoader loader, URL location) {
-        super(resourceClass.getName(), loader, location);
-        this.resourceClass = resourceClass;
-    }
 
     /**
-     * Get the value of resourceClass.
-     * @return value of resourceClass.
+     * Construct a new exception with the specified detail message.
+     *
+     * @param message The detail message
      */
-    public Class getResourceClass() {
-        if (resourceClass == null) {
-            if (log.isDebugEnabled())
-                log.debug("getResourceClass: Loading class '" + getResourceName() + "' with " + loader);
-    
-            try {
-                setResourceClass(getLoader().loadClass(getResourceName()));
-            } catch (ClassNotFoundException e) {
-                setResourceClass(null);
-            }
-        }
-        return resourceClass;
+    public LogConfigurationException(String message) {
+
+        super(message);
+
     }
-    
+
+
     /**
-     * Set the value of resourceClass.
-     * @param v  Value to assign to resourceClass.
+     * Construct a new exception with the specified cause and a derived
+     * detail message.
+     *
+     * @param cause The underlying cause
      */
-    public void setResourceClass(Class resourceClass) {
-        this.resourceClass = resourceClass;
+    public LogConfigurationException(Throwable cause) {
+
+        this((cause == null) ? null : cause.toString(), cause);
+
     }
-    
-    public ClassInfo toClassInfo(ResourceInfo resourceInfo) {
-        if (resourceInfo instanceof ClassInfo) {
-            return (ClassInfo)resourceInfo;
-        } else {
-            return new ClassInfo(resourceInfo.resourceName, resourceInfo.loader, resourceInfo.location);
-        }
+
+
+    /**
+     * Construct a new exception with the specified detail message and cause.
+     *
+     * @param message The detail message
+     * @param cause The underlying cause
+     */
+    public LogConfigurationException(String message, Throwable cause) {
+
+        super(message);
+        this.cause = cause; // Two-argument version requires JDK 1.4 or later
+
     }
-    
-    public String toString() {
-        return "ClassResource " + resourceName + " " + loader + " " + location;
+
+
+    /**
+     * The underlying cause of this exception.
+     */
+    protected Throwable cause = null;
+
+
+    /**
+     * Return the underlying cause of this exception (if any).
+     */
+    public Throwable getCause() {
+
+        return (this.cause);
+
     }
-    
-    public static void setLog(Log _log) {
-        log = _log;
-    }
+
+
 }

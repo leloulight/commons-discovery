@@ -66,6 +66,9 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.logging.Log;
+
 
 
 /**
@@ -92,6 +95,8 @@ import java.util.Vector;
  */
 public class ServiceDiscovery extends ResourceDiscovery
 {
+    private static Log log = DiscoveryLogFactory.newLog(ServiceDiscovery.class);
+
     protected static final String SERVICE_HOME = "META-INF/services/";
     
     /** Construct a new service discoverer
@@ -113,9 +118,12 @@ public class ServiceDiscovery extends ResourceDiscovery
      * 
      * @return Enumeration of ClassInfo
      */
-    public Enumeration findResources(final String resourceName) {
+    public Enumeration findResources(final String serviceName) {
+        if (log.isDebugEnabled())
+            log.debug("findResources: serviceName='" + serviceName + "'");
+
         final Enumeration files =
-            super.findResources(SERVICE_HOME + resourceName);
+            super.findResources(SERVICE_HOME + serviceName);
 
         return new Enumeration() {
             private ClassDiscovery classDiscovery =
@@ -128,7 +136,7 @@ public class ServiceDiscovery extends ResourceDiscovery
             
             public boolean hasMoreElements() {
                 if (resource == null) {
-                    resource = getNextResource();
+                    resource = getNextService();
                 }
                 return resource != null;
             }
@@ -139,7 +147,7 @@ public class ServiceDiscovery extends ResourceDiscovery
                 return element;
             }
             
-            private ClassInfo getNextResource() {
+            private ClassInfo getNextService() {
                 if (classResources == null || !classResources.hasMoreElements()) {
                     classResources = getNextClassResources();
                     if (classResources == null) {
@@ -148,7 +156,7 @@ public class ServiceDiscovery extends ResourceDiscovery
                 }
 
                 ClassInfo classInfo = (ClassInfo)classResources.nextElement();
-                System.out.println("XXX " + classInfo.toString());
+
                 return classInfo;
             }
 
@@ -161,7 +169,12 @@ public class ServiceDiscovery extends ResourceDiscovery
                         }
                         idx = 0;
                     }
-    
+
+                    String className = (String)classNames.get(idx++);
+                    
+                    if (log.isDebugEnabled())
+                        log.debug("getNextClassResource: next class='" + className + "'");
+
                     /**
                      * The loader used to find the service file
                      * is of no (limited?) use here... likewise
@@ -170,7 +183,7 @@ public class ServiceDiscovery extends ResourceDiscovery
                      * find unique classes & their loaders...
                      */
                     Enumeration classes =
-                        classDiscovery.findResources((String)classNames.get(idx++));
+                        classDiscovery.findResources(className);
 
                     if (classes != null && classes.hasMoreElements()) {
                         return classes;
@@ -203,7 +216,9 @@ public class ServiceDiscovery extends ResourceDiscovery
              * URL is of the form: baseURL/META-INF/services/resourceName
              */
             URL baseURL = new URL( url, "../../.." );
-            System.out.println("XXX BaseURL " + baseURL);
+
+            if (log.isDebugEnabled())
+                log.debug("readServices: baseURL='" + baseURL + "'");
             
             InputStream is = url.openStream();
             
@@ -245,5 +260,9 @@ public class ServiceDiscovery extends ResourceDiscovery
         }
         
         return results;
+    }
+    
+    public static void setLog(Log _log) {
+        log = _log;
     }
 }

@@ -164,7 +164,8 @@
              tofile="${build.home}/classes/META-INF/LICENSE.txt"/>
     <jar    jarfile="${dist.home}/commons-${component.name}.jar"
             basedir="${build.home}/classes"
-           manifest="${build.home}/conf/MANIFEST.MF"/>
+           manifest="${build.home}/conf/MANIFEST.MF"
+           excludes="org/apache/commons/logging/**"/>
   </target>
 
 <!-- ========== Testing section ======================================== -->
@@ -187,7 +188,7 @@
     <echo message="Running basic Service tests ..."/>
     <java classname="${test.runner}" fork="yes"
         failonerror="${test.failonerror}">
-      <arg value="org.apache.commons.discovery.TestAll"/>
+      <arg value="org.apache.commons.discovery.test.TestAll"/>
       <classpath refid="test.classpath"/>
     </java>
   </target>

@@ -63,6 +63,9 @@ import java.util.Enumeration;
 
 import org.apache.commons.discovery.jdk.JDKHooks;
 
+import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.logging.Log;
+
 
 /**
  * This class supports any VM, including JDK1.1, via
@@ -77,6 +80,8 @@ import org.apache.commons.discovery.jdk.JDKHooks;
  */
 public class ResourceDiscovery
 {
+    private static Log log = DiscoveryLogFactory.newLog(ResourceDiscovery.class);
+
     /**
      * this doesn't buy anything except +/- style (subjective).
      */
@@ -124,6 +129,9 @@ public class ResourceDiscovery
      * @return Enumeration of ResourceInfo
      */
     public Enumeration findResources(final String resourceName) {
+        if (log.isDebugEnabled())
+            log.debug("findResources: resourceName='" + resourceName + "'");
+
         return new Enumeration() {
             private int idx = 0;
             private ClassLoader loader = null;
@@ -151,9 +159,11 @@ public class ResourceDiscovery
                 ResourceInfo resourceInfo;
                 if (resources != null) {
                     URL url = (URL)resources.nextElement();
-                    System.out.println("XXX URL " + url );
+
+                    if (log.isDebugEnabled())
+                        log.debug("getNextResource: next URL='" + url + "'");
+
                     resourceInfo = new ResourceInfo(resourceName, loader, url);
-                    System.out.println("XXX " + resourceInfo.toString());
                 } else {
                     resourceInfo = null;
                 }
@@ -164,17 +174,23 @@ public class ResourceDiscovery
             private Enumeration getNextResources() {
                 while (idx < getClassLoaders().size()) {
                     loader = getClassLoaders().get(idx++);
+                    if (log.isDebugEnabled())
+                        log.debug("getNextResources: search using ClassLoader '" + loader + "'");
                     try {
                         Enumeration enum = jdkHooks.getResources(loader, resourceName);
                         if (enum != null && enum.hasMoreElements()) {
                             return enum;
                         }
                     } catch( IOException ex ) {
-                        ex.printStackTrace();
+                        log.warn("getNextResources: Ignoring Exception", ex);
                     }
                 }
                 return null;
             }
         };
+    }
+    
+    public static void setLog(Log _log) {
+        log = _log;
     }
 }
