@@ -70,13 +70,6 @@ import java.lang.reflect.Method;
  * to include an spi and the Thread Context Class Loader for
  * the thread that created an instance of this object.
  * 
- * These matters are, for the most part, trivial.  Bundling
- * these two together is a convenience, but more importantly
- * it gives a home to a portable mechanism for determining
- * the thread context class loader.  JDK 1.1 does not support
- * the thread context class loader, yet the code below must
- * be able to compile & execute in such an environment.
- * 
  * @author Richard A. Sitze
  */
 public class SPIContext {
@@ -85,14 +78,7 @@ public class SPIContext {
      * Wrapped bootstrap classloader if classLoader == null.
      */
     private final ClassLoader threadContextClassLoader =
-        ClassLoaderUtils.findThreadContextClassLoader();
-
-    /**
-     * System class loader or null if not available (JDK 1.1).
-     * Wrapped bootstrap classloader if classLoader == null.
-     */
-    private final ClassLoader systemClassLoader =
-        ClassLoaderUtils.findSystemClassLoader();
+        ClassLoaderUtils.getThreadContextClassLoader();
 
     /**
      * List of class loaders
@@ -111,15 +97,11 @@ public class SPIContext {
         this.loaders = ClassLoaderUtils.compactUniq(
             new ClassLoader[] { threadContextClassLoader,
                                 BootstrapLoader.wrap(spi.getClassLoader()),
-                                systemClassLoader });
+                                ClassLoaderUtils.getSystemClassLoader() });
     }
     
     public ClassLoader getThreadContextClassLoader() {
         return threadContextClassLoader;
-    }
-    
-    public ClassLoader getSystemClassLoader() {
-        return systemClassLoader;
     }
     
     public ClassLoader[] getClassLoaders() {

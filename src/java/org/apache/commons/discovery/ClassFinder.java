@@ -90,53 +90,70 @@ public class ClassFinder {
      * looking for an implementation of.
      */
     private final SPIContext spiContext;
+    private final String     groupContext;
     private final Class      rootFinderClass;
     
-    private final ClassLoader[] localLoaders;
+    /**
+     * This is NOT the same as spiContext.getClassLoaders(),
+     * which includes the thread context class loader.
+     */
+    private final ClassLoader[] systemLoaders;
+    
     private final ClassLoader[] allLoaders;
     
     ClassLoader[] getAllLoaders() { return allLoaders; }
 
-    public ClassFinder(SPIContext spiContext, Class rootFinderClass) {
+    public ClassFinder(SPIContext spiContext,
+                       String groupContext,
+                       Class rootFinderClass)
+    {
         this.spiContext = spiContext;
+        this.groupContext = groupContext;
         this.rootFinderClass = rootFinderClass;
-        this.localLoaders = getLocalLoaders(spiContext, rootFinderClass);
+        this.systemLoaders = getSystemLoaders(spiContext, rootFinderClass);
         this.allLoaders = getAllLoaders(spiContext, rootFinderClass);
 
         //System.out.println("Finding '" + spiContext.getSPI().getName() + "'");
     }
     
-    public ClassFinder(Class spi, Class rootFinderClass) {
+    public ClassFinder(Class spi,
+                       String groupContext,
+                       Class rootFinderClass)
+    {
         this.spiContext = new SPIContext(spi);
+        this.groupContext = groupContext;
         this.rootFinderClass = rootFinderClass;
-        this.localLoaders = getLocalLoaders(spiContext, rootFinderClass);
+        this.systemLoaders = getSystemLoaders(spiContext, rootFinderClass);
         this.allLoaders = getAllLoaders(spiContext, rootFinderClass);
 
         //System.out.println("Finding '" + spi.getName() + "'");
     }
     
+    
+    public SPIContext getSPIContext() { return spiContext; }
+    
+    
     /**
      * Return the specified <code>serviceImplName</code> implementation
-     * class.  If <code>localOnly</code> is <code>true</code>, try the
-     * class loaders local to the caller: root finder class's (default
-     * ServiceFinder) and system.  If <code>localOnly</code> is
-     * <code>false</code>, try each of the following class loaders:
-     * thread context, caller's, spi's, root finder class's (default
-     * ServiceFinder), and system.
+     * class.  If <code>systemOnly</code> is <code>true</code>, try the
+     * 'system' class loaders: spi's, root finder class's (default is
+     * Discovery) and system.  If <code>systemOnly</code> is <code>false</code>,
+     * try each of the following class loaders: thread context, caller's, spi's,
+     * root finder class's (default is Discovery), and system.
      *
      * @param serviceImplName Fully qualified name of the implementation class
-     * @param localOnly Use only local class loader
+     * @param systemOnly Use only 'system' class loaders
      *                  (do not try thread context class loader).
      *
      * @exception DiscoveryException if a suitable instance cannot be created,
      *                             or if the class created is not an instance
      *                             of <code>spi</code>
      */
-    public Class findClass(String serviceImplName, boolean localOnly)
+    public Class findClass(String serviceImplName, boolean systemOnly)
         throws DiscoveryException
     {
         Class clazz = ClassLoaderUtils.loadClass(serviceImplName,
-                           localOnly ? localLoaders : allLoaders);
+                           systemOnly ? systemLoaders : allLoaders);
             
         if (clazz != null  &&  !spiContext.getSPI().isAssignableFrom(clazz)) {
             throw new DiscoveryException("Class " + serviceImplName +
@@ -148,25 +165,37 @@ public class ClassFinder {
     
     /**
      * Return the specified <code>resourceName</code> as an
-     * <code>InputStream</code>.  If <code>localOnly</code> is
-     * <code>true</code>, try the class loaders local to the caller:
-     * root finder class's (default ServiceFinder) and system.
-     * If <code>localOnly</code> is <code>false</code>, try each of
+     * <code>InputStream</code>.  If <code>systemOnly</code> is
+     * <code>true</code>, try the 'system' class loaders: spi's,
+     * root finder class's (default is Discovery), and system.
+     * If <code>systemOnly</code> is <code>false</code>, try each of
      * the following class loaders: thread context, caller's, spi's,
-     * root finder class's (default ServiceFinder), and system.
+     * root finder class's (default is Discovery), and system.
      *
      * @param resourceName name of the resource
-     * @param localOnly Use only local class loader
+     * @param system Use only 'system' class loaders
      *                  (do not try thread context class loader).
      *
      * @exception DiscoveryException if a suitable resource cannot be created.
      */
-    public InputStream findResourceAsStream(String resourceName, boolean localOnly)
+    public InputStream findResourceAsStream(String resourceName)
         throws DiscoveryException
     {
-        return ClassLoaderUtils.getResourceAsStream(spiContext.getSPI().getPackage().getName(),
-                                                    resourceName,
-                                                    localOnly ? localLoaders : allLoaders);
+        String name = spiContext.getSPI().getPackage().getName();
+
+        InputStream stream =
+            (groupContext == null)
+                ? null
+                : ClassLoaderUtils.getResourceAsStream(name,
+                                                       groupContext + "." + resourceName,
+                                                       allLoaders);
+
+        if (stream == null)    
+            stream = ClassLoaderUtils.getResourceAsStream(name,
+                                                          resourceName,
+                                                          allLoaders);
+
+        return stream;
     }
     
     /**
@@ -289,16 +318,14 @@ public class ClassFinder {
     }
 
     /**
-     * List of 'local' classes and class loaders.
-     * By using ClassLoaderHolder to holder Class and ClassLoader objects,
-     * we preserve the difference in behaviour between the two for loading
-     * resources..
+     * List of 'system' class loaders to the SPI
      */
-    private static final ClassLoader[] getLocalLoaders(SPIContext spiContext,
-                                                       Class rootFinderClass) {
+    private static final ClassLoader[] getSystemLoaders(SPIContext spiContext,
+                                                        Class rootFinderClass) {
         return ClassLoaderUtils.compactUniq(
-                new ClassLoader[] {BootstrapLoader.wrap(rootFinderClass.getClassLoader()),
-                                   spiContext.getSystemClassLoader()
+                new ClassLoader[] {BootstrapLoader.wrap(spiContext.getSPI().getClassLoader()),
+                                   BootstrapLoader.wrap(rootFinderClass.getClassLoader()),
+                                   ClassLoaderUtils.getSystemClassLoader()
                                   });
     }
     
@@ -309,7 +336,7 @@ public class ClassFinder {
                                    getCallerClassLoader(rootFinderClass),
                                    BootstrapLoader.wrap(spiContext.getSPI().getClassLoader()),
                                    BootstrapLoader.wrap(rootFinderClass.getClassLoader()),
-                                   spiContext.getSystemClassLoader()
+                                   ClassLoaderUtils.getSystemClassLoader()
                                   });
     }
 }

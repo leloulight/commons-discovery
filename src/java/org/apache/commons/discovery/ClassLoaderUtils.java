@@ -82,6 +82,12 @@ import java.lang.reflect.Method;
  * @author Costin Manolache
  */
 public class ClassLoaderUtils {
+    /**
+     * This doesn't change across threads... so cache the value.
+     */
+    private static final ClassLoader systemClassLoader
+        = findSystemClassLoader();
+        
     private static final boolean debug = false;
     
     /**
@@ -363,63 +369,6 @@ public class ClassLoaderUtils {
     }
 
     /**
-     * Return the system class loader if available.
-     * Otherwise return null.  If the system class loader
-     * is the bootstrap classloader, then it is 'wrapped'
-     * (see BootstrapLoader).  Therefore this method only
-     * returns 'null' if a system class loader could not
-     * be identified.
-     * 
-     * The system class loader is available for JDK 1.2
-     * or later, if certain security conditions are met.
-     * 
-     * @exception DiscoveryException if a suitable class loader
-     *            cannot be identified.
-     */
-    public static ClassLoader findSystemClassLoader()
-        throws DiscoveryException
-    {
-        ClassLoader classLoader = null;
-        
-        try {
-            // Are we running on a JDK 1.2 or later system?
-            Method method = ClassLoader.class.getMethod("getSystemClassLoader", null);
-    
-            // Get the system class loader (if there is one)
-            try {
-                classLoader =
-                    BootstrapLoader.wrap((ClassLoader)method.invoke(null, null));
-            } catch (IllegalAccessException e) {
-                throw new DiscoveryException("Unexpected IllegalAccessException", e);
-            } catch (InvocationTargetException e) {
-                /**
-                 * InvocationTargetException is thrown by 'invoke' when
-                 * the method being invoked (ClassLoader.getSystemClassLoader)
-                 * throws an exception.
-                 * 
-                 * ClassLoader.getSystemClassLoader() throws SecurityException
-                 * if security permissions are restricted.
-                 */
-                if (e.getTargetException() instanceof SecurityException) {
-                    classLoader = null;  // ignore
-                } else {
-                    // Capture 'e.getTargetException()' exception for details
-                    // alternate: log 'e.getTargetException()', and pass back 'e'.
-                    throw new DiscoveryException
-                        ("Unexpected InvocationTargetException",
-                         e.getTargetException());
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            // Assume we are running on JDK 1.1
-            classLoader = null;
-        }
-    
-        // Return the selected class loader
-        return classLoader;
-    }
-
-    /**
      * Return the thread context class loader if available.
      * Otherwise return null.  If the thread context class
      * loader is the bootstrap classloader, then it is 'wrapped'
@@ -433,7 +382,7 @@ public class ClassLoaderUtils {
      * @exception DiscoveryException if a suitable class loader
      * cannot be identified.
      */
-    public static ClassLoader findThreadContextClassLoader()
+    public static ClassLoader getThreadContextClassLoader()
         throws DiscoveryException
     {
         ClassLoader classLoader = null;
@@ -466,6 +415,81 @@ public class ClassLoaderUtils {
                  * the logic below, but other calls elsewhere (to obtain
                  * a class loader) will re-trigger this exception where
                  * we can make a distinction.
+                 */
+                if (e.getTargetException() instanceof SecurityException) {
+                    classLoader = null;  // ignore
+                } else {
+                    // Capture 'e.getTargetException()' exception for details
+                    // alternate: log 'e.getTargetException()', and pass back 'e'.
+                    throw new DiscoveryException
+                        ("Unexpected InvocationTargetException",
+                         e.getTargetException());
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            // Assume we are running on JDK 1.1
+            classLoader = null;
+        }
+    
+        // Return the selected class loader
+        return classLoader;
+    }
+    
+    /**
+     * Return the system class loader if available.
+     * Otherwise return null.  If the system class loader
+     * is the bootstrap classloader, then it is 'wrapped'
+     * (see BootstrapLoader).  Therefore this method only
+     * returns 'null' if a system class loader could not
+     * be identified.
+     * 
+     * The system class loader is available for JDK 1.2
+     * or later, if certain security conditions are met.
+     * 
+     * @exception DiscoveryException if a suitable class loader
+     *            cannot be identified.
+     */
+    public static ClassLoader getSystemClassLoader() {
+        return systemClassLoader;
+    }
+
+    /**
+     * Return the system class loader if available.
+     * Otherwise return null.  If the system class loader
+     * is the bootstrap classloader, then it is 'wrapped'
+     * (see BootstrapLoader).  Therefore this method only
+     * returns 'null' if a system class loader could not
+     * be identified.
+     * 
+     * The system class loader is available for JDK 1.2
+     * or later, if certain security conditions are met.
+     * 
+     * @exception DiscoveryException if a suitable class loader
+     *            cannot be identified.
+     */
+    private static ClassLoader findSystemClassLoader()
+        throws DiscoveryException
+    {
+        ClassLoader classLoader = null;
+        
+        try {
+            // Are we running on a JDK 1.2 or later system?
+            Method method = ClassLoader.class.getMethod("getSystemClassLoader", null);
+    
+            // Get the system class loader (if there is one)
+            try {
+                classLoader =
+                    BootstrapLoader.wrap((ClassLoader)method.invoke(null, null));
+            } catch (IllegalAccessException e) {
+                throw new DiscoveryException("Unexpected IllegalAccessException", e);
+            } catch (InvocationTargetException e) {
+                /**
+                 * InvocationTargetException is thrown by 'invoke' when
+                 * the method being invoked (ClassLoader.getSystemClassLoader)
+                 * throws an exception.
+                 * 
+                 * ClassLoader.getSystemClassLoader() throws SecurityException
+                 * if security permissions are restricted.
                  */
                 if (e.getTargetException() instanceof SecurityException) {
                     classLoader = null;  // ignore

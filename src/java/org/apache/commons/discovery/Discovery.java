@@ -71,13 +71,146 @@ import java.io.InputStreamReader;
 
 
 /**
- * <p>Discover service instances,
+ * <p>Discover service providers,
  * with discovery and configuration features similar to that employed
- * by standard Java APIs such as JAXP.</p>
- *
+ * by standard Java APIs such as JAXP.
+ * </p>
+ * 
+ * <p>In the context of this package, a service interface is defined by a
+ * Service Provider Interface (SPI).  The SPI is expressed as a Java interface,
+ * abstract class, or (base) class that defines an expected programming
+ * interface.
+ * </p>
+ * 
+ * <p>Discovery provides the <code>find</code> methods for locating and
+ * instantiating an implementation of a service (SPI).  Each form of
+ * <code>find</code> varies slightly, but they all perform the same basic
+ * function.  The Discovery <code>find</code> methods proceed as follows:
+ * </p>
+ * <ul>
+ *   <p><li>
+ *   Examine an internal cache to determine if the desired service was
+ *   previously identified and instantiated.  If found in cache, return it.
+ *   </li></p>
+ *   <p><li>
+ *   Get the name of an implementation class.  The name is the first
+ *   non-null value obtained from the following resources:
+ *   <ul>
+ *     <p><li>
+ *     The value of the system property whose name is the same as the SPI's
+ *     fully qualified class name (as given by SPI.class.getName()).
+ *     </li></p>
+ *     <p><li>
+ *     The value of a <code>Properties properties</code> property, if provided
+ *     as a parameter, whose name is the same as the SPI's fully qualifed class
+ *     name (as given by SPI.class.getName()).
+ *     </li></p>
+ *     <p><li>
+ *     The value obtained using the JDK1.3+ 'Service Provider' specification
+ *     (http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html) to locate a
+ *     service named <code>SPI.class.getName()</code>.  This is implemented
+ *     internally, so there is not a dependency on JDK 1.3+.
+ *     </li></p>
+ *   </ul>
+ *   </li></p>
+ *   <p><li>
+ *   If the name of the implementation class is non-null, load that class.
+ *   The class loaded is the first class loaded by the following sequence
+ *   of class loaders:
+ *   <ul>
+ *     <li>Thread Context Class Loader</li>
+ *     <li>Discovery's Caller's Class Loader</li>
+ *     <li>SPI's Class Loader</li>
+ *     <li>Discovery's (this class) Class Loader</li>
+ *     <li>System Class Loader</li>
+ *   </ul>
+ *   An exception is thrown if the class cannot be loaded.
+ *   </li></p>
+ *   <p><li>
+ *   If the name of the implementation class is null, AND the default
+ *   implementation class name (<code>defaultImplName</code>) is null,
+ *   then an exception is thrown.
+ *   </li></p>
+ *   <p><li>
+ *   If the name of the implementation class is null, AND the default
+ *   implementation class name (<code>defaultImplName</code>) is non-null,
+ *   then load the default implementation class.  The class loaded is the
+ *   first class loaded by the following sequence of class loaders:
+ *   <ul>
+ *     <li>SPI's Class Loader</li>
+ *     <li>Discovery's (this class) Class Loader</li>
+ *     <li>System Class Loader</li>
+ *   </ul>
+ *   <p>
+ *   This limits the scope in which the default class loader can be found
+ *   to the SPI, Discovery, and System class loaders.  The assumption here
+ *   is that the default implementation is closely associated with the SPI
+ *   or system, and is not defined in the user's application space.
+ *   </p>
+ *   <p>
+ *   An exception is thrown if the class cannot be loaded.
+ *   </p>
+ *   </li></p>
+ *   <p><li>
+ *   Verify that the loaded class implements the SPI: an exception is thrown
+ *   if the loaded class does not implement the SPI.
+ *   </li></p>
+ *   <p><li>
+ *   If the loaded class implements the <code>Service</code> interface,
+ *   then invoke the <code>init(Properties)</code> method, passing in the
+ *   <code>Properties properties</code> parameter, if provided.
+ *   </li></p>
+ * <ul>
+ * 
+ * <p>
+ * Variances for various forms of the <code>find</code>
+ * methods are discussed with each such method.
+ * Variances include the following concepts:
+ * <ul>
+ *   <li><b>rootFinderClass</b> - a wrapper encapsulating a finder method
+ *   (factory or other helper class).  The root finder class is used to
+ *   determine the 'real' caller, and hence the caller's class loader -
+ *   thereby preserving knowledge that is relevant to finding the
+ *   correct/expected implementation class.
+ *   </li>
+ *   <li><b>propertiesFileName</b> - <code>Properties</code> may be specified
+ *   directly, or by property file name.  A property file is loaded using the
+ *   same sequence of class loaders used to load the SPI implementation:
+ *   <ul>
+ *     <li>Thread Context Class Loader</li>
+ *     <li>Discovery's Caller's Class Loader</li>
+ *     <li>SPI's Class Loader</li>
+ *     <li>Discovery's (this class) Class Loader</li>
+ *     <li>System Class Loader</li>
+ *   </ul>
+ *   </li>
+ *   <li><b>groupContext</b> - differentiates service providers for different
+ *   logical groups of service users, that might otherwise be forced to share
+ *   a common service and, more importantly, a common configuration of that
+ *   service.
+ *   <p>The groupContext is used to qualify the name of the property file
+ *   name: <code>groupContext + '.' + propertiesFileName</code>.  If that
+ *   file is not found, then the unqualified propertyFileName is used.
+ *   </p>
+ *   <p>In addition, groupContext is used to qualify the name of the system
+ *   property used to find the service implementation by prepending the value
+ *   of <code>groupContext</code> to the property name:
+ *   <code>groupContext&gt; + '.' + SPI.class.getName()</code>.
+ *   Again, if a system property cannot be found by that name, then the
+ *   unqualified property name is used.
+ *   </p>
+ *   </li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * Other concepts
+ * </p>
+ * 
  * <p><strong>IMPLEMENTATION NOTE</strong> - This implementation is heavily
  * based on the SAXParserFactory and DocumentBuilderFactory implementations
- * (corresponding to the JAXP pluggability APIs) found in Apache Xerces.</p>
+ * (corresponding to the JAXP pluggability APIs) found in Apache Xerces.
+ * </p>
  * 
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
@@ -86,78 +219,441 @@ import java.io.InputStreamReader;
  */
 public class Discovery {
     /**
-     * Sets of previously encountered service interfaces (spis), keyed by the
-     * interface (<code>Class</code>).  Each element is a ServiceCache.
+     * Readable placeholder for a null value.
      */
-    private static final Hashtable service_caches = new Hashtable(13);
+    private static final Properties nullProperties = null;
     
     /**
-     * <p>Locate and instantiate a service.  The service implementation
-     * class is located using the following ordered lookup:</p>
-     * <ul>
-     * <li>Try to load a class with the name obtained from the system
-     *     property, having the same name as the spi class:
-     *     <code>spiContext.getSPI().getName()</code>.</li>
-     * 
-     * <li>Try to load a class with the name obtained from the
-     *     <code>properties</code> parameter, having the same
-     *     name as the spi class: <code>spiContext.getSPI().getName()</code>.</li>
-     * 
-     * <li>Use the JDK1.3+ 'Service Provider' specification
-     *     (http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html)
-     *     to locate a service named <code>spiContext.getSPI().getName()</code>.
-     *     Implemented internally, so there is not a hard
-     *     dependency on JDK 1.3+.</li>
-     * 
-     * <li>Fall back to a default implementation class, as specified by
-     *     non-null <code>defaultImplName</code>.</li>
-     * </ul>
-     * 
-     * <p>In most cases, after class NAME is found, then a
-     * number of attempts are made to load the class using different
-     * class loaders, in the following sequence:
-     * <ul>
-     * <li>Thread Context Class Loader</li>
-     * <li>Caller's Class Loader</li>
-     * <li>SPI's Class Loader</li>
-     * <li>ServiceFinder's (this class) Class Loader</li>
-     * <li>System Class Loader</li>
-     * </ul>
-     * 
-     * <p>The default implementation is loaded using:
-     * <ul>
-     * <li>ServiceFinder's (this class) Class Loader</li>
-     * <li>System Class Loader</li>
-     * </ul>
-     * 
-     * @param ClassFinder  Represents the class loaders provided 
-     *        by a root finder class, and the spiContext.
-     * 
-     * @param spiContext The SPI Context identifies the SPI and the
-     *        thread context class loader.
-     *        <code>spiContext.getSPI().getName()</code> id's the (property)
-     *        name of the service implementation.  Presumed to be an interface,
-     *        but there is nothing in the code that prevents it from
-     *        being an abstract base class, or even a class.
-     * 
-     * @param properties used as one alternative to find name of service
-     *        implementation class, with property name specified by
-     *        <code>spi.getName()</code>.  If the implementation class found
-     *        for <code>spi</code> implements the <code>Service</code>
-     *        interface, then <code>spiInstance.init(properties)</code> is
-     *        called.
-     * 
-     * @param defaultImplName Name of the default implementation class.
-     *
-     * @exception DiscoveryException if the implementation class
-     *            is not available,
-     *            cannot be instantiated,
-     *            or is not an instance of <code>spi</code>.
+     * Readable placeholder for a null value.
      */
-    private static Object find(ClassFinder classFinder,
-                               SPIContext spiContext,
-                               Properties properties,
-                               String defaultImplName)
+    private static final String     nullDefaultImplName = null;
+    
+    /**
+     * Readable placeholder for a null value.
+     */
+    private static final String     nullGroupContext = null;
+    
+    
+    /********************** (RELATIVELY) SIMPLE FINDERS **********************
+     * 
+     * These finders are suitable for direct use in components looking for a
+     * service.  If you are not sure which finder(s) to use, you can narrow
+     * your search to one of these.
+     */
+    
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */
+    public static Object find(Class spi)
+        throws DiscoveryException
+    {
+        return find(Discovery.class, spi);
+    }
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param properties Used to determine name of SPI implementation,
+     *                   and passed to implementation.init() method if
+     *                   implementation implements Service interface.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */
+    public static Object find(Class spi, Properties properties)
+        throws DiscoveryException
+    {
+        return find(Discovery.class, spi, properties);
+    }
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */
+    public static Object find(Class spi, String defaultImplName)
+        throws DiscoveryException
+    {
+        return find(Discovery.class, spi, defaultImplName);
+    }
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param properties Used to determine name of SPI implementation,
+     *                   and passed to implementation.init() method if
+     *                   implementation implements Service interface.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */
+    public static Object find(Class spi,
+                              Properties properties,
+                              String defaultImplName)
+        throws DiscoveryException
+    {
+        return find(Discovery.class, spi, properties, defaultImplName);
+    }
+    
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param propertiesFileName The property file name.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */    
+    public static Object find(Class spi,
+                              String propertiesFileName,
+                              String defaultImplName)
+        throws DiscoveryException
+    {
+        return find(Discovery.class, spi, propertiesFileName, defaultImplName);
+    }
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param groupContext qualifier for the name of the system property
+     *        used to find the service implementation.  If a system property
+     *        cannot be found by that name, then the unqualified property
+     *        name is used.
+     * 
+     * @param properties Used to determine name of SPI implementation,
+     *                   and passed to implementation.init() method if
+     *                   implementation implements Service interface.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */
+    public static Object find(Class spi,
+                              String groupContext,
+                              Properties properties,
+                              String defaultImplName)
+        throws DiscoveryException
+    {
+        return find(Discovery.class, spi, groupContext, properties, defaultImplName);
+    }
+    
+    /**
+     * Find implementation of SPI unique to a group context.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param groupContext qualifier for the property file name and for
+     *        the system property name used to find the service implementation.
+     *        If not found, the unqualified names are used.
+     * 
+     * @param propertiesFileName The (qualified and unqualified) property file
+     *        name.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */    
+    public static Object find(Class spi,
+                              String groupContext,
+                              String propertiesFileName,
+                              String defaultImplName)
+        throws DiscoveryException
+    {
+        return find(Discovery.class, spi, groupContext, propertiesFileName, defaultImplName);
+    }
+
+    
+    /*************** FINDERS FOR USE IN FACTORY/HELPER METHODS ***************
+     * 
+     * These finders provide a rootFinderClass.  The root finder is the wrapper
+     * class (factories or helper classes) that invoke the Discovery find
+     * methods, presumably providing (default) values for propertiesFileName
+     * and defaultImplName.  Having access to this wrapper class provides a
+     * way to determine the 'real' caller, and hence the caller's class loader.
+     * Thus preserving knowledge that is relevant to finding the
+     * correct/expected implementation class.
+     */
+    
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param rootFinderClass Wrapper class used by end-user, that ultimately
+     *        calls this finder method.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded, or if
+     *            the resulting class does not implement the SPI.
+     */
+    public static Object find(Class rootFinderClass, Class spi)
+        throws DiscoveryException
+    {
+        return find(rootFinderClass, spi, nullProperties, nullDefaultImplName);
+    }
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param rootFinderClass Wrapper class used by end-user, that ultimately
+     *        calls this finder method.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param properties Used to determine name of SPI implementation,
+     *                   and passed to implementation.init() method if
+     *                   implementation implements Service interface.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */
+    public static Object find(Class rootFinderClass, Class spi, Properties properties)
+        throws DiscoveryException
+    {
+        return find(rootFinderClass, spi, properties, nullDefaultImplName);
+    }
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param rootFinderClass Wrapper class used by end-user, that ultimately
+     *        calls this finder method.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */
+    public static Object find(Class rootFinderClass, Class spi, String defaultImplName)
+        throws DiscoveryException
+    {
+        return find(rootFinderClass, spi, nullProperties, defaultImplName);
+    }
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param rootFinderClass Wrapper class used by end-user, that ultimately
+     *        calls this finder method.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param properties Used to determine name of SPI implementation,
+     *                   and passed to implementation.init() method if
+     *                   implementation implements Service interface.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */
+    public static Object find(Class rootFinderClass,
+                              Class spi,
+                              Properties properties,
+                              String defaultImplName)
+        throws DiscoveryException
+    {
+        return loadClass(new ClassFinder(spi, nullGroupContext, rootFinderClass),
+                         properties, defaultImplName);
+    }
+    
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param rootFinderClass Wrapper class used by end-user, that ultimately
+     *        calls this finder method.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param propertiesFileName The property file name.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */    
+    public static Object find(Class rootFinderClass,
+                              Class spi,
+                              String propertiesFileName,
+                              String defaultImplName)
+        throws DiscoveryException
+    {
+        ClassFinder classFinder = new ClassFinder(spi, nullGroupContext, rootFinderClass);
+        return loadClass(classFinder,
+                         loadProperties(classFinder, propertiesFileName),
+                         defaultImplName);
+    }
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param rootFinderClass Wrapper class used by end-user, that ultimately
+     *        calls this finder method.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param groupContext qualifier for the property file name and for
+     *        the system property name used to find the service implementation.
+     *        If not found, the unqualified names are used.
+     * 
+     * @param properties Used to determine name of SPI implementation,
+     *                   and passed to implementation.init() method if
+     *                   implementation implements Service interface.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */    
+    public static Object find(Class rootFinderClass,
+                              Class spi,
+                              String groupContext,
+                              Properties properties,
+                              String defaultImplName)
+        throws DiscoveryException
+    {
+        return loadClass(new ClassFinder(spi, groupContext, rootFinderClass),
+                         properties, defaultImplName);
+    }
+
+    /**
+     * Find implementation of SPI.
+     * 
+     * @param rootFinderClass Wrapper class used by end-user, that ultimately
+     *        calls this finder method.
+     * 
+     * @param spi Service Provider Interface Class.
+     * 
+     * @param groupContext qualifier for the property file name and for
+     *        the system property name used to find the service implementation.
+     *        If not found, the unqualified names are used.
+     * 
+     * @param propertiesFileName The property file name.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */    
+    public static Object find(Class rootFinderClass,
+                              Class spi,
+                              String groupContext,
+                              String propertiesFileName,
+                              String defaultImplName)
+        throws DiscoveryException
+    {
+        ClassFinder classFinder = new ClassFinder(spi, groupContext, rootFinderClass);
+        return loadClass(classFinder,
+                         loadProperties(classFinder, propertiesFileName),
+                         defaultImplName);
+    }
+
+    
+    /************************* CORE LOADERS *************************
+     */
+    
+    /**
+     * Load implementation of SPI.
+     * 
+     * @param ClassFinder  Represents the spiContext, class loaders
+     *        (including root finder class), and the groupContext.
+     * 
+     * @param properties Used to determine name of SPI implementation,
+     *                   and passed to implementation.init() method if
+     *                   implementation implements Service interface.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Instance of a class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
+     */
+    private static Object loadClass(ClassFinder classFinder,
+                                    Properties properties,
+                                    String defaultImplName)
         throws DiscoveryException
     {
         /**
@@ -168,7 +664,7 @@ public class Discovery {
         ClassLoader[] allLoaders = classFinder.getAllLoaders();
 
         for (int idx = 0; service == null  &&  idx < allLoaders.length; idx++) {
-            service = get(spiContext.getSPI().getName(), allLoaders[idx]);
+            service = get(classFinder.getSPIContext().getSPI().getName(), allLoaders[idx]);
         }
 
         if (service != null) {        
@@ -186,13 +682,16 @@ public class Discovery {
                     clazz = classFinder.jdk13FindClass();
                 
                     if (clazz == null) {
-                        // Fourth, try the fallback implementation class
+                        // Fourth, try the fallback implementation class,
+                        // but limit loaders to 'system' loaders, in an
+                        // attempt to ensure that the default picked up is
+                        // the one that one intended.
                         clazz = classFinder.findClass(defaultImplName, true);
                         
                         if (clazz == null) {
                             throw new DiscoveryException
                                 ("No implementation defined for " +
-                                 spiContext.getSPI().getName());
+                                 classFinder.getSPIContext().getSPI().getName());
                         }
                     }
                 }
@@ -201,9 +700,9 @@ public class Discovery {
             if (clazz != null) {
                 try {
                     service = clazz.newInstance();
-                    put(spiContext.getSPI().getName(), clazz.getClassLoader(), service);
+                    put(classFinder.getSPIContext().getSPI().getName(), clazz.getClassLoader(), service);
                 } catch (Exception e) {
-                    throw new DiscoveryException("Unable to instantiate " + spiContext.getSPI().getName(), e);
+                    throw new DiscoveryException("Unable to instantiate " + classFinder.getSPIContext().getSPI().getName(), e);
                 }
                 
                 if (service instanceof Service) {
@@ -216,144 +715,30 @@ public class Discovery {
     }
     
     /**
-     * <p>Locate and instantiate a service.  The service implementation
-     * class is located using the following ordered lookup:</p>
-     * <ul>
-     * <li>Try to load a class with the name obtained from the system
-     *     property, having the same name as the spi class:
-     *     <code>spiContext.getSPI().getName()</code>.</li>
+     * Load property file (qualified by groupContext param to classFinder).
      * 
-     * <li>Try to load a class with the name obtained from the
-     *     <code>properties</code> parameter, having the same
-     *     name as the spi class: <code>spiContext.getSPI().getName()</code>.</li>
+     * @param ClassFinder  Represents the spiContext, class loaders
+     *        (including root finder class), and the groupContext.
      * 
-     * <li>Use the JDK1.3+ 'Service Provider' specification
-     *     (http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html)
-     *     to locate a service named <code>spiContext.getSPI().getName()</code>.
-     *     Implemented internally, so there is not a hard
-     *     dependency on JDK 1.3+.</li>
+     * @param propertiesFileName The property file name.
      * 
-     * <li>Fall back to a default implementation class, as specified by
-     *     non-null <code>defaultImplName</code>.</li>
-     * </ul>
+     * @return Instance of a class implementing the SPI.
      * 
-     * <p>In most cases, after class NAME is found, then a
-     * number of attempts are made to load the class using different
-     * class loaders, in the following sequence:
-     * <ul>
-     * <li>Thread Context Class Loader</li>
-     * <li>Caller's Class Loader</li>
-     * <li>SPI's Class Loader</li>
-     * <li>ServiceFinder's (this class) Class Loader</li>
-     * <li>System Class Loader</li>
-     * </ul>
-     * 
-     * <p>The default implementation is loaded using:
-     * <ul>
-     * <li>ServiceFinder's (this class) Class Loader</li>
-     * <li>System Class Loader</li>
-     * </ul>
-     * 
-     * @param rootFinderClass  The root finder class.
-     *        If a wrapper/factory class is used around 'ServiceFinder',
-     *        then this will be that wrapper/factory class.
-     * 
-     * @param spiContext The SPI Context identifies the SPI and the
-     *        thread context class loader.
-     *        <code>spiContext.getSPI().getName()</code> id's the (property)
-     *        name of the service implementation.  Presumed to be an interface,
-     *        but there is nothing in the code that prevents it from
-     *        being an abstract base class, or even a class.
-     * 
-     * @param properties used as one alternative to find name of service
-     *        implementation class, with property name specified by
-     *        <code>spi.getName()</code>.  If the implementation class found
-     *        for <code>spi</code> implements the <code>Service</code>
-     *        interface, then <code>spiInstance.init(properties)</code> is
-     *        called.
-     * 
-     * @param defaultImplName Name of the default implementation class.
-     *
-     * @exception DiscoveryException if the implementation class
-     *            is not available,
-     *            cannot be instantiated,
-     *            or is not an instance of <code>spi</code>.
-     */
-    public static Object find(Class rootFinderClass,
-                              SPIContext spiContext,
-                              Properties properties,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        // thread context can change on each call,
-        // so establish context for this one call.
-        ClassFinder classFinder = new ClassFinder(spiContext, rootFinderClass);
-        return find(classFinder, spiContext, properties, defaultImplName);
-    }
-    
-    /**
-     * Equivalent to
-     * <code>find(ServiceFinder.class, spiContext, properties, defaultImplName)</code>.
-     */
-    public static Object find(SPIContext spiContext,
-                              Properties properties,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(Discovery.class, spiContext, properties, defaultImplName);
-    }
-    
-    /**
-     * Equivalent to
-     * <code>find(new SPIContext(spi), properties, defaultImplName)</code>.
-     */
-    public static Object find(Class rootFinderClass,
-                              Class spi,
-                              Properties properties,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass, new SPIContext(spi), properties, defaultImplName);
-    }
-
-    /**
-     * Equivalent to
-     * <code>find(ServiceFinder.class, spi, properties, defaultImplName)</code>.
-     */
-    public static Object find(Class spi,
-                              Properties properties,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(Discovery.class, spi, properties, defaultImplName);
-    }
-
-    /**
-     * Load properties file, and call
-     * <code>find(rootFinderClass, spiContext, properties, defaultImplName)</code>.
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, if the class cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI.
      */    
-    public static Object find(Class rootFinderClass,
-                              SPIContext spiContext,
-                              String overloadPrefix,
-                              String propertiesFileName,
-                              String defaultImplName)
+    private static Properties loadProperties(ClassFinder classFinder,
+                                             String propertiesFileName)
         throws DiscoveryException
     {
-        // thread context can change on each call,
-        // so establish context for this one call.
-        ClassFinder classFinder = new ClassFinder(spiContext, rootFinderClass);
-
         Properties properties = null;
         
         if (propertiesFileName != null) {
             try {
                 InputStream stream =
-                    (overloadPrefix == null)
-                    ? null
-                    : classFinder.findResourceAsStream(overloadPrefix + "." + propertiesFileName, false);
-
-                if (stream == null)    
-                    stream = classFinder.findResourceAsStream(propertiesFileName, false);
+                    classFinder.findResourceAsStream(propertiesFileName);
     
                 if (stream != null) {
                     properties = new Properties();
@@ -368,159 +753,12 @@ public class Discovery {
             }
         }
         
-        return find(classFinder, spiContext, properties, defaultImplName);
-    }
-
-    /**
-     * Load properties file, and call
-     * <code>find(ServiceFinder.class, spiContext, propertiesFileName, defaultImplName)</code>.
-     */    
-    public static Object find(SPIContext spiContext,
-                              String overloadPrefix,
-                              String propertiesFileName,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(Discovery.class, spiContext, overloadPrefix, propertiesFileName, defaultImplName);
+        return properties;
     }
     
-    /**
-     * Equivalent to
-     * <code>find(rootFinderClass, new SPIContext(spi), propertiesFileName, defaultImplName)</code>.
-     */    
-    public static Object find(Class rootFinderClass,
-                              Class spi,
-                              String overloadPrefix,
-                              String propertiesFileName,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass, new SPIContext(spi), overloadPrefix, propertiesFileName, defaultImplName);
-    }
     
-    /**
-     * Equivalent to
-     * <code>find(new SPIContext(spi), propertiesFileName, defaultImplName)</code>.
-     */    
-    public static Object find(Class spi,
-                              String overloadPrefix,
-                              String propertiesFileName,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(new SPIContext(spi), overloadPrefix, propertiesFileName, defaultImplName);
-    }
-
-    /**
-     * Load properties file, and call
-     * <code>find(rootFinderClass, spiContext, properties, defaultImplName)</code>.
-     */    
-    public static Object find(Class rootFinderClass,
-                              SPIContext spiContext,
-                              String propertiesFileName,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass, spiContext, (String)null, propertiesFileName, defaultImplName);
-    }
+    /************************* SPI LIFE-CYCLE SUPPORT *************************/
     
-    /**
-     * Load properties file, and call
-     * <code>find(ServiceFinder.class, spiContext, propertiesFileName, defaultImplName)</code>.
-     */    
-    public static Object find(SPIContext spiContext,
-                              String propertiesFileName,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(Discovery.class, spiContext, (String)null, propertiesFileName, defaultImplName);
-    }
-    
-    /**
-     * Equivalent to
-     * <code>find(rootFinderClass, new SPIContext(spi), propertiesFileName, defaultImplName)</code>.
-     */    
-    public static Object find(Class rootFinderClass,
-                              Class spi,
-                              String propertiesFileName,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass, new SPIContext(spi), propertiesFileName, defaultImplName);
-    }
-    
-    /**
-     * Equivalent to
-     * <code>find(new SPIContext(spi), propertiesFileName, defaultImplName)</code>.
-     */    
-    public static Object find(Class spi,
-                              String propertiesFileName,
-                              String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(new SPIContext(spi), propertiesFileName, defaultImplName);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * Equivalent to find(rootFinderClass, spi, (Properties)null, defaultImplName);
-     */
-    public static Object find(Class rootFinderClass, Class spi, String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass, spi, (Properties)null, defaultImplName);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * Equivalent to find(spi, (Properties)null, defaultImplName);
-     */
-    public static Object find(Class spi, String defaultImplName)
-        throws DiscoveryException
-    {
-        return find(spi, (Properties)null, defaultImplName);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * Equivalent to find(rootFinderClass, spi, properties, null);
-     */
-    public static Object find(Class rootFinderClass, Class spi, Properties properties)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass, spi, properties, null);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * Equivalent to find(spi, properties, null);
-     */
-    public static Object find(Class spi, Properties properties)
-        throws DiscoveryException
-    {
-        return find(spi, properties, null);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * Equivalent to find(rootFinderClass, spi, (Properties)null, null);
-     */
-    public static Object find(Class rootFinderClass, Class spi)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass, spi, (Properties)null, null);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * Equivalent to find(spi, (Properties)null, null);
-     */
-    public static Object find(Class spi)
-        throws DiscoveryException
-    {
-        return find(spi, (Properties)null, null);
-    }
-
     /**
      * Release any internal references to previously created service instances,
      * after calling the instance method <code>release()</code> on each of them.
@@ -559,6 +797,15 @@ public class Discovery {
             }
         }
     }
+
+    
+    /************************* SPI CACHE SUPPORT *************************/
+
+    /**
+     * Sets of previously encountered service interfaces (spis), keyed by the
+     * interface (<code>Class</code>).  Each element is a ServiceCache.
+     */
+    private static final Hashtable service_caches = new Hashtable(13);
     
     /**
      * Get service keyed by spi & classLoader.
