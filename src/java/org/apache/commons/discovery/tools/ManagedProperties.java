@@ -61,6 +61,12 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
+import org.apache.commons.discovery.load.ClassLoaderUtils;
+
+
 
 /**
  * <p>This class may disappear in the future, or be moved to another project..
@@ -277,7 +283,8 @@ public class ManagedProperties {
             }
 
             if (classLoader == null) break;
-            classLoader = classLoader.getParent();
+            
+            classLoader = getParent(classLoader);
         }
         
         return allProps.keys();
@@ -334,7 +341,7 @@ public class ManagedProperties {
              * then get up-tree value.
              */
             if (classLoader != null) {
-                value = getValueProperty(classLoader.getParent(), propertyName);
+                value = getValueProperty(getParent(classLoader), propertyName);
             }
             
             if (value == null  ||  value.isDefault) {
@@ -357,6 +364,14 @@ public class ManagedProperties {
     }
     
     private static final ClassLoader getThreadContextClassLoader() {
-        return Thread.currentThread().getContextClassLoader();
+        return ClassLoaderUtils.getThreadContextClassLoader();
+    }
+
+    private static final ClassLoader getParent(final ClassLoader classLoader) {
+        return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+                    public Object run() {
+                        return classLoader.getParent();
+                    }
+                });
     }
 }
