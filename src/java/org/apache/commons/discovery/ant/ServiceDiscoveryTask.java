@@ -57,11 +57,11 @@
 
 package org.apache.commons.discovery.ant;
 
-import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.commons.discovery.ResourceDiscovery;
+import org.apache.commons.discovery.DiscoverClassLoaderResources;
 import org.apache.commons.discovery.ResourceInfo;
+import org.apache.commons.discovery.ResourceIterator;
 import org.apache.commons.discovery.jdk.JDKHooks;
 
 
@@ -94,15 +94,15 @@ public class ServiceDiscoveryTask
     public void execute() throws Exception {
         System.out.println("XXX ");
         
-        ResourceDiscovery disc = new ResourceDiscovery();
+        DiscoverClassLoaderResources disc = new DiscoverClassLoaderResources();
         disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
         disc.addClassLoader( this.getClass().getClassLoader() );
         
-        Enumeration enum = disc.find(name);
+        ResourceIterator enum = disc.find(name);
 
         Vector vector = new Vector();
-        while (enum.hasMoreElements()) {
-            ResourceInfo resourceInfo = (ResourceInfo)enum.nextElement();
+        while (enum.hasNext()) {
+            ResourceInfo resourceInfo = enum.next();
             vector.add(resourceInfo);
             if( debug > 0 ) {
                 System.out.println("Found " + resourceInfo);

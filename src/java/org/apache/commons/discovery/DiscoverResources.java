@@ -57,45 +57,58 @@
 
 package org.apache.commons.discovery;
 
-import java.net.URL;
+import java.util.Vector;
 
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
 
 
 /**
- * 'Resource' located by discovery.
- * 
- * @author Craig R. McClanahan
- * @author Costin Manolache
+ * Holder for multiple Discover instances.
+ * The result is the union of the results from each
+ * (not a chained sequence, where results feed the next in line.
+ *
  * @author Richard A. Sitze
  */
-public class ServiceInfo extends ClassInfo
+public class DiscoverResources implements Discover
 {
-    public ServiceInfo() {
-        super();
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverResources.class);
+    public static void setLog(Log _log) {
+        log = _log;
     }
 
-    public ServiceInfo(String className, ClassLoader loader, URL location) {
-        super(className, loader, location);
+    private Vector discoverers = new Vector();
+    
+    /** Construct a new resource discoverer
+     */
+    public DiscoverResources() {
     }
 
-    public ServiceInfo(Class resourceClass, ClassLoader loader, URL location) {
-        super(resourceClass.getName(), loader, location);
+    public int size() {
+        return discoverers.size();
     }
     
-    public static ServiceInfo toServiceInfo(ResourceInfo resourceInfo) {
-        ServiceInfo si;
-        if (resourceInfo instanceof ServiceInfo) {
-            si = (ServiceInfo)resourceInfo;
-        } else {
-            si = new ServiceInfo(resourceInfo.resourceName, resourceInfo.loader, resourceInfo.location);
-            si.resourceClass = ((ClassInfo)resourceInfo).resourceClass;
+    public Discover get(int idx) {
+        return (Discover)discoverers.elementAt(idx);
+    }
+
+    /**
+     * Specify a new class loader to be used in searching.
+     * The order of loaders determines the order of the result.
+     * It is recommended to add the most specific loaders first.
+     */
+    public void put(Discover discover) {
+        if (discover != null) {
+            discoverers.addElement(discover);
         }
-        return si;
     }
-    
-    public String toString() {
-        return "ServiceInfo[" + resourceName + ", " + loader + ", " + location + "]";
+
+    /**
+     * Sum of all discoverers (execute independently [in parallel]),
+     * then put it all together..
+     * 
+     * @return ResourceIterator
+     */
+    public ResourceIterator find(String resourceName) {
     }
 }

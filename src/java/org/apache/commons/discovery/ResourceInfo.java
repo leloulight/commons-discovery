@@ -57,13 +57,22 @@
 
 package org.apache.commons.discovery;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.logging.Log;
+
 
 /**
  * 'Resource' located by discovery.
+ * Naming of methods becomes a real pain ('getClass()')
+ * so I've patterned this after ClassLoader...
+ * 
+ * I think it works well as it will give users a point-of-reference.
  * 
  * @author Craig R. McClanahan
  * @author Costin Manolache
@@ -71,70 +80,110 @@ import java.util.Vector;
  */
 public class ResourceInfo
 {
-    protected String      resourceName;
-    protected ClassLoader loader;
-    protected URL         location;
-
-    public ResourceInfo() {
+    private static Log log = DiscoveryLogFactory.newLog(ResourceInfo.class);
+    public static void setLog(Log _log) {
+        log = _log;
     }
 
-    public ResourceInfo(String resourceName, ClassLoader loader, URL location) {
-        setResourceName( resourceName );
-        setLoader( loader );
-        setURL( location );
+    protected String      name;
+    protected URL         resource;
+    protected Class       resourceClass;
+    protected ClassLoader classLoader;
+
+    public ResourceInfo(String resourceName) {
+        this(resourceName, null, null);
     }
 
-    /**
-     * Get the value of URL.
-     * @return value of URL.
-     */
-    public URL getURL() {
-        return location;
+    public ResourceInfo(Class resourceClass) {
+        this(resourceClass, null, null);
     }
-    
-    /**
-     * Set the value of URL.
-     * @param v  Value to assign to URL.
-     */
-    public void setURL(URL  v) {
-        this.location = v;
+
+    public ResourceInfo(String resourceName, URL resource, ClassLoader loader) {
+        this.name = resourceName;
+        setResource(resource);
+        resourceClass = null;
+        setClassLoader(loader);
     }
-    
+
+    public ResourceInfo(Class resourceClass, URL resource, ClassLoader loader) {
+        this.name = resourceClass.getName();
+        setResource(resource);
+        this.resourceClass = resourceClass;
+        setClassLoader(loader);
+    }
 
     /**
      * Get the value of resourceName.
      * @return value of resourceName.
      */
-    public String getResourceName() {
-        return resourceName;
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set the value of URL.
+     * @param v  Value to assign to URL.
+     */
+    public void setResource(URL  location) {
+        this.resource = location;
     }
     
     /**
-     * Set the value of resourceName.
-     * @param v  Value to assign to resourceName.
+     * Get the value of URL.
+     * @return value of URL.
      */
-    public void setResourceName(String  v) {
-        this.resourceName = v;
+    public URL getResource() {
+        return resource;
+    }
+    
+    /**
+     * Get the value of URL.
+     * @return value of URL.
+     */
+    public InputStream getResourceAsStream() {
+        try {
+            return resource.openStream();
+        } catch (IOException e) {
+            return null;  // ignore
+        }
+    }
+    
+    /**
+     * Get the value of resourceClass.
+     * @return value of resourceClass.
+     */
+    public Class loadClass() {
+        if (resourceClass == null  &&  getClassLoader() != null) {
+            if (log.isDebugEnabled())
+                log.debug("getResourceClass: Loading class '" + getName() + "' with " + getClassLoader());
+
+            try {
+                resourceClass = getClassLoader().loadClass(getName());
+            } catch (ClassNotFoundException e) {
+                resourceClass = null;
+            }
+        }
+        return resourceClass;
     }
     
     /**
      * Get the value of loader.
      * @return value of loader.
      */
-    public ClassLoader getLoader() {
-        return loader;
+    public ClassLoader getClassLoader() {
+        return classLoader ;
     }
     
     /**
      * Set the value of loader.
      * @param v  Value to assign to loader.
      */
-    public void setLoader(ClassLoader  v) {
-        this.loader = v;
+    public void setClassLoader(ClassLoader  loader) {
+        this.classLoader = loader;
     }
     
     public String toString() {
-        return "ResourceInfo[" + resourceName + ", " + loader + ", " + location + "]";
+        return "ResourceInfo[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
     }
     
     public static ResourceInfo[] toArray(Enumeration enum) {

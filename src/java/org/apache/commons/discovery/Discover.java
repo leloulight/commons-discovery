@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -59,66 +55,17 @@
  *
  */
 
-package org.apache.commons.discovery.tools;
-
-import org.apache.commons.discovery.ClassLoaders;
-import org.apache.commons.discovery.DiscoverClasses;
-import org.apache.commons.discovery.ResourceInfo;
-import org.apache.commons.discovery.ResourceIterator;
+package org.apache.commons.discovery;
 
 
 /**
- * Holder for a default class.
- * 
- * Class may be specified by name (String) or class (Class).
- * Using the holder complicates the users job, but minimized # of API's.
- * 
  * @author Richard A. Sitze
+ * @author Costin Manolache
  */
-public class DefaultClassHolder {
-    private Class        defaultClass;
-    private final String defaultName;
-    
-    public DefaultClassHolder(Class defaultClass) {
-        this.defaultClass = defaultClass;
-        this.defaultName = defaultClass.getName();
-    }
-    
-    public DefaultClassHolder(String defaultName) {
-        this.defaultClass = null;
-        this.defaultName = defaultName;
-    }
-
+public interface Discover
+{
     /**
-     * @param spi non-null SPI
-     * @param loaders Used only if class needs to be loaded.
-     * 
-     * @return Default Class.  Load the class if necessary,
-     *         and verify that it implements the SPI.
-     *         (this forces the check, no way out..).
+     * @return ResourceIterator
      */
-    public Class getDefaultClass(SPInterface spi, ClassLoaders loaders) {
-        if (defaultClass == null) {
-            DiscoverClasses classDiscovery = new DiscoverClasses(loaders);
-            ResourceIterator classes = classDiscovery.find(getDefaultName());
-            if (classes.hasNext()) {
-                ResourceInfo info = classes.next();
-                try {
-                    defaultClass = info.loadClass();
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        }
-        
-        if (defaultClass != null) {
-            spi.verifyAncestory(defaultClass);
-        }
-
-        return defaultClass;
-    }
-
-    public String getDefaultName() {
-        return defaultName;
-    }
+    public ResourceIterator find(String resourceName);
 }

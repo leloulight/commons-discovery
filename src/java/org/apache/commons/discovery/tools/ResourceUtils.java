@@ -64,13 +64,13 @@ package org.apache.commons.discovery.tools;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.commons.discovery.ClassLoaders;
+import org.apache.commons.discovery.DiscoverClassLoaderResources;
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.ResourceDiscovery;
 import org.apache.commons.discovery.ResourceInfo;
+import org.apache.commons.discovery.ResourceIterator;
 
 
 /**
@@ -120,11 +120,11 @@ public class ResourceUtils {
                                   ClassLoaders loaders)
         throws DiscoveryException
     {
-        ResourceDiscovery explorer = new ResourceDiscovery(loaders);
-        Enumeration resources = explorer.find(resourceName);
+        DiscoverClassLoaderResources explorer = new DiscoverClassLoaderResources(loaders);
+        ResourceIterator resources = explorer.find(resourceName);
         
         if (spi != null  &&
-            !resources.hasMoreElements()  &&
+            !resources.hasNext()  &&
             resourceName.charAt(0) != '/')
         {
             /**
@@ -136,8 +136,8 @@ public class ResourceUtils {
             resources = explorer.find(resourceName);
         }
         
-        return resources.hasMoreElements()
-               ? ((ResourceInfo)resources.nextElement()).getURL()
+        return resources.hasNext()
+               ? ((ResourceInfo)resources.next()).getResource()
                : null;
     }
 

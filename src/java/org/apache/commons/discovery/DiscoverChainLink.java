@@ -57,77 +57,56 @@
 
 package org.apache.commons.discovery;
 
-import java.net.URL;
-
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
-import org.apache.commons.logging.Log;
-
 
 /**
- * 'Resource' located by discovery.
+ * This is a helper-class for chains,
+ * where the results of one feed the next.
+ * The only place where this makes sense is when
+ * a Discover implementation returns names that
+ * differ from the input name
+ * (i.e. DiscoverFiledResources & ServiceResources).
  * 
- * @author Craig R. McClanahan
- * @author Costin Manolache
+ * Default discoverer is DiscoverClassLoaderResources,
+ * but it can be set to any other.
+ *
  * @author Richard A. Sitze
  */
-public class ClassInfo extends ResourceInfo
+public abstract class DiscoverChainLink implements Discover
 {
-    private static Log log = DiscoveryLogFactory.newLog(ClassInfo.class);
-    public static void setLog(Log _log) {
-        log = _log;
-    }
-
-    protected Class       resourceClass;
-
-    public ClassInfo() {
-        super();
-    }
-
-    public ClassInfo(String className, ClassLoader loader, URL location) {
-        super(className, loader, location);
-        this.resourceClass = null;
-    }
-
-    public ClassInfo(Class resourceClass, ClassLoader loader, URL location) {
-        super(resourceClass.getName(), loader, location);
-        this.resourceClass = resourceClass;
-    }
-
-    /**
-     * Get the value of resourceClass.
-     * @return value of resourceClass.
-     */
-    public Class getResourceClass() {
-        if (resourceClass == null) {
-            if (log.isDebugEnabled())
-                log.debug("getResourceClass: Loading class '" + getResourceName() + "' with " + loader);
+    private Discover discoverResources;
     
-            try {
-                setResourceClass(getLoader().loadClass(getResourceName()));
-            } catch (ClassNotFoundException e) {
-                setResourceClass(null);
-            }
-        }
-        return resourceClass;
+    /**
+     *  Construct a new resource discoverer
+     */
+    public DiscoverChainLink() {
+        discoverResources = new DiscoverClassLoaderResources();
     }
     
     /**
-     * Set the value of resourceClass.
-     * @param v  Value to assign to resourceClass.
+     *  Construct a new resource discoverer
      */
-    public void setResourceClass(Class resourceClass) {
-        this.resourceClass = resourceClass;
+    public DiscoverChainLink(ClassLoaders loaders) {
+        discoverResources = new DiscoverClassLoaderResources(loaders);
     }
     
-    public static ClassInfo toClassInfo(ResourceInfo resourceInfo) {
-        if (resourceInfo instanceof ClassInfo) {
-            return (ClassInfo)resourceInfo;
-        } else {
-            return new ClassInfo(resourceInfo.resourceName, resourceInfo.loader, resourceInfo.location);
-        }
+    /**
+     *  Construct a new resource discoverer
+     */
+    public DiscoverChainLink(Discover discoverer) {
+        this.discoverResources = discoverer;
     }
-    
-    public String toString() {
-        return "ClassInfo[" + resourceName + ", " + loader + ", " + location + "]";
+
+    /**
+     * Specify set of class loaders to be used in searching.
+     */
+    public void setDiscoverer(Discover discoverer) {
+        this.discoverResources = discoverer;
+    }
+
+    /**
+     * To be used by downstream elements..
+     */
+    public Discover getDiscoverer() {
+        return discoverResources;
     }
 }

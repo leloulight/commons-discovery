@@ -57,103 +57,66 @@
 
 package org.apache.commons.discovery;
 
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.Properties;
 
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
 
 
-
 /**
- * This class supports any VM, including JDK1.1, via
- * org.apache.commons.discover.jdk.JDKHooks.
- *
- * The findResources() method will check every loader.
- *
  * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author James Strachan
  */
-public class ClassDiscovery extends ResourceDiscovery
+public class DiscoverPropertyResources implements Discover
 {
-    private static Log log = DiscoveryLogFactory.newLog(ClassDiscovery.class);
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverPropertyResources.class);
     public static void setLog(Log _log) {
         log = _log;
     }
 
-    protected static final String SERVICE_HOME = "META-INF/services/";
+    private Properties properties;
     
-    /** Construct a new class discoverer
+    /** Construct a new resource discoverer
      */
-    public ClassDiscovery() {
+    public DiscoverPropertyResources() {
+        setProperties(null);
     }
     
-    /** Construct a new class discoverer
+    /** Construct a new resource discoverer
      */
-    public ClassDiscovery(ClassLoaders classLoaders) {
-        super(classLoaders);
+    public DiscoverPropertyResources(Properties properties) {
+        setProperties(properties);
     }
-    
-    /**
-     * This gets ugly, but...
-     * a) it preserves the desired behaviour
-     * b) it defers file I/O and class loader lookup until necessary.
-     * 
-     * Find upto one class per class loader, and don't load duplicates
-     * from different class loaders (first one wins).
-     * 
-     * @return Enumeration of ClassInfo
-     */
-    public Enumeration find(String className) {
-        return findClasses(className);
-    }
-    
-    protected Enumeration findClasses(final String className) {
-        final String resourceName = className.replace('.','/') + ".class";
-        
-        if (log.isDebugEnabled())
-            log.debug("findClasses: className='" + className + "'");
 
-        return new Enumeration() {
-            private Vector history = new Vector();
-            private int idx = 0;
-            private ClassInfo resource = null;
+    protected Properties getProperties() {
+        return properties;
+    }
+
+    /**
+     * Specify set of class loaders to be used in searching.
+     */
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * @return Enumeration of ResourceInfo
+     */
+    public ResourceIterator find(final String resourceName) {
+        if (log.isDebugEnabled())
+            log.debug("findResources: resourceName='" + resourceName + "'");
+
+        return new ResourceIterator() {
+            private ResourceInfo resource = new ResourceInfo(properties.getProperty(resourceName));
             
-            public boolean hasMoreElements() {
-                if (resource == null) {
-                    resource = getNextClass();
-                }
+            public boolean hasNext() {
                 return resource != null;
             }
             
-            public Object nextElement() {
-                Object element = resource;
-                resource = null;
-                return element;
-            }
-            
-            private ClassInfo getNextClass() {
-                while (idx < getClassLoaders().size()) {
-                    ClassLoader loader = getClassLoaders().get(idx++);
-                    URL url = loader.getResource(resourceName);
-                    if (url != null) {
-                        if (!history.contains(url)) {
-                            history.addElement(url);
-    
-                            if (log.isDebugEnabled())
-                                log.debug("getNextClass: next URL='" + url + "'");
-    
-                            return new ClassInfo(className, loader, url);
-                        }
-                        if (log.isDebugEnabled())
-                            log.debug("getNextClass: duplicate URL='" + url + "'");
-                    } else {
-                        if (log.isDebugEnabled())
-                            log.debug("getNextClass: loader " + loader + ": '" + resourceName + "' not found");
-                    }
+            public ResourceInfo next() {
+                if (resource != null) {
+                    ResourceInfo element = resource;
+                    resource = null;
+                    return element;
                 }
                 return null;
             }

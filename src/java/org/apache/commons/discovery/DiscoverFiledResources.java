@@ -61,9 +61,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
@@ -72,131 +69,95 @@ import org.apache.commons.logging.Log;
 
 
 /**
- * [this was ServiceDiscovery12... the 1.1 versus 1.2 issue
- * has been abstracted to org.apache.commons.discover.jdk.JDKHooks]
+ * Discover ALL files of a given name, and return resource names
+ * contained within the set of files:
+ * <ul>
+ *   <li>one resource name per line,</li>
+ *   <li>whitespace ignored,</li>
+ *   <li>comments begin with '#'</li>
+ * </ul>
  * 
- * <p>Implement the JDK1.3 'Service Provider' specification.
- * ( http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html )
- * </p>
- *
- * This class supports any VM, including JDK1.1, via
- * org.apache.commons.discover.jdk.JDKHooks.
- *
- * The caller will first configure the discoverer by adding ( in the desired
- * order ) all the places to look for the META-INF/services. Currently
- * we support loaders.
- *
- * The findResources() method will check every loader.
+ * Default discoverer is DiscoverClassLoaderResources,
+ * but it can be set to any other.
  *
  * @author Richard A. Sitze
- * @author Craig R. McClanahan
  * @author Costin Manolache
  * @author James Strachan
  */
-public class ServiceDiscovery extends ClassDiscovery
+public class DiscoverFiledResources extends DiscoverChainLink implements Discover
 {
-    private static Log log = DiscoveryLogFactory.newLog(ServiceDiscovery.class);
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverFiledResources.class);
     public static void setLog(Log _log) {
         log = _log;
     }
-
-    protected static final String SERVICE_HOME = "META-INF/services/";
     
-    /** Construct a new service discoverer
+    /**
+     *  Construct a new resource discoverer
      */
-    public ServiceDiscovery() {
+    public DiscoverFiledResources() {
         super();
     }
     
-    /** Construct a new service discoverer
+    /**
+     *  Construct a new resource discoverer
      */
-    public ServiceDiscovery(ClassLoaders classLoaders) {
-        super(classLoaders);
+    public DiscoverFiledResources(ClassLoaders loaders) {
+        super(loaders);
     }
     
     /**
-     * This gets ugly, but...
-     * a) it preserves the desired behaviour
-     * b) it defers file I/O and class loader lookup until necessary.
-     * 
+     *  Construct a new resource discoverer
+     */
+    public DiscoverFiledResources(Discover discoverer) {
+        super(discoverer);
+    }
+
+    /**
      * @return Enumeration of ServiceInfo
      */
-    public Enumeration find(String serviceName) {
-        return findServices(serviceName);
-    }
-    
-    protected Enumeration findServices(final String serviceName) {
+    public ResourceIterator find(final String fileName) {
         if (log.isDebugEnabled())
-            log.debug("findResources: serviceName='" + serviceName + "'");
+            log.debug("findResources: fileName='" + fileName + "'");
 
-        final Enumeration files = findResources(SERVICE_HOME + serviceName);
-
-        return new Enumeration() {
+        return new ResourceIterator() {
+            private ResourceIterator files = getDiscoverer().find(fileName);
             private int idx = 0;
             private Vector classNames = null;
-            private Enumeration classResources = null;
-            private ServiceInfo resource = null;
+            private ResourceInfo resource = null;
             
-            public boolean hasMoreElements() {
+            public boolean hasNext() {
                 if (resource == null) {
-                    resource = getNextService();
+                    resource = getNextClassName();
                 }
                 return resource != null;
             }
             
-            public Object nextElement() {
-                Object element = resource;
+            public ResourceInfo next() {
+                ResourceInfo element = resource;
                 resource = null;
                 return element;
             }
             
-            private ServiceInfo getNextService() {
-                if (classResources == null || !classResources.hasMoreElements()) {
-                    classResources = getNextClassResources();
-                    if (classResources == null) {
+            private ResourceInfo getNextClassName() {
+                if (classNames == null || idx >= classNames.size()) {
+                    classNames = getNextClassNames();
+                    idx = 0;
+                    if (classNames != null) {
                         return null;
                     }
                 }
 
-                ServiceInfo serviceInfo = ServiceInfo.toServiceInfo((ClassInfo)classResources.nextElement());
+                String className = (String)classNames.get(idx++);
 
-                return serviceInfo;
-            }
+                if (log.isDebugEnabled())
+                    log.debug("getNextClassResource: next class='" + className + "'");
 
-            private Enumeration getNextClassResources() {
-                while (true) {
-                    if (classNames == null || idx >= classNames.size()) {
-                        classNames = getNextClassNames();
-                        if (classNames == null) {
-                            return null;
-                        }
-                        idx = 0;
-                    }
-
-                    String className = (String)classNames.get(idx++);
-                    
-                    if (log.isDebugEnabled())
-                        log.debug("getNextClassResource: next class='" + className + "'");
-
-                    /**
-                     * The loader used to find the service file
-                     * is of no (limited?) use here... likewise
-                     * the URL does not refer to a class.
-                     * Go back to original set of classloaders and
-                     * find unique classes & their loaders...
-                     */
-                    Enumeration classes = findClasses(className);
-
-                    if (classes != null && classes.hasMoreElements()) {
-                        return classes;
-                    }
-                }
+                return new ResourceInfo(className);
             }
 
             private Vector getNextClassNames() {
-                while (files.hasMoreElements()) {
-                    ResourceInfo info = (ResourceInfo)files.nextElement();
-                    Vector results = readServices(info.getURL());
+                while (files.hasNext()) {
+                    Vector results = readServices(files.next());
                     if (results != null  &&  results.size() > 0) {
                         return results;
                     }
@@ -210,13 +171,13 @@ public class ServiceDiscovery extends ClassDiscovery
      * Read everything, no defering here..
      * Ensure that files are closed before we leave.
      */
-    private Vector readServices(final URL url) {
+    private Vector readServices(final ResourceInfo info) {
         Vector results = new Vector();
         
-        try {
-            InputStream is = url.openStream();
-            
-            if( is != null ) {
+        InputStream is = info.getResourceAsStream();
+        
+        if( is != null ) {
+            try {
                 try {
                     // This code is needed by EBCDIC and other
                     // strange systems.  It's a fix for bugs
@@ -236,7 +197,7 @@ public class ServiceDiscovery extends ClassDiscovery
                                 serviceImplName = serviceImplName.substring(0, idx);
                             }
                             serviceImplName = serviceImplName.trim();
-
+    
                             if (serviceImplName.length() != 0) {
                                 results.add(serviceImplName);
                             }
@@ -247,11 +208,9 @@ public class ServiceDiscovery extends ClassDiscovery
                 } finally {
                     is.close();
                 }
+            } catch (IOException e) {
+                // ignore
             }
-        } catch (MalformedURLException ex) {
-            ex.printStackTrace();
-        } catch (IOException ioe) {
-            ; // ignore
         }
         
         return results;

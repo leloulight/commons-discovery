@@ -59,9 +59,10 @@ package org.apache.commons.discovery.tools;
 
 import java.util.Enumeration;
 
-import org.apache.commons.discovery.ClassInfo;
 import org.apache.commons.discovery.ClassLoaders;
-import org.apache.commons.discovery.ServiceDiscovery;
+import org.apache.commons.discovery.DiscoverServicesResources;
+import org.apache.commons.discovery.ResourceInfo;
+import org.apache.commons.discovery.ResourceIterator;
 
 
 /**
@@ -121,10 +122,10 @@ public class Service
                                                       true);
         }
         
-        ServiceDiscovery serviceDiscovery =
-            new ServiceDiscovery(classLoaders);
+        DiscoverServicesResources serviceDiscovery =
+            new DiscoverServicesResources(classLoaders);
 
-        final Enumeration services = serviceDiscovery.find(spi.getSPName());
+        final ResourceIterator services = serviceDiscovery.find(spi.getSPName());
         
         return new Enumeration() {
             private Object object = null;
@@ -143,10 +144,10 @@ public class Service
             }
 
             private Object getNextClassInstance() {
-                while (services.hasMoreElements()) {
-                    ClassInfo info = (ClassInfo)services.nextElement();
+                while (services.hasNext()) {
+                    ResourceInfo info = services.next();
                     try {
-                        return spi.newInstance(info.getResourceClass());
+                        return spi.newInstance(info.loadClass());
                     } catch (Exception e) {
                         // ignore
                     }

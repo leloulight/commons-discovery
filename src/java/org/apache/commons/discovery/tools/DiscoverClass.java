@@ -62,15 +62,15 @@
 package org.apache.commons.discovery.tools;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.commons.discovery.ClassDiscovery;
-import org.apache.commons.discovery.ClassInfo;
 import org.apache.commons.discovery.ClassLoaders;
+import org.apache.commons.discovery.DiscoverClasses;
+import org.apache.commons.discovery.DiscoverServicesResources;
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.ServiceDiscovery;
+import org.apache.commons.discovery.ResourceInfo;
+import org.apache.commons.discovery.ResourceIterator;
 
 
 /**
@@ -363,33 +363,34 @@ public class DiscoverClass {
         String[] classNames = discoverClassNames(spi, props);
         
         if (classNames.length > 0) {
-            ClassDiscovery classDiscovery = new ClassDiscovery(loaders);
+            DiscoverClasses classDiscovery = new DiscoverClasses(loaders);
             
-            Enumeration classes = classDiscovery.find(classNames[0]);
+            ResourceIterator classes = classDiscovery.find(classNames[0]);
             
             // If it's set as a property.. it had better be there!
-            if (classes.hasMoreElements()) {
-                ClassInfo info = (ClassInfo)classes.nextElement();
+            if (classes.hasNext()) {
+                ResourceInfo info = classes.next();
                 try {
-                    return info.getResourceClass();
+                    return info.loadClass();
                 } catch (Exception e) {
                     // ignore
                 }
             }
         } else {
-            ServiceDiscovery serviceDiscovery = new ServiceDiscovery(loaders);
+            DiscoverServicesResources serviceDiscovery =
+                new DiscoverServicesResources(loaders);
             
-            Enumeration classes = serviceDiscovery.find(spi.getSPName());
+            ResourceIterator classes = serviceDiscovery.find(spi.getSPName());
             
-            if (!classes.hasMoreElements()  &&  defaultImpl != null) {
+            if (!classes.hasNext()  &&  defaultImpl != null) {
                 return defaultImpl.getDefaultClass(spi, loaders);
             }
             
             // Services we iterate through until we find one that loads..
-            while (classes.hasMoreElements()) {
-                ClassInfo info = (ClassInfo)classes.nextElement();
+            while (classes.hasNext()) {
+                ResourceInfo info = classes.next();
                 try {
-                    return info.getResourceClass();
+                    return info.loadClass();
                 } catch (Exception e) {
                     // ignore
                 }
