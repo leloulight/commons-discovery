@@ -94,6 +94,8 @@ public class ClassFinder {
     
     private final ClassLoader[] localLoaders;
     private final ClassLoader[] allLoaders;
+    
+    ClassLoader[] getAllLoaders() { return allLoaders; }
 
     public ClassFinder(SPIContext spiContext, Class rootFinderClass) {
         this.spiContext = spiContext;

@@ -162,16 +162,13 @@ public class ServiceFinder {
     {
         /**
          * Return previously registered service object (not class)
-         * for this spi.  Try contextClassLoader first, and if that
-         * fails then try the spi's class loader.
+         * for this spi.  Try each class loader in succession.
          */
-        Object service = (spiContext.getThreadContextClassLoader() == null)
-                ? null
-                : get(spiContext.getSPI().getName(), spiContext.getThreadContextClassLoader());
-        
-        if (service == null) {
-            service = get(spiContext.getSPI().getName(),
-                          spiContext.getSPI().getClassLoader());
+        Object service = null;
+        ClassLoader[] allLoaders = classFinder.getAllLoaders();
+
+        for (int idx = 0; service == null  &&  idx < allLoaders.length; idx++) {
+            service = get(spiContext.getSPI().getName(), allLoaders[idx]);
         }
 
         if (service != null) {        
@@ -504,7 +501,7 @@ public class ServiceFinder {
      */
     private static Object get(String spi, ClassLoader classLoader)
     {
-        ServiceCache cache = (spi == null)
+        ServiceCache cache = (spi == null  ||  classLoader == null)
                              ? null
                              : (ServiceCache)service_caches.get(spi);
         
