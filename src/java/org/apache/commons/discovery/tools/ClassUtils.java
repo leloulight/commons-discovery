@@ -91,7 +91,7 @@ public class ClassUtils {
             packageName = clazzPackage.getName();
         } else {
             String clazzName = clazz.getName();
-            packageName = new String(clazzName.toCharArray(), 0, clazzName.lastIndexOf('.'));
+            packageName = clazzName.substring(0, clazzName.lastIndexOf('.'));
         }
         return packageName;
     }
