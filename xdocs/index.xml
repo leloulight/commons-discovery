@@ -3,12 +3,12 @@
 <document>
 
  <properties>
-  <title>Discovery: Serivce Discovery component</title>
+  <title>Discovery: Service Discovery component</title>
  </properties>
 
 <body>
 
-<section name="Discovery: Serivce Discovery component">
+<section name="Discovery: Service Discovery component">
 
 <p>The Discovery Component is about discovering, or finding,
 implementations for pluggable interfaces.
