@@ -72,13 +72,13 @@ package org.apache.commons.discovery;
  * @version $Revision$ $Date$
  */
 
-public class ServiceException extends RuntimeException {
+public class DiscoveryException extends RuntimeException {
 
 
     /**
      * Construct a new exception with <code>null</code> as its detail message.
      */
-    public ServiceException() {
+    public DiscoveryException() {
         super();
     }
 
@@ -87,7 +87,7 @@ public class ServiceException extends RuntimeException {
      *
      * @param message The detail message
      */
-    public ServiceException(String message) {
+    public DiscoveryException(String message) {
         super(message);
     }
 
@@ -97,7 +97,7 @@ public class ServiceException extends RuntimeException {
      *
      * @param cause The underlying cause
      */
-    public ServiceException(Throwable cause) {
+    public DiscoveryException(Throwable cause) {
         this((cause == null) ? null : cause.toString(), cause);
     }
 
@@ -107,7 +107,7 @@ public class ServiceException extends RuntimeException {
      * @param message The detail message
      * @param cause The underlying cause
      */
-    public ServiceException(String message, Throwable cause) {
+    public DiscoveryException(String message, Throwable cause) {
         super(message);
         this.cause = cause; // Two-argument version requires JDK 1.4 or later
     }

@@ -90,7 +90,7 @@ public class ClassLoaderUtils {
      * @param serviceImplName The name of the class to load.
      */
     private static Class rawLoadClass(String serviceImplName, ClassLoader loader)
-        throws ServiceException
+        throws DiscoveryException
     {
         Class clazz = null;
         
@@ -114,7 +114,7 @@ public class ClassLoaderUtils {
     public static Class loadClass(String serviceImplName,
                                   ClassLoader[] loaders,
                                   int length)
-        throws ServiceException
+        throws DiscoveryException
     {
         Class clazz = null;
         
@@ -140,7 +140,7 @@ public class ClassLoaderUtils {
      * @param serviceImplName The name of the class to load.
      */
     public static Class loadClass(String serviceImplName, ClassLoader[] loaders)
-        throws ServiceException
+        throws DiscoveryException
     {
         return loadClass(serviceImplName, loaders, loaders.length);
     }
@@ -152,7 +152,7 @@ public class ClassLoaderUtils {
      * @param serviceImplName The name of the class to load.
      */
     public static Class loadClass(String serviceImplName, SPIContext spiContext)
-        throws ServiceException
+        throws DiscoveryException
     {
         return loadClass(serviceImplName, spiContext.getClassLoaders());
     }
@@ -168,7 +168,7 @@ public class ClassLoaderUtils {
     public static InputStream getResourceAsStream(String resourceName,
                                                   ClassLoader[] loaders,
                                                   int length)
-        throws ServiceException
+        throws DiscoveryException
     {
         InputStream stream = null;
         
@@ -194,7 +194,7 @@ public class ClassLoaderUtils {
      * @param resourceName The name of the resource to load.
      */
     public static InputStream getResourceAsStream(String resourceName, ClassLoader[] loaders)
-        throws ServiceException
+        throws DiscoveryException
     {
         return getResourceAsStream(resourceName, loaders, loaders.length);
     }
@@ -206,7 +206,7 @@ public class ClassLoaderUtils {
      * @param resourceName The name of the resource to load.
      */
     public static InputStream getResourceAsStream(String resourceName, SPIContext spiContext)
-        throws ServiceException
+        throws DiscoveryException
     {
         return getResourceAsStream(resourceName, spiContext.getClassLoaders());
     }
@@ -226,7 +226,7 @@ public class ClassLoaderUtils {
                                                   String resourceName,
                                                   ClassLoader[] loaders,
                                                   int length)
-        throws ServiceException
+        throws DiscoveryException
     {
         InputStream stream = getResourceAsStream(resourceName, loaders, length);
         
@@ -255,7 +255,7 @@ public class ClassLoaderUtils {
     public static InputStream getResourceAsStream(String packageName,
                                                   String resourceName,
                                                   ClassLoader[] loaders)
-        throws ServiceException
+        throws DiscoveryException
     {
         return getResourceAsStream(packageName, resourceName, loaders, loaders.length);
     }
@@ -273,7 +273,7 @@ public class ClassLoaderUtils {
     public static InputStream getResourceAsStream(String packageName,
                                                   String resourceName,
                                                   SPIContext spiContext)
-        throws ServiceException
+        throws DiscoveryException
     {
         return getResourceAsStream(packageName, resourceName, spiContext.getClassLoaders());
     }
@@ -373,11 +373,11 @@ public class ClassLoaderUtils {
      * The system class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
      * 
-     * @exception ServiceException if a suitable class loader
+     * @exception DiscoveryException if a suitable class loader
      *            cannot be identified.
      */
     public static ClassLoader findSystemClassLoader()
-        throws ServiceException
+        throws DiscoveryException
     {
         ClassLoader classLoader = null;
         
@@ -390,7 +390,7 @@ public class ClassLoaderUtils {
                 classLoader =
                     BootstrapLoader.wrap((ClassLoader)method.invoke(null, null));
             } catch (IllegalAccessException e) {
-                throw new ServiceException("Unexpected IllegalAccessException", e);
+                throw new DiscoveryException("Unexpected IllegalAccessException", e);
             } catch (InvocationTargetException e) {
                 /**
                  * InvocationTargetException is thrown by 'invoke' when
@@ -405,7 +405,7 @@ public class ClassLoaderUtils {
                 } else {
                     // Capture 'e.getTargetException()' exception for details
                     // alternate: log 'e.getTargetException()', and pass back 'e'.
-                    throw new ServiceException
+                    throw new DiscoveryException
                         ("Unexpected InvocationTargetException",
                          e.getTargetException());
                 }
@@ -430,11 +430,11 @@ public class ClassLoaderUtils {
      * The thread context class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
      * 
-     * @exception ServiceException if a suitable class loader
+     * @exception DiscoveryException if a suitable class loader
      * cannot be identified.
      */
     public static ClassLoader findThreadContextClassLoader()
-        throws ServiceException
+        throws DiscoveryException
     {
         ClassLoader classLoader = null;
         
@@ -447,7 +447,7 @@ public class ClassLoaderUtils {
                 classLoader =
                     BootstrapLoader.wrap((ClassLoader)method.invoke(Thread.currentThread(), null));
             } catch (IllegalAccessException e) {
-                throw new ServiceException("Unexpected IllegalAccessException", e);
+                throw new DiscoveryException("Unexpected IllegalAccessException", e);
             } catch (InvocationTargetException e) {
                 /**
                  * InvocationTargetException is thrown by 'invoke' when
@@ -472,7 +472,7 @@ public class ClassLoaderUtils {
                 } else {
                     // Capture 'e.getTargetException()' exception for details
                     // alternate: log 'e.getTargetException()', and pass back 'e'.
-                    throw new ServiceException
+                    throw new DiscoveryException
                         ("Unexpected InvocationTargetException",
                          e.getTargetException());
                 }

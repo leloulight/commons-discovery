@@ -71,7 +71,7 @@ import java.io.InputStreamReader;
 
 
 /**
- * <p>Service factory for discovery and creation of service instances,
+ * <p>Discover service instances,
  * with discovery and configuration features similar to that employed
  * by standard Java APIs such as JAXP.</p>
  *
@@ -84,7 +84,7 @@ import java.io.InputStreamReader;
  * @author Costin Manolache
  * @version $Revision$ $Date$
  */
-public class ServiceFinder {
+public class Discovery {
     /**
      * Sets of previously encountered service interfaces (spis), keyed by the
      * interface (<code>Class</code>).  Each element is a ServiceCache.
@@ -130,8 +130,8 @@ public class ServiceFinder {
      * <li>System Class Loader</li>
      * </ul>
      * 
-     * @param rootFinderClass  The root finder class, which may not
-     *        be 'ServiceFinder' if a wrapper class is used.
+     * @param ClassFinder  Represents the class loaders provided 
+     *        by a root finder class, and the spiContext.
      * 
      * @param spiContext The SPI Context identifies the SPI and the
      *        thread context class loader.
@@ -149,7 +149,7 @@ public class ServiceFinder {
      * 
      * @param defaultImplName Name of the default implementation class.
      *
-     * @exception ServiceException if the implementation class
+     * @exception DiscoveryException if the implementation class
      *            is not available,
      *            cannot be instantiated,
      *            or is not an instance of <code>spi</code>.
@@ -158,7 +158,7 @@ public class ServiceFinder {
                                SPIContext spiContext,
                                Properties properties,
                                String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         /**
          * Return previously registered service object (not class)
@@ -190,7 +190,7 @@ public class ServiceFinder {
                         clazz = classFinder.findClass(defaultImplName, true);
                         
                         if (clazz == null) {
-                            throw new ServiceException
+                            throw new DiscoveryException
                                 ("No implementation defined for " +
                                  spiContext.getSPI().getName());
                         }
@@ -203,7 +203,7 @@ public class ServiceFinder {
                     service = clazz.newInstance();
                     put(spiContext.getSPI().getName(), clazz.getClassLoader(), service);
                 } catch (Exception e) {
-                    throw new ServiceException("Unable to instantiate " + spiContext.getSPI().getName(), e);
+                    throw new DiscoveryException("Unable to instantiate " + spiContext.getSPI().getName(), e);
                 }
                 
                 if (service instanceof Service) {
@@ -215,11 +215,75 @@ public class ServiceFinder {
         return service;
     }
     
+    /**
+     * <p>Locate and instantiate a service.  The service implementation
+     * class is located using the following ordered lookup:</p>
+     * <ul>
+     * <li>Try to load a class with the name obtained from the system
+     *     property, having the same name as the spi class:
+     *     <code>spiContext.getSPI().getName()</code>.</li>
+     * 
+     * <li>Try to load a class with the name obtained from the
+     *     <code>properties</code> parameter, having the same
+     *     name as the spi class: <code>spiContext.getSPI().getName()</code>.</li>
+     * 
+     * <li>Use the JDK1.3+ 'Service Provider' specification
+     *     (http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html)
+     *     to locate a service named <code>spiContext.getSPI().getName()</code>.
+     *     Implemented internally, so there is not a hard
+     *     dependency on JDK 1.3+.</li>
+     * 
+     * <li>Fall back to a default implementation class, as specified by
+     *     non-null <code>defaultImplName</code>.</li>
+     * </ul>
+     * 
+     * <p>In most cases, after class NAME is found, then a
+     * number of attempts are made to load the class using different
+     * class loaders, in the following sequence:
+     * <ul>
+     * <li>Thread Context Class Loader</li>
+     * <li>Caller's Class Loader</li>
+     * <li>SPI's Class Loader</li>
+     * <li>ServiceFinder's (this class) Class Loader</li>
+     * <li>System Class Loader</li>
+     * </ul>
+     * 
+     * <p>The default implementation is loaded using:
+     * <ul>
+     * <li>ServiceFinder's (this class) Class Loader</li>
+     * <li>System Class Loader</li>
+     * </ul>
+     * 
+     * @param rootFinderClass  The root finder class.
+     *        If a wrapper/factory class is used around 'ServiceFinder',
+     *        then this will be that wrapper/factory class.
+     * 
+     * @param spiContext The SPI Context identifies the SPI and the
+     *        thread context class loader.
+     *        <code>spiContext.getSPI().getName()</code> id's the (property)
+     *        name of the service implementation.  Presumed to be an interface,
+     *        but there is nothing in the code that prevents it from
+     *        being an abstract base class, or even a class.
+     * 
+     * @param properties used as one alternative to find name of service
+     *        implementation class, with property name specified by
+     *        <code>spi.getName()</code>.  If the implementation class found
+     *        for <code>spi</code> implements the <code>Service</code>
+     *        interface, then <code>spiInstance.init(properties)</code> is
+     *        called.
+     * 
+     * @param defaultImplName Name of the default implementation class.
+     *
+     * @exception DiscoveryException if the implementation class
+     *            is not available,
+     *            cannot be instantiated,
+     *            or is not an instance of <code>spi</code>.
+     */
     public static Object find(Class rootFinderClass,
                               SPIContext spiContext,
                               Properties properties,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         // thread context can change on each call,
         // so establish context for this one call.
@@ -234,9 +298,9 @@ public class ServiceFinder {
     public static Object find(SPIContext spiContext,
                               Properties properties,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
-        return find(ServiceFinder.class, spiContext, properties, defaultImplName);
+        return find(Discovery.class, spiContext, properties, defaultImplName);
     }
     
     /**
@@ -247,7 +311,7 @@ public class ServiceFinder {
                               Class spi,
                               Properties properties,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(rootFinderClass, new SPIContext(spi), properties, defaultImplName);
     }
@@ -259,9 +323,9 @@ public class ServiceFinder {
     public static Object find(Class spi,
                               Properties properties,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
-        return find(ServiceFinder.class, spi, properties, defaultImplName);
+        return find(Discovery.class, spi, properties, defaultImplName);
     }
 
     /**
@@ -273,7 +337,7 @@ public class ServiceFinder {
                               String overloadPrefix,
                               String propertiesFileName,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         // thread context can change on each call,
         // so establish context for this one call.
@@ -315,9 +379,9 @@ public class ServiceFinder {
                               String overloadPrefix,
                               String propertiesFileName,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
-        return find(ServiceFinder.class, spiContext, overloadPrefix, propertiesFileName, defaultImplName);
+        return find(Discovery.class, spiContext, overloadPrefix, propertiesFileName, defaultImplName);
     }
     
     /**
@@ -329,7 +393,7 @@ public class ServiceFinder {
                               String overloadPrefix,
                               String propertiesFileName,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(rootFinderClass, new SPIContext(spi), overloadPrefix, propertiesFileName, defaultImplName);
     }
@@ -342,7 +406,7 @@ public class ServiceFinder {
                               String overloadPrefix,
                               String propertiesFileName,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(new SPIContext(spi), overloadPrefix, propertiesFileName, defaultImplName);
     }
@@ -355,7 +419,7 @@ public class ServiceFinder {
                               SPIContext spiContext,
                               String propertiesFileName,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(rootFinderClass, spiContext, (String)null, propertiesFileName, defaultImplName);
     }
@@ -367,9 +431,9 @@ public class ServiceFinder {
     public static Object find(SPIContext spiContext,
                               String propertiesFileName,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
-        return find(ServiceFinder.class, spiContext, (String)null, propertiesFileName, defaultImplName);
+        return find(Discovery.class, spiContext, (String)null, propertiesFileName, defaultImplName);
     }
     
     /**
@@ -380,7 +444,7 @@ public class ServiceFinder {
                               Class spi,
                               String propertiesFileName,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(rootFinderClass, new SPIContext(spi), propertiesFileName, defaultImplName);
     }
@@ -392,7 +456,7 @@ public class ServiceFinder {
     public static Object find(Class spi,
                               String propertiesFileName,
                               String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(new SPIContext(spi), propertiesFileName, defaultImplName);
     }
@@ -402,7 +466,7 @@ public class ServiceFinder {
      * Equivalent to find(rootFinderClass, spi, (Properties)null, defaultImplName);
      */
     public static Object find(Class rootFinderClass, Class spi, String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(rootFinderClass, spi, (Properties)null, defaultImplName);
     }
@@ -412,7 +476,7 @@ public class ServiceFinder {
      * Equivalent to find(spi, (Properties)null, defaultImplName);
      */
     public static Object find(Class spi, String defaultImplName)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(spi, (Properties)null, defaultImplName);
     }
@@ -422,7 +486,7 @@ public class ServiceFinder {
      * Equivalent to find(rootFinderClass, spi, properties, null);
      */
     public static Object find(Class rootFinderClass, Class spi, Properties properties)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(rootFinderClass, spi, properties, null);
     }
@@ -432,7 +496,7 @@ public class ServiceFinder {
      * Equivalent to find(spi, properties, null);
      */
     public static Object find(Class spi, Properties properties)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(spi, properties, null);
     }
@@ -442,7 +506,7 @@ public class ServiceFinder {
      * Equivalent to find(rootFinderClass, spi, (Properties)null, null);
      */
     public static Object find(Class rootFinderClass, Class spi)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(rootFinderClass, spi, (Properties)null, null);
     }
@@ -452,7 +516,7 @@ public class ServiceFinder {
      * Equivalent to find(spi, (Properties)null, null);
      */
     public static Object find(Class spi)
-        throws ServiceException
+        throws DiscoveryException
     {
         return find(spi, (Properties)null, null);
     }

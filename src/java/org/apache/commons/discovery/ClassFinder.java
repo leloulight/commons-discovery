@@ -128,18 +128,18 @@ public class ClassFinder {
      * @param localOnly Use only local class loader
      *                  (do not try thread context class loader).
      *
-     * @exception ServiceException if a suitable instance cannot be created,
+     * @exception DiscoveryException if a suitable instance cannot be created,
      *                             or if the class created is not an instance
      *                             of <code>spi</code>
      */
     public Class findClass(String serviceImplName, boolean localOnly)
-        throws ServiceException
+        throws DiscoveryException
     {
         Class clazz = ClassLoaderUtils.loadClass(serviceImplName,
                            localOnly ? localLoaders : allLoaders);
             
         if (clazz != null  &&  !spiContext.getSPI().isAssignableFrom(clazz)) {
-            throw new ServiceException("Class " + serviceImplName +
+            throw new DiscoveryException("Class " + serviceImplName +
                           " does not implement " + spiContext.getSPI().getName());
         }
         
@@ -159,10 +159,10 @@ public class ClassFinder {
      * @param localOnly Use only local class loader
      *                  (do not try thread context class loader).
      *
-     * @exception ServiceException if a suitable resource cannot be created.
+     * @exception DiscoveryException if a suitable resource cannot be created.
      */
     public InputStream findResourceAsStream(String resourceName, boolean localOnly)
-        throws ServiceException
+        throws DiscoveryException
     {
         return ClassLoaderUtils.getResourceAsStream(spiContext.getSPI().getPackage().getName(),
                                                     resourceName,

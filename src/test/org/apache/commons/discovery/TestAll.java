@@ -92,13 +92,13 @@ public class TestAll extends TestCase {
     public void testServiceFinder1() {
         try {
             LogFactory factory =
-                (LogFactory)ServiceFinder.find(LogFactory.class,
+                (LogFactory)Discovery.find(LogFactory.class,
                                                LogFactoryImpl.class.getName());
             Log log = factory.getLog(TestAll.class);
             log.info("got log!");
         } finally {
             LogFactory.releaseAll();
-            ServiceFinder.releaseAll();
+            Discovery.releaseAll();
         }
     }
     
@@ -112,12 +112,12 @@ public class TestAll extends TestCase {
         
         try {
             LogFactory factory =
-                (LogFactory)ServiceFinder.find(LogFactory.class, props);
+                (LogFactory)Discovery.find(LogFactory.class, props);
             Log log = factory.getLog(TestAll.class);
             log.info("got log factory via service");
         } finally {
             LogFactory.releaseAll();
-            ServiceFinder.releaseAll();
+            Discovery.releaseAll();
         }
     }
 
