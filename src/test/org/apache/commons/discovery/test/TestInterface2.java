@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,68 +58,15 @@
  * <http://www.apache.org/>.
  *
  */
-
-package org.apache.commons.discovery.tools;
-
-import java.util.Enumeration;
-
-import org.apache.commons.discovery.ClassDiscovery;
-import org.apache.commons.discovery.ClassInfo;
-import org.apache.commons.discovery.ClassLoaders;
+ 
+ 
+package org.apache.commons.discovery.test;
 
 
 /**
- * Holder for a default class.
- * 
- * Class may be specified by name (String) or class (Class).
- * Using the holder complicates the users job, but minimized # of API's.
- * 
- * @author Richard A. Sitze
+  * @author Richard A. Sitze
+  * @version $Revision$
  */
-public class DefaultClassHolder {
-    private Class        defaultClass;
-    private final String defaultName;
-    
-    public DefaultClassHolder(Class defaultClass) {
-        this.defaultClass = defaultClass;
-        this.defaultName = defaultClass.getName();
-    }
-    
-    public DefaultClassHolder(String defaultName) {
-        this.defaultClass = null;
-        this.defaultName = defaultName;
-    }
-
-    /**
-     * @param spi non-null SPI
-     * @param loaders Used only if class needs to be loaded.
-     * 
-     * @return Default Class.  Load the class if necessary,
-     *         and verify that it implements the SPI.
-     *         (this forces the check, no way out..).
-     */
-    public Class getDefaultClass(SPInterface spi, ClassLoaders loaders) {
-        if (defaultClass == null) {
-            ClassDiscovery classDiscovery = new ClassDiscovery(loaders);
-            Enumeration classes = classDiscovery.find(getDefaultName());
-            if (classes.hasMoreElements()) {
-                ClassInfo info = (ClassInfo)classes.nextElement();
-                try {
-                    defaultClass = info.getResourceClass();
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        }
-        
-        if (defaultClass != null) {
-            spi.verifyAncestory(defaultClass);
-        }
-
-        return defaultClass;
-    }
-
-    public String getDefaultName() {
-        return defaultName;
-    }
+public interface TestInterface2 {
+    public void method();
 }

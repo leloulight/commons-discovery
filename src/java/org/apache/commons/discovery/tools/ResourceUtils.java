@@ -121,7 +121,7 @@ public class ResourceUtils {
         throws DiscoveryException
     {
         ResourceDiscovery explorer = new ResourceDiscovery(loaders);
-        Enumeration resources = explorer.findResources(resourceName);
+        Enumeration resources = explorer.find(resourceName);
         
         if (spi != null  &&
             !resources.hasMoreElements()  &&
@@ -133,7 +133,7 @@ public class ResourceUtils {
              * package name of the spi.
              */
             resourceName = getPackageName(spi).replace('.','/') + "/" + resourceName;
-            resources = explorer.findResources(resourceName);
+            resources = explorer.find(resourceName);
         }
         
         return resources.hasMoreElements()

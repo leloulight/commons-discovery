@@ -118,17 +118,17 @@ public class ServiceDiscovery extends ClassDiscovery
      * 
      * @return Enumeration of ServiceInfo
      */
-    public Enumeration findResources(final String serviceName) {
+    public Enumeration find(String serviceName) {
+        return findServices(serviceName);
+    }
+    
+    protected Enumeration findServices(final String serviceName) {
         if (log.isDebugEnabled())
             log.debug("findResources: serviceName='" + serviceName + "'");
 
-        final Enumeration files =
-            super.findResources(SERVICE_HOME + serviceName);
+        final Enumeration files = findResources(SERVICE_HOME + serviceName);
 
         return new Enumeration() {
-            private ClassDiscovery classDiscovery =
-                new ClassDiscovery(getClassLoaders());
-                
             private int idx = 0;
             private Vector classNames = null;
             private Enumeration classResources = null;
@@ -182,8 +182,7 @@ public class ServiceDiscovery extends ClassDiscovery
                      * Go back to original set of classloaders and
                      * find unique classes & their loaders...
                      */
-                    Enumeration classes =
-                        classDiscovery.findResources(className);
+                    Enumeration classes = findClasses(className);
 
                     if (classes != null && classes.hasMoreElements()) {
                         return classes;
@@ -212,14 +211,6 @@ public class ServiceDiscovery extends ClassDiscovery
         Vector results = new Vector();
         
         try {
-            /**
-             * URL is of the form: baseURL/META-INF/services/resourceName
-             */
-            URL baseURL = new URL( url, "../../.." );
-
-            if (log.isDebugEnabled())
-                log.debug("readServices: baseURL='" + baseURL + "'");
-            
             InputStream is = url.openStream();
             
             if( is != null ) {
@@ -237,10 +228,11 @@ public class ServiceDiscovery extends ClassDiscovery
                     try {
                         String serviceImplName;
                         while( (serviceImplName = rd.readLine()) != null) {
-                            serviceImplName =
-                                new String(serviceImplName.getBytes(),
-                                           0,
-                                           serviceImplName.indexOf('#')).trim();
+                            int idx = serviceImplName.indexOf('#');
+                            if (idx >= 0) {
+                                serviceImplName = serviceImplName.substring(0, idx);
+                            }
+                            serviceImplName = serviceImplName.trim();
 
                             if (serviceImplName.length() != 0) {
                                 results.add(serviceImplName);

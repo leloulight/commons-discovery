@@ -124,7 +124,7 @@ public class Service
         ServiceDiscovery serviceDiscovery =
             new ServiceDiscovery(classLoaders);
 
-        final Enumeration services = serviceDiscovery.findResources(spi.getSPName());
+        final Enumeration services = serviceDiscovery.find(spi.getSPName());
         
         return new Enumeration() {
             private Object object = null;

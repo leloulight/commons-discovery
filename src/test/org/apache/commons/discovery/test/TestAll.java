@@ -95,14 +95,14 @@ public class TestAll extends TestCase {
     public void testFindDefaultImpl_1() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
-        TestInterface ti = null;
+        TestInterface1 ti = null;
         
         try {
-            ti = (TestInterface)DiscoverSingleton.find(TestInterface.class,
-                                                       TestImpl_1.class.getName());
+            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+                                                        TestImpl1_1.class.getName());
 
-            assertTrue(ti.getClass().getName() + "!=" + TestImpl_1.class.getName(),
-                       ti.getClass().getName().equals(TestImpl_1.class.getName()));
+            assertTrue(ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
+                       ti.getClass().getName().equals(TestImpl1_1.class.getName()));
         } finally {
             DiscoverSingleton.release();
         }
@@ -111,14 +111,14 @@ public class TestAll extends TestCase {
     public void testFindDefaultImpl_2() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
-        TestInterface ti = null;
+        TestInterface1 ti = null;
 
         try {
-            ti = (TestInterface)DiscoverSingleton.find(TestInterface.class,
-                                                       TestImpl_2.class.getName());
+            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+                                                        TestImpl1_2.class.getName());
 
-            assertTrue(ti.getClass().getName() + "!=" + TestImpl_2.class.getName(),
-                       ti.getClass().getName().equals(TestImpl_2.class.getName()));
+            assertTrue(ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
+                       ti.getClass().getName().equals(TestImpl1_2.class.getName()));
         } finally {
             DiscoverSingleton.release();
         }
@@ -127,23 +127,23 @@ public class TestAll extends TestCase {
     public void testCache() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
-        TestInterface ti = null;
+        TestInterface1 ti = null;
         
         try {
-            ti = (TestInterface)DiscoverSingleton.find(TestInterface.class,
-                                                       TestImpl_1.class.getName());
+            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+                                                        TestImpl1_1.class.getName());
 
-            assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl_1.class.getName(),
-                       ti.getClass().getName().equals(TestImpl_1.class.getName()));
+            assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
+                       ti.getClass().getName().equals(TestImpl1_1.class.getName()));
             
             // no release, should get cached value..
             
-            ti = (TestInterface)DiscoverSingleton.find(TestInterface.class,
-                                                       TestImpl_2.class.getName());
+            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+                                                        TestImpl1_2.class.getName());
 
             // factory should be cached LogFactoryImpl
-            assertTrue("2. " + ti.getClass().getName() + "!=" + TestImpl_1.class.getName(),
-                       ti.getClass().getName().equals(TestImpl_1.class.getName()));
+            assertTrue("2. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
+                       ti.getClass().getName().equals(TestImpl1_1.class.getName()));
         } finally {
             DiscoverSingleton.release();
         }
@@ -152,23 +152,23 @@ public class TestAll extends TestCase {
     public void testRelease() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
-        TestInterface ti = null;
+        TestInterface1 ti = null;
         
         try {
-            ti = (TestInterface)DiscoverSingleton.find(TestInterface.class,
-                                                       TestImpl_1.class.getName());
+            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+                                                        TestImpl1_1.class.getName());
 
-            assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl_1.class.getName(),
-                       ti.getClass().getName().equals(TestImpl_1.class.getName()));
+            assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
+                       ti.getClass().getName().equals(TestImpl1_1.class.getName()));
             
             DiscoverSingleton.release();
             
-            ti = (TestInterface)DiscoverSingleton.find(TestInterface.class,
-                                                       TestImpl_2.class.getName());
+            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+                                                        TestImpl1_2.class.getName());
 
             // factory should be cached LogFactoryImpl
-            assertTrue("2. " + ti.getClass().getName() + "!=" + TestImpl_2.class.getName(),
-                       ti.getClass().getName().equals(TestImpl_2.class.getName()));
+            assertTrue("2. " + ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
+                       ti.getClass().getName().equals(TestImpl1_2.class.getName()));
         } finally {
             DiscoverSingleton.release();
         }
@@ -177,18 +177,18 @@ public class TestAll extends TestCase {
     public void testFindPropertyImpl_1() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
-        TestInterface ti = null;
+        TestInterface1 ti = null;
 
         try {
             Properties props = new Properties();
             
-            props.setProperty(TestInterface.class.getName(),
-                              TestImpl_2.class.getName());
+            props.setProperty(TestInterface1.class.getName(),
+                              TestImpl1_2.class.getName());
             
-            ti = (TestInterface)DiscoverSingleton.find(TestInterface.class, props);
+            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class, props);
 
-            assertTrue(ti.getClass().getName() + "!=" + TestImpl_2.class.getName(),
-                       ti.getClass().getName().equals(TestImpl_2.class.getName()));
+            assertTrue(ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
+                       ti.getClass().getName().equals(TestImpl1_2.class.getName()));
         } finally {
             DiscoverSingleton.release();
         }
@@ -197,23 +197,23 @@ public class TestAll extends TestCase {
     public void testMyFactoryManagedProperty() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
-        TestInterface ti = null;
+        TestInterface1 ti = null;
 
         try {
-            ManagedProperties.setProperty(TestInterface.class.getName(),
-                                          TestImpl_2.class.getName());
+            ManagedProperties.setProperty(TestInterface1.class.getName(),
+                                          TestImpl1_2.class.getName());
                               
-            ti = (TestInterface)DiscoverSingleton.find(TestInterface.class);
+            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class);
 
-            assertTrue(ti.getClass().getName() + "!=" + TestImpl_2.class.getName(),
-                       ti.getClass().getName().equals(TestImpl_2.class.getName()));
+            assertTrue(ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
+                       ti.getClass().getName().equals(TestImpl1_2.class.getName()));
         } finally {
             DiscoverSingleton.release();
             
             /**
              * Cleanup, don't want to affect next test..
              */
-            ManagedProperties.setProperty(TestInterface.class.getName(), null);
+            ManagedProperties.setProperty(TestInterface1.class.getName(), null);
         }
     }
     
@@ -221,16 +221,35 @@ public class TestAll extends TestCase {
     public void testFindGroupLogFactoryImplPropFileDefault() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
-        TestInterface ti = null;
+        TestInterface1 ti = null;
         
         try {
-            ti = (TestInterface)DiscoverSingleton.find(null,
-                                   new SPInterface(TestInterface.class),
+            ti = (TestInterface1)DiscoverSingleton.find(null,
+                                   new SPInterface(TestInterface1.class),
                                    new PropertiesHolder("TestInterface.properties"),
-                                   new DefaultClassHolder(TestImpl_2.class.getName()));
+                                   new DefaultClassHolder(TestImpl1_2.class.getName()));
 
-            assertTrue(ti.getClass().getName() + "!=" + TestImpl_1.class.getName(),
-                       ti.getClass().getName().equals(TestImpl_1.class.getName()));
+            assertTrue(ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
+                       ti.getClass().getName().equals(TestImpl1_1.class.getName()));
+        } finally {
+            DiscoverSingleton.release();
+        }
+    }
+
+    public void testFindGroupLogFactoryImplServiceFileDefault() {
+//        org.apache.commons.discovery.log.SimpleLog.setLevel(org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_DEBUG);
+        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
+
+        TestInterface2 ti = null;
+        
+        try {
+            ti = (TestInterface2)DiscoverSingleton.find(null,
+                                   new SPInterface(TestInterface2.class),
+                                   null,
+                                   new DefaultClassHolder(TestImpl2_2.class.getName()));
+
+            assertTrue(ti.getClass().getName() + "!=" + TestImpl2_1.class.getName(),
+                       ti.getClass().getName().equals(TestImpl2_1.class.getName()));
         } finally {
             DiscoverSingleton.release();
         }

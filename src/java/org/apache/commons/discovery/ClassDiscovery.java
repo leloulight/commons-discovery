@@ -104,11 +104,15 @@ public class ClassDiscovery extends ResourceDiscovery
      * 
      * @return Enumeration of ClassInfo
      */
-    public Enumeration findResources(final String className) {
+    public Enumeration find(String className) {
+        return findClasses(className);
+    }
+    
+    protected Enumeration findClasses(final String className) {
         final String resourceName = className.replace('.','/') + ".class";
         
         if (log.isDebugEnabled())
-            log.debug("findResources: className='" + className + "'");
+            log.debug("findClasses: className='" + className + "'");
 
         return new Enumeration() {
             private Vector history = new Vector();
@@ -132,16 +136,21 @@ public class ClassDiscovery extends ResourceDiscovery
                 while (idx < getClassLoaders().size()) {
                     ClassLoader loader = getClassLoaders().get(idx++);
                     URL url = loader.getResource(resourceName);
-                    if (url != null  &&  !history.contains(url)) {
-                        history.addElement(url);
-
+                    if (url != null) {
+                        if (!history.contains(url)) {
+                            history.addElement(url);
+    
+                            if (log.isDebugEnabled())
+                                log.debug("getNextClass: next URL='" + url + "'");
+    
+                            return new ClassInfo(className, loader, url);
+                        }
                         if (log.isDebugEnabled())
-                            log.debug("getNextClass: next URL='" + url + "'");
-
-                        return new ClassInfo(className, loader, url);
+                            log.debug("getNextClass: duplicate URL='" + url + "'");
+                    } else {
+                        if (log.isDebugEnabled())
+                            log.debug("getNextClass: loader " + loader + ": '" + resourceName + "' not found");
                     }
-                    if (log.isDebugEnabled())
-                        log.debug("getNextClass: duplicate URL='" + url + "'");
                 }
                 return null;
             }

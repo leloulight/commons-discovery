@@ -98,7 +98,7 @@ public class ServiceDiscoveryTask
         disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
         disc.addClassLoader( this.getClass().getClassLoader() );
         
-        Enumeration enum = disc.findResources(name);
+        Enumeration enum = disc.find(name);
 
         Vector vector = new Vector();
         while (enum.hasMoreElements()) {

@@ -365,7 +365,7 @@ public class DiscoverClass {
         if (classNames.length > 0) {
             ClassDiscovery classDiscovery = new ClassDiscovery(loaders);
             
-            Enumeration classes = classDiscovery.findResources(classNames[0]);
+            Enumeration classes = classDiscovery.find(classNames[0]);
             
             // If it's set as a property.. it had better be there!
             if (classes.hasMoreElements()) {
@@ -379,7 +379,7 @@ public class DiscoverClass {
         } else {
             ServiceDiscovery serviceDiscovery = new ServiceDiscovery(loaders);
             
-            Enumeration classes = serviceDiscovery.findResources(spi.getSPName());
+            Enumeration classes = serviceDiscovery.find(spi.getSPName());
             
             if (!classes.hasMoreElements()  &&  defaultImpl != null) {
                 return defaultImpl.getDefaultClass(spi, loaders);

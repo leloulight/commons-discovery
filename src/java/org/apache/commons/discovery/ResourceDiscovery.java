@@ -128,7 +128,11 @@ public class ResourceDiscovery
      * 
      * @return Enumeration of ResourceInfo
      */
-    public Enumeration findResources(final String resourceName) {
+    public Enumeration find(String resourceName) {
+        return findResources(resourceName);
+    }
+    
+    protected Enumeration findResources(final String resourceName) {
         if (log.isDebugEnabled())
             log.debug("findResources: resourceName='" + resourceName + "'");
 
