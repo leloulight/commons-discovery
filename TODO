@@ -9,4 +9,6 @@
     if your app plays with classloaders...  Need to
     go over this again someday.
 
-
+4.  Would like a class that represents constructor arguments (form & value)
+    that can be given to DiscoverClass.newInstance().
+    
