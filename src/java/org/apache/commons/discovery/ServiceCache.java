@@ -73,7 +73,7 @@ import java.util.HashMap;
  * 
  * @author Richard A. Sitze
  */
-public class ServiceCache
+class ServiceCache
 {
     /**
      * Previously encountered service interfaces (spis), keyed by the
