@@ -110,11 +110,17 @@ public class DiscoverMappedNames
         }
         
         final Object obj = mapping.get(resourceName);
+
+        final String[] names;
+        if (obj instanceof String) {
+            names = new String[] { (String)obj };
+        } else if (obj instanceof String[]) {
+            names = (String[])obj;
+        } else {
+            names = null;
+        }
         
         return new ResourceNameIterator() {
-            String[] names = (obj == null || obj instanceof String)
-                             ? (new String[] { (String)obj })
-                             : (String[])obj;
 
             private int idx = 0;
             
