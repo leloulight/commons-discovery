@@ -82,22 +82,25 @@ import org.apache.commons.discover.jdk.JDKHooks;
  */
 public class ResourceDiscovery
 {
+    /**
+     * this doesn't buy anything except +/- style (subjective).
+     */
     protected static JDKHooks jdkHooks = JDKHooks.getJDKHooks();
     
     protected Vector classLoaders=new Vector();
     
-    /** Construct a new service discoverer
+    /** Construct a new resource discoverer
      */
-    protected ResourceDiscovery() {
+    public ResourceDiscovery() {
     }
 
     /**
-     * Creates a new instance of a ResourceDiscovery instance.
+     * @deprecated
      */
     public static ResourceDiscovery newInstance() {
         // This is _not_ singleton.
         return new ResourceDiscovery();
-        // XXX Check if JDK1.1 is used and return the specific version 
+        // XXX Check if JDK1.1 is used no longer necessary.
     }
 
     /** Specify a new class loader to be used in searching.

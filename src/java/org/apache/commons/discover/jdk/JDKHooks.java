@@ -69,7 +69,11 @@ import java.io.IOException;
  * @author Richard A. Sitze
  */
 public abstract class JDKHooks {
-    private static JDKHooks jdkHooks = null;
+    private static final JDKHooks jdkHooks;
+    
+    static {
+        jdkHooks = new JDK12Hooks();
+    }
     
     protected JDKHooks() { }
     
@@ -78,10 +82,7 @@ public abstract class JDKHooks {
      * 
      * TODO: add logic to detect JDK level.
      */
-    public static JDKHooks getJDKHooks() {
-        if (jdkHooks == null) {
-            jdkHooks = new JDK12Hooks();
-        }
+    public static final JDKHooks getJDKHooks() {
         return jdkHooks;
     }
 
