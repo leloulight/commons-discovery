@@ -172,17 +172,17 @@ public class ResourceUtils {
         
         if (propertiesFileName != null) {
             try {
-                InputStream stream =
-                    getResource(spi,
-                                propertiesFileName,
-                                classLoaders).getResourceAsStream();
-    
-                if (stream != null) {
-                    properties = new Properties();
-                    try {
-                        properties.load(stream);
-                    } finally {
-                        stream.close();
+                Resource resource = getResource(spi, propertiesFileName, classLoaders);
+                if (resource != null) {
+                    InputStream stream = resource.getResourceAsStream();
+        
+                    if (stream != null) {
+                        properties = new Properties();
+                        try {
+                            properties.load(stream);
+                        } finally {
+                            stream.close();
+                        }
                     }
                 }
             } catch (IOException e) {
