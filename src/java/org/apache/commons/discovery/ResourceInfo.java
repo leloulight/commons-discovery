@@ -134,7 +134,7 @@ public class ResourceInfo
     }
     
     public String toString() {
-        return "Resource " + resourceName + " " + loader + " " + location;
+        return "ResourceInfo[" + resourceName + ", " + loader + ", " + location + "]";
     }
     
     public static ResourceInfo[] toArray(Enumeration enum) {

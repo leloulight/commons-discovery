@@ -93,7 +93,7 @@ import org.apache.commons.logging.Log;
  * @author Costin Manolache
  * @author James Strachan
  */
-public class ServiceDiscovery extends ResourceDiscovery
+public class ServiceDiscovery extends ClassDiscovery
 {
     private static Log log = DiscoveryLogFactory.newLog(ServiceDiscovery.class);
 
@@ -116,7 +116,7 @@ public class ServiceDiscovery extends ResourceDiscovery
      * a) it preserves the desired behaviour
      * b) it defers file I/O and class loader lookup until necessary.
      * 
-     * @return Enumeration of ClassInfo
+     * @return Enumeration of ServiceInfo
      */
     public Enumeration findResources(final String serviceName) {
         if (log.isDebugEnabled())
@@ -132,7 +132,7 @@ public class ServiceDiscovery extends ResourceDiscovery
             private int idx = 0;
             private Vector classNames = null;
             private Enumeration classResources = null;
-            private ClassInfo resource = null;
+            private ServiceInfo resource = null;
             
             public boolean hasMoreElements() {
                 if (resource == null) {
@@ -147,7 +147,7 @@ public class ServiceDiscovery extends ResourceDiscovery
                 return element;
             }
             
-            private ClassInfo getNextService() {
+            private ServiceInfo getNextService() {
                 if (classResources == null || !classResources.hasMoreElements()) {
                     classResources = getNextClassResources();
                     if (classResources == null) {
@@ -155,9 +155,9 @@ public class ServiceDiscovery extends ResourceDiscovery
                     }
                 }
 
-                ClassInfo classInfo = (ClassInfo)classResources.nextElement();
+                ServiceInfo serviceInfo = ServiceInfo.toServiceInfo((ClassInfo)classResources.nextElement());
 
-                return classInfo;
+                return serviceInfo;
             }
 
             private Enumeration getNextClassResources() {

@@ -70,64 +70,32 @@ import org.apache.commons.logging.Log;
  * @author Costin Manolache
  * @author Richard A. Sitze
  */
-public class ClassInfo extends ResourceInfo
+public class ServiceInfo extends ClassInfo
 {
-    private static Log log = DiscoveryLogFactory.newLog(ClassInfo.class);
-    public static void setLog(Log _log) {
-        log = _log;
-    }
-
-    protected Class       resourceClass;
-
-    public ClassInfo() {
+    public ServiceInfo() {
         super();
     }
 
-    public ClassInfo(String className, ClassLoader loader, URL location) {
+    public ServiceInfo(String className, ClassLoader loader, URL location) {
         super(className, loader, location);
-        this.resourceClass = null;
     }
 
-    public ClassInfo(Class resourceClass, ClassLoader loader, URL location) {
+    public ServiceInfo(Class resourceClass, ClassLoader loader, URL location) {
         super(resourceClass.getName(), loader, location);
-        this.resourceClass = resourceClass;
-    }
-
-    /**
-     * Get the value of resourceClass.
-     * @return value of resourceClass.
-     */
-    public Class getResourceClass() {
-        if (resourceClass == null) {
-            if (log.isDebugEnabled())
-                log.debug("getResourceClass: Loading class '" + getResourceName() + "' with " + loader);
-    
-            try {
-                setResourceClass(getLoader().loadClass(getResourceName()));
-            } catch (ClassNotFoundException e) {
-                setResourceClass(null);
-            }
-        }
-        return resourceClass;
     }
     
-    /**
-     * Set the value of resourceClass.
-     * @param v  Value to assign to resourceClass.
-     */
-    public void setResourceClass(Class resourceClass) {
-        this.resourceClass = resourceClass;
-    }
-    
-    public static ClassInfo toClassInfo(ResourceInfo resourceInfo) {
-        if (resourceInfo instanceof ClassInfo) {
-            return (ClassInfo)resourceInfo;
+    public static ServiceInfo toServiceInfo(ResourceInfo resourceInfo) {
+        ServiceInfo si;
+        if (resourceInfo instanceof ServiceInfo) {
+            si = (ServiceInfo)resourceInfo;
         } else {
-            return new ClassInfo(resourceInfo.resourceName, resourceInfo.loader, resourceInfo.location);
+            si = new ServiceInfo(resourceInfo.resourceName, resourceInfo.loader, resourceInfo.location);
+            si.resourceClass = ((ClassInfo)resourceInfo).resourceClass;
         }
+        return si;
     }
     
     public String toString() {
-        return "ClassInfo[" + resourceName + ", " + loader + ", " + location + "]";
+        return "ServiceInfo[" + resourceName + ", " + loader + ", " + location + "]";
     }
 }
