@@ -119,7 +119,13 @@ public class DiscoverMappedNames
             private int idx = 0;
             
             public boolean hasNext() {
-                return idx < names.length;
+                if (names != null) {
+                    while (idx < names.length  &&  names[idx] == null) {
+                        idx++;
+                    }
+                    return idx < names.length;
+                }
+                return false;
             }
             
             public String nextResourceName() {

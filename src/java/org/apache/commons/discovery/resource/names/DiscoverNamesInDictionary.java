@@ -139,11 +139,17 @@ public class DiscoverNamesInDictionary
             private int idx = 0;
             
             public boolean hasNext() {
-                return (resources != null && idx < resources.length);
+                if (resources != null) {
+                    while (idx < resources.length  &&  resources[idx] == null) {
+                        idx++;
+                    }
+                    return idx < resources.length;
+                }
+                return false;
             }
             
             public String nextResourceName() {
-                return resources[idx++];
+                return hasNext() ? resources[idx++] : null;
             }
         };
     }
