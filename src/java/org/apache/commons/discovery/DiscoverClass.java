@@ -796,7 +796,10 @@ public class DiscoverClass {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */    
-    public static Object newInstance(Environment env, SPInterface spi, String propertiesFileName, ImplClass defaultImpl)
+    public static Object newInstance(Environment env,
+                                     SPInterface spi,
+                                     String propertiesFileName,
+                                     ImplClass defaultImpl)
         throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,

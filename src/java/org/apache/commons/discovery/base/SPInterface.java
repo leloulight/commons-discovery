@@ -192,4 +192,12 @@ public class SPInterface {
     public ImplClass createImplClass(String className) {
         return new ImplClass(className, paramClasses, params);
     }
+
+    /**
+     * Create an ImplClass representing the SPI and,
+     * if set, the constructor type/object arguments.
+     */    
+    public ImplClass createImplClass(Class clazz) {
+        return new ImplClass(clazz, paramClasses, params);
+    }
 }
