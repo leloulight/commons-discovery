@@ -62,10 +62,8 @@
 package org.apache.commons.discovery.tools;
 
 import java.io.InputStream;
-import java.util.Enumeration;
 
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.ResourceInfo;
 import org.apache.commons.discovery.base.ClassLoaders;
 
 

@@ -57,16 +57,8 @@
 
 package org.apache.commons.discovery;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Enumeration;
-import java.util.Vector;
 
-import org.apache.commons.discovery.base.ClassLoaders;
 import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.base.SPInterface;

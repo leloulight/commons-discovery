@@ -61,15 +61,12 @@
 
 package org.apache.commons.discovery;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.base.SPInterface;
-import org.apache.commons.discovery.tools.ClassLoaderUtils;
 import org.apache.commons.discovery.tools.EnvironmentCache;
 
 

@@ -67,8 +67,6 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import org.apache.commons.discovery.base.ClassLoaders;
-import org.apache.commons.discovery.base.ImplClass;
-import org.apache.commons.discovery.base.SPInterface;
 
 
 /**

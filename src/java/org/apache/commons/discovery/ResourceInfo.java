@@ -57,20 +57,17 @@
 
 package org.apache.commons.discovery;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Properties;
-import java.util.Vector;
 import java.net.URL;
+import java.util.Enumeration;
+import java.util.Vector;
+
 
 /**
  * 'Resource' located by discovery.
  * 
- * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
+ * @author Richard A. Sitze
  */
 public class ResourceInfo
 {
@@ -138,5 +135,17 @@ public class ResourceInfo
     
     public String toString() {
         return "Resource " + resourceName + " " + loader + " " + location;
+    }
+    
+    public static ResourceInfo[] toArray(Enumeration enum) {
+        Vector vector = new Vector();
+        while (enum.hasMoreElements()) {
+            ResourceInfo resourceInfo = (ResourceInfo)enum.nextElement();
+            vector.add(resourceInfo);
+        }
+        ResourceInfo[] resources = new ResourceInfo[vector.size()];
+        vector.copyInto(resources);
+        
+        return resources;
     }
 }
