@@ -36,33 +36,15 @@ and the order in which they are used.
 <ul>
 <pre>
     import org.apache.commons.discovery.Discovery;
-    import org.apache.commons.logging.Log;
+    import org.apache.commons.logging.LogFactory;
     ...
-    Log log = (Log)Discovery.find(Log.class);
+    LogFactory logFactory = (LogFactory)Discovery.find(LogFactory.class);
 </pre>
 </ul>
 Discovery looks for the value of the system property
-<code>org.apache.commons.logging.Log</code>
-for the name of the class implementing that interface,
+<code>org.apache.commons.logging.LogFactory</code>
+for the name of the class implementing that the <code>LogFactory</code> (abstract) class,
 and failing that uses JDK1.3-style service discovery.
-</p>
-<p>
-This should be sufficient for many new applications,
-however, in this case, the commons-logging API
-provides a <code>LogFactory</code> class that
-provides additional benefits, including a series of
-fall-back logger implementations
-(see commons-logging guidelines for best-practices related to that component),
-and preserves backward compatible configuration/property names.
-So, the following may be appropriate:
-<ul>
-<pre>
-    import org.apache.commons.logging.LogFactory;
-    ...
-    LogFactory factory = (LogFactory)Discovery.find(LogFactory.class);
-    Log log = factory.getInstance();
-</pre>
-</ul>
 </p>
 <p>
 Discovery also allows a <code>java.util.Properties</code>
