@@ -164,13 +164,15 @@ public class ManagedProperties {
                 HashMap properties = (HashMap)propertiesCache.get(classLoader);
                 
                 if (value == null) {
-                    properties.remove(propertyName);
+                    if (properties != null) {
+                        properties.remove(propertyName);
+                    }
                 } else {
                     if (properties == null) {
                         properties = new HashMap();
                         propertiesCache.put(classLoader, properties);
                     }
-                
+
                     properties.put(propertyName, new Value(value, isDefault));
                 }
             }
