@@ -65,7 +65,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.discover.jdk.JDKHooks;
+import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.DiscoveryException;
 import org.apache.commons.discovery.base.ClassLoaders;
 import org.apache.commons.discovery.base.Environment;

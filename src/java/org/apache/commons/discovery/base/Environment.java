@@ -61,7 +61,7 @@
 
 package org.apache.commons.discovery.base;
 
-import org.apache.commons.discover.jdk.JDKHooks;
+import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.DiscoverClass;
 
 

@@ -60,7 +60,7 @@ package org.apache.commons.discovery;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.commons.discover.jdk.JDKHooks;
+import org.apache.commons.discovery.jdk.JDKHooks;
 
 
 /**

@@ -63,7 +63,7 @@ package org.apache.commons.discovery.tools;
 
 import java.util.HashMap;
 
-import org.apache.commons.discover.jdk.JDKHooks;
+import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.base.Environment;
 
 

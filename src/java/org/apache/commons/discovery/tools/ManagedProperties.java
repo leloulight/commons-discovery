@@ -63,7 +63,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.discover.jdk.JDKHooks;
+import org.apache.commons.discovery.jdk.JDKHooks;
 
 
 

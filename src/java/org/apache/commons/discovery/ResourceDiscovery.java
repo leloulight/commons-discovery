@@ -61,7 +61,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-import org.apache.commons.discover.jdk.JDKHooks;
+import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.base.ClassLoaders;
 
 
