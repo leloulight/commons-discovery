@@ -3,7 +3,7 @@
 <project>
   <extend>../project.xml</extend>
   <name>Discovery</name>
-  <id>commons-discover</id>
+  <id>commons-discovery</id>
   <currentVersion>1.0-dev</currentVersion>
   <inceptionYear>2002</inceptionYear>
   <gumpRepositoryId>jakarta</gumpRepositoryId>
