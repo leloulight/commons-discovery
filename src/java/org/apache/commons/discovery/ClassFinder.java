@@ -84,7 +84,7 @@ public class ClassFinder {
      * ( http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html )
      */
     private static final String SERVICE_HOME = "META-INF/services/";
-
+    
     /**
      * The SPI (and thread context) for which we are (presumably)
      * looking for an implementation of.
@@ -103,33 +103,28 @@ public class ClassFinder {
     
     ClassLoader[] getAllLoaders() { return allLoaders; }
 
-    public ClassFinder(SPIContext spiContext,
-                       String groupContext,
+    public ClassFinder(String groupContext,
+                       SPIContext spiContext,
                        Class rootFinderClass)
     {
+        this.groupContext = groupContext;
         this.spiContext = spiContext;
-        this.groupContext = groupContext;
         this.rootFinderClass = rootFinderClass;
         this.systemLoaders = getSystemLoaders(spiContext, rootFinderClass);
         this.allLoaders = getAllLoaders(spiContext, rootFinderClass);
 
-        //System.out.println("Finding '" + spiContext.getSPI().getName() + "'");
+        //System.out.println("Finding '" + groupContext + "::" + spiContext.getSPI().getName() + "'");
     }
     
-    public ClassFinder(Class spi,
-                       String groupContext,
+    public ClassFinder(String groupContext,
+                       Class spi,
                        Class rootFinderClass)
     {
-        this.spiContext = new SPIContext(spi);
-        this.groupContext = groupContext;
-        this.rootFinderClass = rootFinderClass;
-        this.systemLoaders = getSystemLoaders(spiContext, rootFinderClass);
-        this.allLoaders = getAllLoaders(spiContext, rootFinderClass);
-
-        //System.out.println("Finding '" + spi.getName() + "'");
+        this (groupContext, new SPIContext(spi), rootFinderClass);
     }
     
     
+    public String getGroupContext() { return groupContext; }
     public SPIContext getSPIContext() { return spiContext; }
     
     
@@ -181,17 +176,17 @@ public class ClassFinder {
     public InputStream findResourceAsStream(String resourceName)
         throws DiscoveryException
     {
-        String name = spiContext.getSPI().getPackage().getName();
+        String packageName = spiContext.getSPI().getPackage().getName();
 
         InputStream stream =
-            (groupContext == null)
+            (getGroupContext() == null)
                 ? null
-                : ClassLoaderUtils.getResourceAsStream(name,
-                                                       groupContext + "." + resourceName,
-                                                       allLoaders);
+                : ClassLoaderUtils.getResourceAsStream(packageName,
+                          getGroupContext() + "." + resourceName,
+                          allLoaders);
 
-        if (stream == null)    
-            stream = ClassLoaderUtils.getResourceAsStream(name,
+        if (stream == null)
+            stream = ClassLoaderUtils.getResourceAsStream(packageName,
                                                           resourceName,
                                                           allLoaders);
 
@@ -265,13 +260,13 @@ public class ClassFinder {
 
         // Name of J2EE application file that identifies the service implementation.
         String servicePropertyFile = SERVICE_HOME + spiContext.getSPI().getName();
-        
+
         ClassLoader contextLoader = spiContext.getThreadContextClassLoader();
-    
+
         InputStream is = (contextLoader == null
                           ? ClassLoader.getSystemResourceAsStream(servicePropertyFile)
                           : contextLoader.getResourceAsStream(servicePropertyFile));
-                          
+
         if( is != null ) {
             try {
                 try {

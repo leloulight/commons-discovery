@@ -62,6 +62,7 @@
 package org.apache.commons.discovery;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.io.InputStream;
@@ -354,12 +355,12 @@ public class Discovery {
     /**
      * Find implementation of SPI.
      * 
-     * @param spi Service Provider Interface Class.
-     * 
      * @param groupContext qualifier for the name of the system property
      *        used to find the service implementation.  If a system property
      *        cannot be found by that name, then the unqualified property
      *        name is used.
+     * 
+     * @param spi Service Provider Interface Class.
      * 
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
@@ -374,23 +375,23 @@ public class Discovery {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static Object find(Class spi,
-                              String groupContext,
+    public static Object find(String groupContext,
+                              Class spi,
                               Properties properties,
                               String defaultImplName)
         throws DiscoveryException
     {
-        return find(Discovery.class, spi, groupContext, properties, defaultImplName);
+        return find(Discovery.class, groupContext, spi, properties, defaultImplName);
     }
     
     /**
      * Find implementation of SPI unique to a group context.
      * 
-     * @param spi Service Provider Interface Class.
-     * 
      * @param groupContext qualifier for the property file name and for
      *        the system property name used to find the service implementation.
      *        If not found, the unqualified names are used.
+     * 
+     * @param spi Service Provider Interface Class.
      * 
      * @param propertiesFileName The (qualified and unqualified) property file
      *        name.
@@ -404,13 +405,13 @@ public class Discovery {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */    
-    public static Object find(Class spi,
-                              String groupContext,
+    public static Object find(String groupContext,
+                              Class spi,
                               String propertiesFileName,
                               String defaultImplName)
         throws DiscoveryException
     {
-        return find(Discovery.class, spi, groupContext, propertiesFileName, defaultImplName);
+        return find(Discovery.class, groupContext, spi, propertiesFileName, defaultImplName);
     }
 
     
@@ -521,7 +522,7 @@ public class Discovery {
                               String defaultImplName)
         throws DiscoveryException
     {
-        return loadClass(new ClassFinder(spi, nullGroupContext, rootFinderClass),
+        return loadClass(new ClassFinder(nullGroupContext, spi, rootFinderClass),
                          properties, defaultImplName);
     }
     
@@ -550,7 +551,7 @@ public class Discovery {
                               String defaultImplName)
         throws DiscoveryException
     {
-        ClassFinder classFinder = new ClassFinder(spi, nullGroupContext, rootFinderClass);
+        ClassFinder classFinder = new ClassFinder(nullGroupContext, spi, rootFinderClass);
         return loadClass(classFinder,
                          loadProperties(classFinder, propertiesFileName),
                          defaultImplName);
@@ -562,11 +563,11 @@ public class Discovery {
      * @param rootFinderClass Wrapper class used by end-user, that ultimately
      *        calls this finder method.
      * 
-     * @param spi Service Provider Interface Class.
-     * 
      * @param groupContext qualifier for the property file name and for
      *        the system property name used to find the service implementation.
      *        If not found, the unqualified names are used.
+     * 
+     * @param spi Service Provider Interface Class.
      * 
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
@@ -582,13 +583,13 @@ public class Discovery {
      *            (or extend) the SPI.
      */    
     public static Object find(Class rootFinderClass,
-                              Class spi,
                               String groupContext,
+                              Class spi,
                               Properties properties,
                               String defaultImplName)
         throws DiscoveryException
     {
-        return loadClass(new ClassFinder(spi, groupContext, rootFinderClass),
+        return loadClass(new ClassFinder(groupContext, spi, rootFinderClass),
                          properties, defaultImplName);
     }
 
@@ -598,11 +599,11 @@ public class Discovery {
      * @param rootFinderClass Wrapper class used by end-user, that ultimately
      *        calls this finder method.
      * 
-     * @param spi Service Provider Interface Class.
-     * 
      * @param groupContext qualifier for the property file name and for
      *        the system property name used to find the service implementation.
      *        If not found, the unqualified names are used.
+     * 
+     * @param spi Service Provider Interface Class.
      * 
      * @param propertiesFileName The property file name.
      * 
@@ -616,13 +617,13 @@ public class Discovery {
      *            (or extend) the SPI.
      */    
     public static Object find(Class rootFinderClass,
-                              Class spi,
                               String groupContext,
+                              Class spi,
                               String propertiesFileName,
                               String defaultImplName)
         throws DiscoveryException
     {
-        ClassFinder classFinder = new ClassFinder(spi, groupContext, rootFinderClass);
+        ClassFinder classFinder = new ClassFinder(groupContext, spi, rootFinderClass);
         return loadClass(classFinder,
                          loadProperties(classFinder, propertiesFileName),
                          defaultImplName);
@@ -664,7 +665,9 @@ public class Discovery {
         ClassLoader[] allLoaders = classFinder.getAllLoaders();
 
         for (int idx = 0; service == null  &&  idx < allLoaders.length; idx++) {
-            service = get(classFinder.getSPIContext().getSPI().getName(), allLoaders[idx]);
+            service = get(classFinder.getGroupContext(),
+                          classFinder.getSPIContext().getSPI().getName(),
+                          allLoaders[idx]);
         }
 
         if (service != null) {        
@@ -700,7 +703,10 @@ public class Discovery {
             if (clazz != null) {
                 try {
                     service = clazz.newInstance();
-                    put(classFinder.getSPIContext().getSPI().getName(), clazz.getClassLoader(), service);
+                    put(classFinder.getGroupContext(),
+                        classFinder.getSPIContext().getSPI().getName(),
+                        clazz.getClassLoader(),
+                        service);
                 } catch (Exception e) {
                     throw new DiscoveryException("Unable to instantiate " + classFinder.getSPIContext().getSPI().getName(), e);
                 }
@@ -760,83 +766,149 @@ public class Discovery {
     /************************* SPI LIFE-CYCLE SUPPORT *************************/
     
     /**
-     * Release any internal references to previously created service instances,
-     * after calling the instance method <code>release()</code> on each of them.
+     * Release any internal references to previously created service instances
+     * associated with the 'null' (default) groupContext.  The
+     * <code>release()</code> method is called for service instances that
+     * implement the <code>Service</code> interface.
+     * 
+     * Equivalent to calling releaseAll(null) for the default groupContext.
      *
-     * This is useful environments like servlet containers,
+     * This is useful in environments like servlet containers,
      * which implement application reloading by throwing away a ClassLoader.
      * Dangling references to objects in that class loader would prevent
      * garbage collection.
      */
     public static void releaseAll() {
-        synchronized (service_caches) {
-            Enumeration cache = service_caches.elements();
-            while (cache.hasMoreElements()) {
-                ((ServiceCache)cache.nextElement()).releaseAll();
-            }
-            service_caches.clear();
-        }
+        releaseAll(nullGroupContext);
     }
     
     /**
-     * Release any internal references to previously created instances of SPI,
-     * after calling the instance method <code>release()</code> on each of them.
-     *
-     * This is useful environments like servlet containers,
+     * Release any internal references to previously created service instances
+     * associated with the <code>groupContext</code>.  The
+     * <code>release()</code> method is called for service instances that
+     * implement the <code>Service</code> interface.
+     * 
+     * This is useful in environments like servlet containers,
      * which implement application reloading by throwing away a ClassLoader.
      * Dangling references to objects in that class loader would prevent
      * garbage collection.
      */
-    public static void releaseAll(Class spi) {
+    public static void releaseAll(String groupContext) {
+        synchronized (group_caches) {
+            Hashtable service_caches = (Hashtable)group_caches.get(groupContext);
+
+            if (service_caches != null) {
+                Enumeration caches = service_caches.elements();
+
+                while (caches.hasMoreElements()) {
+                    ((ServiceCache)caches.nextElement()).releaseAll();
+                }
+
+                service_caches.clear();
+
+                group_caches.remove(groupContext);
+            }
+        }
+    }
+    
+    /**
+     * Release any internal references to a previously created service instances
+     * associated with the <code>groupContext</code>.
+     * Release any internal references to previously created instances of SPI,
+     * after calling the instance method <code>release()</code> on each of them.
+     */
+    public static void releaseAll(String groupContext, Class spi) {
         if (spi != null) {
-            synchronized (service_caches) {
-                ServiceCache cache = (ServiceCache)service_caches.get(spi.getName());
-                if (cache != null) {
-                    cache.releaseAll();
+            synchronized (group_caches) {
+                Hashtable service_caches = (Hashtable)group_caches.get(groupContext);
+
+                if (service_caches != null) {
+                    ServiceCache cache = (ServiceCache)service_caches.get(spi.getName());
+
+                    if (cache != null) {
+                        cache.releaseAll();
+                    }
+                    
+                    service_caches.remove(spi.getName());
                 }
             }
         }
     }
 
     
-    /************************* SPI CACHE SUPPORT *************************/
+    /************************* SPI CACHE SUPPORT *************************
+     * 
+     * Cache by
+     * - Group : Cache is a <code>HashMap</code> (unsynchronized, allows null keys(required))
+     *           keyed by groupContext (<code>String</code>).
+     *           Each element is a <code>Hashtable</code> (unsynchronized, no non-null).
+     * 
+     * - SPI : Cache is a <code>Hashtable</code>
+     *         keyed by interface (<code>Class</code>).
+     *         Each element is a <code>ServiceCache</code>.
+     * 
+     * - ClassLoader : Cache is a <code>ServiceCache</code>
+     *                 keyed by class loader (<code>ClassLoader</code>)
+     *                 Each element is an SPI implementation (<code>Object</code>).
+     */
 
     /**
-     * Sets of previously encountered service interfaces (spis), keyed by the
-     * interface (<code>Class</code>).  Each element is a ServiceCache.
+     * Allows null key, important as default groupContext is null.
      */
-    private static final Hashtable service_caches = new Hashtable(13);
+    private static final HashMap group_caches = new HashMap(13);
+//    private static final Hashtable service_caches = new Hashtable(13);
+
     
     /**
      * Get service keyed by spi & classLoader.
-     * Special cases null bootstrap classloader (classLoader == null).
+     * Special cases null bootstrap classloader (classLoader == null)
+     * via ServiceCache.get().
      */
-    private static Object get(String spi, ClassLoader classLoader)
+    private static Object get(String groupContext, String spi, ClassLoader classLoader)
     {
-        ServiceCache cache = (spi == null)
-                             ? null
-                             : (ServiceCache)service_caches.get(spi);
-        
-        return (cache == null)
-                ? null
-                : cache.get(classLoader);
+        Object service = null;
+
+        if (spi != null) {
+            synchronized (group_caches) {
+                Hashtable service_caches = (Hashtable)group_caches.get(groupContext);
+
+                if (service_caches != null) {
+                    ServiceCache cache = (ServiceCache)service_caches.get(spi);
+
+                    if (cache != null)
+                        service = cache.get(classLoader);
+                }
+            }
+        }
+
+        return service;
     }
     
     /**
      * Put service keyed by spi & classLoader.
-     * Special cases null bootstrap classloader (classLoader == null).
+     * Special cases null bootstrap classloader (classLoader == null)
+     * via ServiceCache.put().
      */
-    private static void put(String spi, ClassLoader classLoader, Object service)
+    private static void put(String groupContext, String spi, ClassLoader classLoader, Object service)
     {
         if (spi != null  &&  service != null) {
-            ServiceCache cache = (ServiceCache)service_caches.get(spi);
-            
-            if (cache == null) {
-                cache = new ServiceCache();
-                service_caches.put(spi, cache);
+            synchronized (group_caches) {
+                Hashtable service_caches = (Hashtable)group_caches.get(groupContext);
+                
+                if (service_caches == null) {
+                    service_caches = new Hashtable(13);
+                    group_caches.put(groupContext, service_caches);
+                }
+
+                ServiceCache cache = (ServiceCache)service_caches.get(spi);
+
+                if (cache == null) {
+                    cache = new ServiceCache();
+                    service_caches.put(spi, cache);
+                }
+
+                cache.put(classLoader, service);
             }
-            
-            cache.put(classLoader, service);
         }
     }
 }
