@@ -95,12 +95,20 @@ public class Environment {
     
     private boolean searchLibOnly;
     
+    public Environment() {
+        this(defaultGroupContext, defaultRootDiscoveryClass, null);
+    }
+    
     public Environment(Class rootDiscoveryClass) {
-        this(defaultGroupContext, rootDiscoveryClass, defaultRootDiscoveryClass);
+        this(defaultGroupContext, rootDiscoveryClass, null);
+    }
+    
+    public Environment(String groupContext) {
+        this(groupContext, defaultRootDiscoveryClass, null);
     }
     
     public Environment(String groupContext, Class rootDiscoveryClass) {
-        this(groupContext, rootDiscoveryClass, defaultRootDiscoveryClass);
+        this(groupContext, rootDiscoveryClass, null);
     }
     
     public Environment(String groupContext,

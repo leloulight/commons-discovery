@@ -70,6 +70,7 @@ import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.base.SPInterface;
 import org.apache.commons.discovery.load.ClassLoaderUtils;
+import org.apache.commons.discovery.tools.EnvironmentCache;
 
 
 /**
@@ -498,9 +499,7 @@ public class DiscoverSingleton {
          * Return previously registered service object (not class)
          * for this spi, bound only to current thread context class loader.
          */
-        Object service = get(env.getThreadContextClassLoader(),
-                             env.getGroupContext(),
-                             spi.getSPName());
+        Object service = get(env, spi.getSPName());
 
         if (service == null) {
             try {
@@ -508,10 +507,7 @@ public class DiscoverSingleton {
                     DiscoverClass.newInstance(env, spi, properties, defaultImpl);
     
                 if (service != null) {
-                    put(env.getThreadContextClassLoader(),
-                        env.getGroupContext(),
-                        spi.getSPName(),
-                        service);
+                    put(env, spi.getSPName(), service);
                 }
             } catch (DiscoveryException de) {
                 throw de;
@@ -557,9 +553,7 @@ public class DiscoverSingleton {
          * Return previously registered service object (not class)
          * for this spi, bound only to current thread context class loader.
          */
-        Object service = get(env.getThreadContextClassLoader(),
-                             env.getGroupContext(),
-                             spi.getSPName());
+        Object service = get(env, spi.getSPName());
 
         if (service == null) {
             try {
@@ -569,10 +563,7 @@ public class DiscoverSingleton {
                                                     defaultImpl);
     
                 if (service != null) {
-                    put(env.getThreadContextClassLoader(),
-                        env.getGroupContext(),
-                        spi.getSPName(),
-                        service);
+                    put(env, spi.getSPName(), service);
                 }
             } catch (DiscoveryException de) {
                 throw de;
@@ -598,31 +589,8 @@ public class DiscoverSingleton {
      * Dangling references to objects in that class loader would prevent
      * garbage collection.
      */
-    public static void release() {
-        ClassLoader threadContextClassLoader =
-            ClassLoaderUtils.getThreadContextClassLoader();
-
-        /**
-         * 'null' (bootstrap/system class loader) thread context class loader
-         * is ok...  Until we learn otherwise.
-         */
-        synchronized (root_cache) {
-            HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
-
-            if (groups != null) {
-                Iterator groupIter = groups.values().iterator();
-
-                while (groupIter.hasNext()) {
-                    HashMap spis = (HashMap)groupIter.next();
-                    
-                    if (spis != null) {
-                        spis.clear();
-                    }
-                }
-                groups.clear();
-            }
-            root_cache.remove(threadContextClassLoader);
-        }
+    public static synchronized void release() {
+        root_cache.release();
     }
     
     
@@ -632,26 +600,27 @@ public class DiscoverSingleton {
      * If the SPI instance implements <code>Service</code>, then call
      * <code>release()</code>.
      */
-    public static void release(String groupContext) {
-        ClassLoader threadContextClassLoader =
-            ClassLoaderUtils.getThreadContextClassLoader();
+    public static synchronized void release(String groupContext) {
+        HashMap spis = (HashMap)root_cache.get(new Environment(groupContext));
+        
+        if (spis != null) {
+            spis.clear();
+        }
+        
+        root_cache.release(new Environment(groupContext));
+    }
 
-        /**
-         * 'null' (bootstrap/system class loader) thread context class loader
-         * is ok...  Until we learn otherwise.
-         */
-        synchronized (root_cache) {
-            HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
-
-            if (groups != null) {
-                HashMap spis = (HashMap)groups.get(groupContext);
-                
-                if (spis != null) {
-                    spis.clear();
-                }
-                groups.remove(groupContext);
-            }
-            root_cache.remove(threadContextClassLoader);
+    /**
+     * Release any internal references to a previously created service
+     * instance associated with the current thread context class loader.
+     * If the SPI instance implements <code>Service</code>, then call
+     * <code>release()</code>.
+     */
+    public static synchronized void release(String groupContext, Class spiClass) {
+        HashMap spis = (HashMap)root_cache.get(new Environment(groupContext));
+        
+        if (spis != null) {
+            spis.remove(spiClass.getName());
         }
     }
 
@@ -661,36 +630,7 @@ public class DiscoverSingleton {
      * If the SPI instance implements <code>Service</code>, then call
      * <code>release()</code>.
      */
-    public static void release(String groupContext, Class spiClass) {
-        ClassLoader threadContextClassLoader =
-            ClassLoaderUtils.getThreadContextClassLoader();
-
-        /**
-         * 'null' (bootstrap/system class loader) thread context class loader
-         * is ok...  Until we learn otherwise.
-         */
-        if (spiClass != null) {
-            synchronized (root_cache) {
-                HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
-
-                if (groups != null) {
-                    HashMap spis = (HashMap)groups.get(groupContext);
-
-                    if (spis != null) {
-                        spis.remove(spiClass.getName());
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Release any internal references to a previously created service
-     * instance associated with the current thread context class loader.
-     * If the SPI instance implements <code>Service</code>, then call
-     * <code>release()</code>.
-     */
-    public static void release(Class spiClass) {
+    public static synchronized void release(Class spiClass) {
         release(Environment.defaultGroupContext, spiClass);
     }
     
@@ -723,75 +663,41 @@ public class DiscoverSingleton {
      */
 
     /**
-     * Allows null key, important as default groupContext is null.
+     * Implements first two levels of the cache (loader & groupContext).
+     * Allows null keys, important as default groupContext is null.
      */
-    private static final HashMap root_cache = new HashMap();
+    private static final EnvironmentCache root_cache = new EnvironmentCache();
 
-    /**
-     * Initial hash size for SPI's, default just seem TO big today..
-     */
-    private static final int smallHashSize = 13;
-    
     /**
      * Get service keyed by spi & classLoader.
      */
-    static Object get(ClassLoader loader, String groupContext, String spiName)
+    private static synchronized Object get(Environment env,
+                                           String spiName)
     {
-        Object service = null;
-
-        /**
-         * 'null' (bootstrap/system class loader) thread context class loader
-         * is ok...  Until we learn otherwise.
-         */
-        synchronized (root_cache) {
-            HashMap groups =
-                (HashMap)root_cache.get(loader);
-
-            if (groups != null) {
-                HashMap spis =
-                    (HashMap)groups.get(groupContext);
-
-                if (spis != null) {
-                    
-                    service = (Object)spis.get(spiName);
-                }
-            }
-        }
-
-        return service;
+        HashMap spis = (HashMap)root_cache.get(env);
+        
+        return (spis != null)
+               ? spis.get(spiName)
+               : null;
     }
     
     /**
      * Put service keyed by spi & classLoader.
      */
-    static void put(ClassLoader loader, String groupContext, String spiName,
-                    Object service)
+    private static synchronized void put(Environment env,
+                                         String spiName,
+                                         Object service)
     {
-        /**
-         * 'null' (bootstrap/system class loader) thread context class loader
-         * is ok...  Until we learn otherwise.
-         */
         if (service != null)
         {
-            synchronized (root_cache) {
-                HashMap groups =
-                    (HashMap)root_cache.get(loader);
-                    
-                if (groups == null) {
-                    groups = new HashMap(smallHashSize);
-                    root_cache.put(loader, groups);
-                }
-
-                HashMap spis =
-                    (HashMap)groups.get(groupContext);
-
-                if (spis == null) {
-                    spis = new HashMap(smallHashSize);
-                    groups.put(groupContext, spis);
-                }
-
-                spis.put(spiName, service);
+            HashMap spis = (HashMap)root_cache.get(env);
+            
+            if (spis == null) {
+                spis = new HashMap(root_cache.smallHashSize);
+                root_cache.put(env, spis);
             }
+            
+            spis.put(spiName, service);
         }
     }
 }
