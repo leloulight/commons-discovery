@@ -11,18 +11,26 @@
 <h3>(0) Rationale</h3>
 
 <p>
-Service Discovery provides fundamental discovery pattern used in many projects.
+Discovery locates and manages singleton class instances,
+loading configuration and instantiating if necessary,
+that implement a given Java interface.
+Discovery is, in fact, a pattern used in many projects
+including JAXP (SaxParserFactory and others) and commons-logging (LogFactory).
+By extracting this fundamental pattern,
+other projects can reuse the existing pattern,
+and take advantage of improvements to the pattern as Discovery evolves.
 </p>
 <p>
-It also provides the resources to make such discovery easily adaptable
-for use within a project whenever/wherever a pluggable interface is
-to be introduced.
+Discovery improves over previous implementations
+by establishing facilities for working within managed environments.
+These allow configuration and property overrides without appealing
+to the global System properties (which are scoped across an entire JVM).
 </p>
 
 <h3>(1) Scope of the Package</h3>
 
 <p>
-This is not indended to be a replacement to be used by the user, but rather
+This is not indended to be a replacement to be used strictly by the user, but rather
 a replacement to be used directly by projects.  Use by the user is also reasonable,
 but limited due to 'keeping this simple'.  In particular, there is no configuration
 for this discovery service, it relies soley on usage patterns.

@@ -7,10 +7,10 @@
   <currentVersion>1.0-dev</currentVersion>
   <inceptionYear>2002</inceptionYear>
   <gumpRepositoryId>jakarta</gumpRepositoryId>
-  <shortDescription>Commons Database Connection Pooling</shortDescription>
+  <shortDescription>Commons Discovery</shortDescription>
 
   <description>
-    Commons Database Connection Pooling
+    Commons Discovery
   </description>
   
   <developers>
