@@ -63,16 +63,34 @@ package org.apache.commons.discovery.jdk;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
+
+import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.logging.Log;
 
 
 /**
  * @author Richard A. Sitze
  */
 class JDK12Hooks extends JDKHooks {
+    
+    /**
+     * Logger
+     */
+    private static Log log = DiscoveryLogFactory.newLog(JDK12Hooks.class);
+    
+    
     private static final ClassLoader systemClassLoader
         = findSystemClassLoader();
 
+    /**
+     * Must be implemented to use DiscoveryLogFactory
+     */
+    public static void setLog(Log _log) {
+        log = _log;
+    }
+    
     /**
      * The thread context class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
@@ -146,9 +164,35 @@ class JDK12Hooks extends JDKHooks {
          * and eliminate the redundent element.
          */
         
-        final URL first = (URL)loader.getResource(resourceName);
-        final Enumeration rest = loader.getResources(resourceName);
+        final URL first = loader.getResource(resourceName);
         
+        // XXX: Trying to avoid JBoss UnifiedClassLoader problem
+        
+        Enumeration resources;
+        
+        if(first == null) {
+            log.debug("Could not find resource: " + resourceName);
+            resources = Collections.enumeration(Collections.EMPTY_LIST);
+            
+        } else {
+        
+            try {
+                
+                resources = loader.getResources(resourceName);
+                
+            } catch (RuntimeException ex) {
+                log.error("Exception occured during attept to get " + resourceName 
+                        + " from " + first, ex);
+                resources = Collections.enumeration(Collections.EMPTY_LIST);
+            }
+            
+            resources = getResourcesFromUrl(first, resources);
+        }
+        
+        return resources;
+    }
+    
+    private static Enumeration getResourcesFromUrl(final URL first, final Enumeration rest) {
         return new Enumeration() {
             private boolean firstDone = (first == null);
             private URL next = getNext();

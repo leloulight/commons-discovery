@@ -316,6 +316,7 @@ public class TestAll extends TestCase {
         DiscoverResources discovery = new DiscoverResources(loaders);
         ResourceIterator iter = discovery.findResources(name);
         int count = 0;
+        
         while (iter.hasNext()) {
             Resource resource = iter.nextResource();
             URL url = resource.getResource();
@@ -323,7 +324,7 @@ public class TestAll extends TestCase {
                 System.out.println("URL = " + url.toString());
                 
                 if (url.getFile().indexOf(partialPaths[count]) == -1) {
-                    fail("expected to locate URL containing " + partialPaths[count]);
+                    fail(url + " does not contain " + partialPaths[count]);
                 }
                 count++;
             }
