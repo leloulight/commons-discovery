@@ -57,58 +57,38 @@
 
 package org.apache.commons.discovery;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Properties;
 import java.util.Vector;
-
-import org.apache.commons.discover.jdk.JDKHooks;
 
 
 /**
- * Small ant task that will use discovery to locate a particular impl.
- * and display all values.
+ * There are many different contexts in which
+ * loaders can be used.  This provides a holder
+ * for a set of class loaders, so that they
+ * don't have to be build back up everytime...
  *
- * You can execute this and save it with an id, then other classes can use it.
- *
+ * @author Richard A. Sitze
+ * @author Craig R. McClanahan
  * @author Costin Manolache
  */
-public class ServiceDiscoveryTask
+public class ClassLoaders
 {
-    String name;
-    int debug=0;
-    ResourceInfo drivers[]=null;
-        
-    public void setServiceName(String name ) {
-        this.name=name;
+    protected Vector classLoaders=new Vector();
+    
+    /** Construct a new class loader set
+     */
+    public ClassLoaders() {
     }
 
-    public void setDebug(int i) {
-        this.debug=debug;
+    /**
+     * Specify a new class loader to be used in searching.
+     * The order of loaders determines the order of the result.
+     * It is recommended to add the most specific loaders first.
+     */
+    public void addClassLoader(ClassLoader loader) {
+        classLoaders.addElement(loader);
     }
-
-    public ResourceInfo[] getServiceInfo() {
-        return drivers;
-    }
-
-    public void execute() throws Exception {
-        System.out.println("XXX ");
-        
-        ClassLoaders classLoaders = new ClassLoaders();
-        classLoaders.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
-        classLoaders.addClassLoader( this.getClass().getClassLoader() );
-
-        ResourceDiscovery disc=ResourceDiscovery.newInstance();
-        disc.setClassLoaders(classLoaders);
-        
-        drivers=disc.findResources(name);
-
-        if( debug > 0 ) {
-            for( int i=0; i<drivers.length; i++ ) {
-                System.out.println("Found " + drivers[i] );
-            }
-        }
+    
+    public Vector getClassLoaders() {
+        return classLoaders;
     }
 }
