@@ -108,9 +108,9 @@ public class DiscoverResources
                     if (log.isDebugEnabled())
                         log.debug("getNextResources: search using ClassLoader '" + loader + "'");
                     try {
-                        Enumeration enum = JDKHooks.getJDKHooks().getResources(loader, resourceName);
-                        if (enum != null && enum.hasMoreElements()) {
-                            return enum;
+                        Enumeration e = JDKHooks.getJDKHooks().getResources(loader, resourceName);
+                        if (e != null && e.hasMoreElements()) {
+                            return e;
                         }
                     } catch( IOException ex ) {
                         log.warn("getNextResources: Ignoring Exception", ex);
