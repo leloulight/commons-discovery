@@ -7,3 +7,5 @@
 4. NLS enable
 
 5. Create a finer granularity of exceptions.. we only have one for all situations.
+
+6. Figure out which to keep: src or sandbox..
