@@ -57,81 +57,108 @@
 
 package org.apache.commons.discovery;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Properties;
-import java.util.Vector;
-
+import java.io.*;
+import java.util.*;
+import java.net.*;
 
 /**
+ * [this was ServiceDiscovery12... the 1.1 versus 1.2 issue
+ * has been abstracted to org.apache.commons.discover.jdk.JDKHooks]
+ * 
  * <p>Implement the JDK1.3 'Service Provider' specification.
  * ( http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html )
  * </p>
  *
- * This class supports any VM, including JDK1.1. If a higher VM is
- * detected a more efficient and complete implementation will be used.
+ * This class supports any VM, including JDK1.1, via
+ * org.apache.commons.discover.jdk.JDKHooks.
  *
  * The caller will first configure the discoverer by adding ( in the desired
  * order ) all the places to look for the META-INF/services. Currently
  * we support loaders.
  *
- * The findServices() method will check every loader.
- *
- * Note. On JDK1.1 there is no getResources() method. We emulate this by
- * using introspection and doing the lookup ourself, using the list of URLs.
- * If the loader has a method getResources(), it'll be used. If not, we'll look
- * for a method named getURLs().
+ * The findResources() method will check every loader.
  *
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
  * @author James Strachan
  */
-public abstract class ServiceDiscovery
+public class ServiceDiscovery extends ResourceDiscovery
 {
     protected static final String SERVICE_HOME = "META-INF/services/";
-    
-    protected Vector classLoaders=new Vector();
     
     /** Construct a new service discoverer
      */
     protected ServiceDiscovery() {
     }
-
-    /**
-     * Creates a new instance of a ServiceDiscovery instance based on the 
-     * abilities of the current JDK. The later the JDK the neater the implementation
-     * of service discovery. 
-     * ServiceDiscovery12 will be used on JDK 1.2 or later JDKs.
-     */
-    public static ServiceDiscovery newInstance() {
-        // This is _not_ singleton. 
-        return new ServiceDiscovery12();
-        // XXX Check if JDK1.1 is used and return the specific version 
-    }
-
-    /**
-     * @deprecated  please now use {@link #newInstance()}
-     */
-    public static ServiceDiscovery getServiceDiscovery() {
-        return newInstance();
-    }
-
-    /** Specify a new class loader to be used in searching.
-     *   The order of loaders determines the order of the result.
-     *  It is recommended to add the most specific loaders first.
-     */
-    public void addClassLoader(ClassLoader loader) {
-        classLoaders.addElement( loader );
-    }
-
-    /** Convenience method to find the thread class loader.
-     *  Usefull in jdk1.1, to avoid other introspection hacks.
-     */
-    public abstract ClassLoader getThreadClassLoader();
  
-    public abstract ResourceInfo[] findServices( String name );
+    public ResourceInfo[] findResources(String resourceName) {
+        ResourceInfo[] services =
+            super.findResources(SERVICE_HOME + resourceName);
+            
+        // use each loader to find if META-INF/services.
+        // find all resources, etc.
+    
+        Vector results = new Vector();
+        
+        // For each service resource
+        for( int i=0; i<services.length ; i++ ) {
+            ResourceInfo info = services[i];
 
+            try {
+                URL url = info.getURL();
+
+                /**
+                 * URL will be of the form:
+                 *  baseURL/META-INF/services/resourceName
+                 */
+                URL baseURL=new URL( url, "../../.." );
+                System.out.println("XXX BaseURL " + baseURL);
+                
+                InputStream is = url.openStream();
+                
+                if( is != null ) {
+                    try {
+                        // This code is needed by EBCDIC and other strange systems.
+                        // It's a fix for bugs reported in xerces
+                        BufferedReader rd;
+                        try {
+                            rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                        } catch (java.io.UnsupportedEncodingException e) {
+                            rd = new BufferedReader(new InputStreamReader(is));
+                        }
+                        
+                        try {
+                            String serviceImplName;
+                            while( (serviceImplName = rd.readLine()) != null) {
+                                serviceImplName.trim();
+                                if( "".equals(serviceImplName) )
+                                    continue;
+                                if( serviceImplName.startsWith( "#" ))
+                                    continue;
+                                ResourceInfo sinfo =
+                                    new ResourceInfo(serviceImplName,
+                                                     info.getLoader(),
+                                                     baseURL);
+                                results.add(sinfo);
+                                System.out.println("XXX " + sinfo.toString());
+                            }
+                        } finally {
+                            rd.close();
+                        }
+                    } finally {
+                        is.close();
+                    }
+                }
+            } catch (MalformedURLException ex) {
+                ex.printStackTrace();
+            } catch (IOException ioe) {
+                ; // ignore
+            }
+        }
+
+        ResourceInfo resultA[]=new ResourceInfo[ results.size() ];
+        results.copyInto( resultA );
+        return resultA;
+    }
 }

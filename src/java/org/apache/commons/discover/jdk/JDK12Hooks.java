@@ -59,108 +59,77 @@
  *
  */
 
-package org.apache.commons.discovery.base;
+package org.apache.commons.discover.jdk;
 
-import org.apache.commons.discover.jdk.JDKHooks;
-import org.apache.commons.discovery.DiscoverClass;
-import org.apache.commons.discovery.load.ClassLoaderUtils;
+import java.util.Enumeration;
+import java.io.IOException;
 
 
 /**
- * Represents a environment context:
- * the Thread Context Class Loader, the group context id, and the
- * root discovery class (class representing the discovery front-door).
- * 
  * @author Richard A. Sitze
  */
-public class Environment {
+class JDK12Hooks extends JDKHooks {
     /**
-     * Readable placeholder for a null value.
+     * The thread context class loader is available for JDK 1.2
+     * or later, if certain security conditions are met.
+     * 
+     * @return The thread context class loader, if available.
+     *         Otherwise return null.
      */
-    public static final String     defaultGroupContext = null;
-    
-    public static final Class      defaultRootDiscoveryClass
-        = DiscoverClass.class;
-
-    /**
-     * Thread context class loader or null if not available (JDK 1.1).
-     * Wrapped bootstrap classloader if classLoader == null.
-     */
-    private final ClassLoader threadContextClassLoader =
-        JDKHooks.getJDKHooks().getThreadContextClassLoader();
-
-    private final String groupContext;
-
-    private final Class rootDiscoveryClass;
-    private final Class callingClass;
-    
-    private boolean searchLibOnly;
-    
-    public Environment() {
-        this(defaultGroupContext, defaultRootDiscoveryClass, null);
-    }
-    
-    public Environment(Class rootDiscoveryClass) {
-        this(defaultGroupContext, rootDiscoveryClass, null);
-    }
-    
-    public Environment(String groupContext) {
-        this(groupContext, defaultRootDiscoveryClass, null);
-    }
-    
-    public Environment(String groupContext, Class rootDiscoveryClass) {
-        this(groupContext, rootDiscoveryClass, null);
-    }
-    
-    public Environment(String groupContext,
-                       Class rootDiscoveryClass,
-                       Class callingClass) {
-        this.groupContext = groupContext;
-
-        this.rootDiscoveryClass =
-            (rootDiscoveryClass == null)
-            ? defaultRootDiscoveryClass
-            : rootDiscoveryClass;
-
-        /**
-         * Default to rootDiscoveryClass only if
-         * rootDiscoveryClass != defaultRootDiscoveryClass
-         * (otherwise it changes classloader order, see load.Loaders).
-         * MAY BE NULL.
-         */
-        this.callingClass =
-            (callingClass == null  &&
-             rootDiscoveryClass != defaultRootDiscoveryClass)
-            ? rootDiscoveryClass
-            : callingClass;
-            
-        this.searchLibOnly = false;
-    }
-    
     public ClassLoader getThreadContextClassLoader() {
-        return threadContextClassLoader;
+        ClassLoader classLoader;
+        
+        try {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        } catch (SecurityException e) {
+            /**
+             * SecurityException is thrown when
+             * a) the context class loader isn't an ancestor of the
+             *    calling class's class loader, or
+             * b) if security permissions are restricted.
+             * 
+             * For (a), ignore and keep going.  We cannot help but also
+             * ignore (b) with the logic below, but other calls elsewhere
+             * (to obtain a class loader) will re-trigger this exception
+             * where we can make a distinction.
+             */
+            classLoader = null;  // ignore
+        }
+        
+        // Return the selected class loader
+        return classLoader;
     }
     
-    public String getGroupContext() {
-        return groupContext;
-    }
-    
-    public Class getRootDiscoveryClass() {
-        return rootDiscoveryClass;
+    /**
+     * The system class loader is available for JDK 1.2
+     * or later, if certain security conditions are met.
+     * 
+     * @return The system class loader, if available.
+     *         Otherwise return null.
+     */
+    public ClassLoader getSystemClassLoader() {
+        ClassLoader classLoader;
+        
+        try {
+            classLoader = ClassLoader.getSystemClassLoader();
+        } catch (SecurityException e) {
+            /**
+             * Ignore and keep going.
+             */
+            classLoader = null;  // ignore
+        }
+        
+        // Return the selected class loader
+        return classLoader;
     }
 
     /**
-     * May be null
-     */    
-    public Class getCallingClass() {
-        return callingClass;
-    }
-    
-    public void setSearchLibOnly(boolean searchLibOnly) {
-        this.searchLibOnly = searchLibOnly;
-    }
-    
-    public boolean getSearchLibOnly() {
-        return searchLibOnly;
+     * Implement ClassLoader.getResources for JDK 1.1
+     */
+    public Enumeration getResources(ClassLoader loader,
+                                    String resourceName)
+        throws IOException
+    {
+        return loader.getResources(resourceName);
     }
 }

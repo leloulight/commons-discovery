@@ -57,95 +57,81 @@
 
 package org.apache.commons.discovery;
 
-import java.io.*;
-import java.util.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import org.apache.commons.discover.jdk.JDKHooks;
+
 
 /**
- * Version for 1.2+ VMs.
+ * This class supports any VM, including JDK1.1, via
+ * org.apache.commons.discover.jdk.JDKHooks.
+ *
+ * The findResources() method will check every loader.
  *
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
+ * @author James Strachan
  */
-public class ServiceDiscovery12 extends ServiceDiscovery
+public class ResourceDiscovery
 {
+    protected static JDKHooks jdkHooks = JDKHooks.getJDKHooks();
+    
+    protected Vector classLoaders=new Vector();
+    
     /** Construct a new service discoverer
      */
-    protected ServiceDiscovery12() {
+    protected ResourceDiscovery() {
     }
 
-    /** Convenience method to find the thread class loader.
-     *  Usefull in jdk1.1, to avoid other introspection hacks.
+    /**
+     * Creates a new instance of a ResourceDiscovery instance.
      */
-    public ClassLoader getThreadClassLoader() {
-        return Thread.currentThread().getContextClassLoader();
+    public static ResourceDiscovery newInstance() {
+        // This is _not_ singleton.
+        return new ResourceDiscovery();
+        // XXX Check if JDK1.1 is used and return the specific version 
     }
- 
-    public ResourceInfo[] findServices( String name ) {
-        // use each loader to find if META-INF/services.
-        // find all resources, etc.
-    
+
+    /** Specify a new class loader to be used in searching.
+     *   The order of loaders determines the order of the result.
+     *  It is recommended to add the most specific loaders first.
+     */
+    public void addClassLoader(ClassLoader loader) {
+        classLoaders.addElement( loader );
+    }
+
+    public ResourceInfo[] findResources(String resourceName) {
         Vector results = new Vector();
-        
-        String servicePropertyFile = ServiceDiscovery.SERVICE_HOME + name;
 
         // For each loader
         for( int i=0; i<classLoaders.size() ; i++ ) {
             ClassLoader loader=(ClassLoader)classLoaders.elementAt(i);
 
             Enumeration enum=null;
+
             try {
-                enum=loader.getResources( servicePropertyFile );
+                enum=jdkHooks.getResources(loader, resourceName);
             } catch( IOException ex ) {
                 ex.printStackTrace();
             }
             if( enum==null ) continue;
 
             while( enum.hasMoreElements() ) {
-                try {
-                    URL url=(URL)enum.nextElement();
+                URL url=(URL)enum.nextElement();
 
-                    URL baseURL=new URL( url, "../../.." );
-                    System.out.println("XXX BaseURL " + baseURL + " " + url );
-                    
-                    InputStream is = url.openStream();
-                    
-                    if( is != null ) {
-                        try {
-                            // This code is needed by EBCDIC and other strange systems.
-                            // It's a fix for bugs reported in xerces
-                            BufferedReader rd;
-                            try {
-                                rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                            } catch (java.io.UnsupportedEncodingException e) {
-                                rd = new BufferedReader(new InputStreamReader(is));
-                            }
-                            
-                            try {
-                                String serviceImplName;
-                                while( (serviceImplName = rd.readLine()) != null) {
-                                    serviceImplName.trim();
-                                    if( "".equals(serviceImplName) )
-                                        continue;
-                                    if( serviceImplName.startsWith( "#" ))
-                                        continue;
-                                    ResourceInfo sinfo=new ResourceInfo(serviceImplName, loader, baseURL);
-                                    results.add(sinfo);
-                                    System.out.println("XXX " + sinfo.toString());
-                                }
-                            } finally {
-                                rd.close();
-                            }
-                        } finally {
-                            is.close();
-                        }
-                    }
-                } catch (MalformedURLException ex) {
-                    ex.printStackTrace();
-                } catch (IOException ioe) {
-                    ; // ignore
-                }
+                System.out.println("XXX URL " + url );
+                
+                ResourceInfo sinfo = new ResourceInfo(resourceName, loader, url);
+                results.add(sinfo);
+                System.out.println("XXX " + sinfo.toString());
             }
         }
 

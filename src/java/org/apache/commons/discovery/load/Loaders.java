@@ -63,6 +63,7 @@ package org.apache.commons.discovery.load;
 
 import java.io.InputStream;
 
+import org.apache.commons.discover.jdk.JDKHooks;
 import org.apache.commons.discovery.DiscoveryException;
 import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.SPInterface;
@@ -183,7 +184,7 @@ public class Loaders {
         return ClassLoaderUtils.compactUniq(
                 new ClassLoader[] {spiClass.getClassLoader(),
                                    env.getRootDiscoveryClass().getClassLoader(),
-                                   ClassLoaderUtils.getSystemClassLoader()
+                                   JDKHooks.getJDKHooks().getSystemClassLoader()
                                   });
     }
     
@@ -195,7 +196,7 @@ public class Loaders {
                                        : env.getCallingClass().getClassLoader(),
                                    spiClass.getClassLoader(),
                                    env.getRootDiscoveryClass().getClassLoader(),
-                                   ClassLoaderUtils.getSystemClassLoader()
+                                   JDKHooks.getJDKHooks().getSystemClassLoader()
                                   });
     }
 }

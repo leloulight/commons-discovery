@@ -68,6 +68,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.apache.commons.discover.jdk.*;
 import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.base.SPInterface;
@@ -91,6 +92,7 @@ import org.apache.commons.discovery.load.ClassLoaderUtils;
  * have the same thread context class loader... as that will be used
  * to identify cached entries to be released.
  * 
+ * @author Richard A. Sitze
  */
 public class EnvironmentCache {
     /**
@@ -169,7 +171,7 @@ public class EnvironmentCache {
          * is ok...  Until we learn otherwise.
          */
         ClassLoader threadContextClassLoader =
-            ClassLoaderUtils.getThreadContextClassLoader();
+            JDKHooks.getJDKHooks().getThreadContextClassLoader();
 
 //        HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
 //

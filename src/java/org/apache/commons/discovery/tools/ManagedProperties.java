@@ -64,6 +64,7 @@ import java.util.Properties;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+import org.apache.commons.discover.jdk.*;
 import org.apache.commons.discovery.load.ClassLoaderUtils;
 
 
@@ -364,7 +365,7 @@ public class ManagedProperties {
     }
     
     private static final ClassLoader getThreadContextClassLoader() {
-        return ClassLoaderUtils.getThreadContextClassLoader();
+        return JDKHooks.getJDKHooks().getThreadContextClassLoader();
     }
 
     private static final ClassLoader getParent(final ClassLoader classLoader) {

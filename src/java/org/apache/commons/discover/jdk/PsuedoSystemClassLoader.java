@@ -1,4 +1,8 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -55,57 +59,29 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discover.jdk;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Properties;
-import java.util.Vector;
-
-import org.apache.commons.discover.jdk.JDKHooks;
+import java.net.URL;
 
 
 /**
- * Small ant task that will use discovery to locate a particular impl.
- * and display all values.
- *
- * You can execute this and save it with an id, then other classes can use it.
- *
- * @author Costin Manolache
+ * JDK 1.1.x compatible?
+ * There is no direct way to get the system class loader
+ * in 1.1.x, but this should be a good work around...
  */
-public class ServiceDiscoveryTask
-{
-    String name;
-    int debug=0;
-    ResourceInfo drivers[]=null;
-        
-    public void setServiceName(String name ) {
-        this.name=name;
+class PsuedoSystemClassLoader extends ClassLoader {
+    protected Class loadClass(String className, boolean resolve)
+        throws ClassNotFoundException
+    {
+        return findSystemClass(className);
     }
-
-    public void setDebug(int i) {
-        this.debug=debug;
+    
+    public URL getResource(String resName) {
+        return getSystemResource(resName);
     }
-
-    public ResourceInfo[] getServiceInfo() {
-        return drivers;
-    }
-
-    public void execute() throws Exception {
-        System.out.println("XXX ");
-        ResourceDiscovery disc=ResourceDiscovery.newInstance();
-
-        disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
-        disc.addClassLoader( this.getClass().getClassLoader() );
-
-        drivers=disc.findResources(name);
-
-        if( debug > 0 ) {
-            for( int i=0; i<drivers.length; i++ ) {
-                System.out.println("Found " + drivers[i] );
-            }
-        }
+    
+    public InputStream getResourceAsStream(String resName) {
+        return getSystemResourceAsStream(resName);
     }
 }

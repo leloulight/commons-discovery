@@ -59,29 +59,56 @@
  *
  */
 
-package org.apache.commons.discovery.load;
+package org.apache.commons.discover.jdk;
 
-import java.io.InputStream;
-import java.net.URL;
+import java.util.Enumeration;
+import java.io.IOException;
 
 
 /**
- * JDK 1.1.x compatible?
- * There is no direct way to get the system class loader
- * in 1.1.x, but this should be a good work around...
+ * @author Richard A. Sitze
  */
-public class PsuedoSystemClassLoader extends ClassLoader {
-    protected Class loadClass(String className, boolean resolve)
-        throws ClassNotFoundException
+class JDK11Hooks extends JDKHooks {
+    private static final ClassLoader systemClassLoader
+        = new PsuedoSystemClassLoader();
+
+
+    /**
+     * The thread context class loader is available for JDK 1.2
+     * or later, if certain security conditions are met.
+     * 
+     * @return The thread context class loader, if available.
+     *         Otherwise return null.
+     */
+    public ClassLoader getThreadContextClassLoader() {
+        return null;
+    }
+    
+    /**
+     * The system class loader is available for JDK 1.2
+     * or later, if certain security conditions are met.
+     * 
+     * @return The system class loader, if available.
+     *         Otherwise return null.
+     */
+    public ClassLoader getSystemClassLoader() {
+        return systemClassLoader;
+    }
+
+    /**
+     * Implement ClassLoader.getResources for JDK 1.1
+     * 
+     * On JDK1.1 there is no getResources() method. We emulate this by
+     * using introspection and doing the lookup ourself, using the list
+     * of URLs, via getURLs().
+     */
+    public Enumeration getResources(ClassLoader loader,
+                                    String resourceName)
+        throws IOException
     {
-        return findSystemClass(className);
-    }
-    
-    public URL getResource(String resName) {
-        return getSystemResource(resName);
-    }
-    
-    public InputStream getResourceAsStream(String resName) {
-        return getSystemResourceAsStream(resName);
+        /**
+         * Not yet implemented...
+         */
+        return null;
     }
 }
