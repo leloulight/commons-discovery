@@ -18,9 +18,9 @@
     </links>
 
     <menu name="Commons Discovery">
-      <item name="Overview"
-            href="/index.html"/>
-          
+      <item name="Overview" href="/index.html"/>
+      <item name="Best practices" href="/best-practices.html"/>
+      <item name="Guidelines" href="/adc-guidelines.html"/>
     </menu>
     
     &commons-nav;
