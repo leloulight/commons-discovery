@@ -208,7 +208,7 @@ public class DefaultDiscoverStrategy
             }
         }
 
-        // Last, try to find a service by using the JDK1.3 jar
+        // Last, try to find services by using the JDK1.3 jar
         // discovery mechanism.
         Enumeration classNames = getJDK13ClassNames(env.getThreadContextClassLoader(), spiName);
         while (classNames.hasMoreElements()) {

@@ -169,11 +169,11 @@ public class DefaultLoadStrategy implements LoadStrategy {
             implClass.load(getLoaders(env.getSearchLibOnly()));
         } else {
             // All else fails: try the fallback implementation class,
-            // but limit loaders to 'system' loaders, in an
+            // but limit loaders to library loaders, in an
             // attempt to ensure that the default picked up is
             // the one that was intended.
-            implClass = defaultImpl;
-            if (implClass != null) {
+            if (defaultImpl != null) {
+                implClass = defaultImpl;
                 implClass.load(getLoaders(true));
             }
         }
