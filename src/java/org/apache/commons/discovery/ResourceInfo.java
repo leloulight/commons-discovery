@@ -66,13 +66,13 @@ import java.util.Vector;
 import java.net.URL;
 
 /**
- * 'Service' located by the discovery.
+ * 'Resource' located by discovery.
  * 
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
  */
-public class ResourceInfo 
+public class ResourceInfo
 {
     String      resourceName;
     ClassLoader loader;
