@@ -66,7 +66,6 @@ import java.util.Vector;
 import org.apache.commons.discovery.Resource;
 import org.apache.commons.discovery.ResourceDiscover;
 import org.apache.commons.discovery.ResourceIterator;
-import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
@@ -151,7 +150,7 @@ public class DiscoverNamesInFile
 
             private int idx = 0;
             private Vector classNames = null;
-            private ResourceName resource = null;
+            private String resource = null;
             
             public boolean hasNext() {
                 if (resource == null) {
@@ -160,13 +159,13 @@ public class DiscoverNamesInFile
                 return resource != null;
             }
             
-            public ResourceName nextResourceName() {
-                ResourceName element = resource;
+            public String nextResourceName() {
+                String element = resource;
                 resource = null;
                 return element;
             }
             
-            private ResourceName getNextClassName() {
+            private String getNextClassName() {
                 if (classNames == null || idx >= classNames.size()) {
                     classNames = getNextClassNames();
                     idx = 0;
@@ -180,7 +179,7 @@ public class DiscoverNamesInFile
                 if (log.isDebugEnabled())
                     log.debug("getNextClassResource: next class='" + className + "'");
 
-                return new ResourceName(className);
+                return className;
             }
 
             private Vector getNextClassNames() {

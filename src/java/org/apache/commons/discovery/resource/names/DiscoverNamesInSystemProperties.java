@@ -57,7 +57,6 @@
 
 package org.apache.commons.discovery.resource.names;
 
-import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
@@ -97,8 +96,8 @@ public class DiscoverNamesInSystemProperties
                 return resource != null;
             }
             
-            public ResourceName nextResourceName() {
-                ResourceName element = new ResourceName(resource);
+            public String nextResourceName() {
+                String element = resource;
                 resource = null;
                 return element;
             }

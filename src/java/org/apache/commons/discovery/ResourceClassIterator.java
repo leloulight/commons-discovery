@@ -71,7 +71,7 @@ public abstract class ResourceClassIterator extends ResourceIterator
         return nextResourceClass();
     }
     
-    public ResourceName nextResourceName() {
-        return nextResourceClass();
+    public String nextResourceName() {
+        return nextResourceClass().getName();
     }
 }

@@ -57,7 +57,6 @@
 
 package org.apache.commons.discovery.resource.names;
 
-import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
 
@@ -84,7 +83,7 @@ public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover
     public ResourceNameIterator findResourceNames(final ResourceNameIterator inputNames) {
         return new ResourceNameIterator() {
             private ResourceNameIterator resourceNames = null;
-            private ResourceName resourceName = null;
+            private String resourceName = null;
             
             public boolean hasNext() {
                 if (resourceName == null) {
@@ -93,16 +92,16 @@ public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover
                 return resourceName != null;
             }
             
-            public ResourceName nextResourceName() {
-                ResourceName name = resourceName;
+            public String nextResourceName() {
+                String name = resourceName;
                 resourceName = null;
                 return name;
             }
             
-            private ResourceName getNextResourceName() {
+            private String getNextResourceName() {
                 while (inputNames.hasNext() && (resourceNames == null  ||  !resourceNames.hasNext())) {
                     resourceNames =
-                        findResourceNames(inputNames.nextResourceName().getName());
+                        findResourceNames(inputNames.nextResourceName());
                 }
     
                 return (resourceNames != null  &&  resourceNames.hasNext())

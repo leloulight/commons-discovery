@@ -69,5 +69,5 @@ public interface ResourceNameIterator
 
     /**
      */
-    public ResourceName nextResourceName();
+    public String nextResourceName();
 }

@@ -60,6 +60,7 @@ package org.apache.commons.discovery;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Vector;
 
 
 /**
@@ -73,24 +74,33 @@ import java.net.URL;
  * @author Costin Manolache
  * @author Richard A. Sitze
  */
-public class Resource extends ResourceName
+public class Resource
 {
-    protected URL         resource;
-    protected ClassLoader loader;
+    protected final String      name;
+    protected final URL         resource;
+    protected final ClassLoader loader;
 
     public Resource(String resourceName, URL resource, ClassLoader loader) {
-        super(resourceName);
-        setResource(resource);
-        setClassLoader(loader);
+        this.name = resourceName;
+        this.resource = resource;
+        this.loader = loader;
     }
 
     /**
-     * Set the value of URL.
-     * @param v  Value to assign to URL.
+     * Get the value of resourceName.
+     * @return value of resourceName.
      */
-    public void setResource(URL  resource) {
-        this.resource = resource;
+    public String getName() {
+        return name;
     }
+
+//    /**
+//     * Set the value of URL.
+//     * @param v  Value to assign to URL.
+//     */
+//    public void setResource(URL  resource) {
+//        this.resource = resource;
+//    }
     
     /**
      * Get the value of URL.
@@ -120,15 +130,26 @@ public class Resource extends ResourceName
         return loader ;
     }
     
-    /**
-     * Set the value of loader.
-     * @param v  Value to assign to loader.
-     */
-    public void setClassLoader(ClassLoader  loader) {
-        this.loader = loader;
-    }
+//    /**
+//     * Set the value of loader.
+//     * @param v  Value to assign to loader.
+//     */
+//    public void setClassLoader(ClassLoader  loader) {
+//        this.loader = loader;
+//    }
     
     public String toString() {
-        return "LoadableResourceInfo[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
+        return "Resource[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
+    }
+    
+    public static Resource[] toArray(ResourceIterator iterator) {
+        Vector vector = new Vector();
+        while (iterator.hasNext()) {
+            vector.add(iterator.nextResource());
+        }
+        Resource[] resources = new Resource[vector.size()];
+        vector.copyInto(resources);
+        
+        return resources;
     }
 }

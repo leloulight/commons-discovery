@@ -97,7 +97,7 @@ public class ResourceClass extends Resource
     public Class loadClass() {
         if (resourceClass == null  &&  getClassLoader() != null) {
             if (log.isDebugEnabled())
-                log.debug("getResourceClass: Loading class '" + getName() + "' with " + getClassLoader());
+                log.debug("loadClass: Loading class '" + getName() + "' with " + getClassLoader());
 
             try {
                 resourceClass = getClassLoader().loadClass(getName());
@@ -109,6 +109,6 @@ public class ResourceClass extends Resource
     }
     
     public String toString() {
-        return "LoadableClass[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
+        return "ResourceClass[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
     }
 }

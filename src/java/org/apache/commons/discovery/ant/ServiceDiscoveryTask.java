@@ -59,7 +59,6 @@ package org.apache.commons.discovery.ant;
 
 import java.util.Vector;
 
-import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.resource.DiscoverResources;
@@ -77,7 +76,7 @@ public class ServiceDiscoveryTask
 {
     String name;
     int debug=0;
-    ResourceName[] drivers = null;
+    String[] drivers = null;
         
     public void setServiceName(String name ) {
         this.name=name;
@@ -87,7 +86,7 @@ public class ServiceDiscoveryTask
         this.debug=debug;
     }
 
-    public ResourceName[] getServiceInfo() {
+    public String[] getServiceInfo() {
         return drivers;
     }
 
@@ -98,18 +97,18 @@ public class ServiceDiscoveryTask
         disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
         disc.addClassLoader( this.getClass().getClassLoader() );
         
-        ResourceNameIterator enum = disc.findResources(name);
+        ResourceNameIterator iterator = disc.findResources(name);
 
         Vector vector = new Vector();
-        while (enum.hasNext()) {
-            ResourceName resourceInfo = enum.nextResourceName();
+        while (iterator.hasNext()) {
+            String resourceInfo = iterator.nextResourceName();
             vector.add(resourceInfo);
             if( debug > 0 ) {
                 System.out.println("Found " + resourceInfo);
             }
         }
         
-        drivers = new ResourceName[vector.size()];
+        drivers = new String[vector.size()];
         vector.copyInto(drivers);
     }
         

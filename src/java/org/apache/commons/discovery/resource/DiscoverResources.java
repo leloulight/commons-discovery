@@ -64,7 +64,6 @@ import java.util.Enumeration;
 import org.apache.commons.discovery.Resource;
 import org.apache.commons.discovery.ResourceDiscover;
 import org.apache.commons.discovery.ResourceIterator;
-import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
@@ -117,10 +116,6 @@ public class DiscoverResources
                     resource = getNextResource();
                 }
                 return resource != null;
-            }
-            
-            public ResourceName nextResourceName() {
-                return nextResource();
             }
             
             public Resource nextResource() {

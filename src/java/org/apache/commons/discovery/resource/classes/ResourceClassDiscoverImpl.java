@@ -156,9 +156,10 @@ public abstract class ResourceClassDiscoverImpl
             }
             
             private ResourceClass getNextResource() {
-                while (inputNames.hasNext() && (classes == null  ||  !classes.hasNext())) {
+                while (inputNames.hasNext() &&
+                       (classes == null  ||  !classes.hasNext())) {
                     classes =
-                        findResourceClasses(inputNames.nextResourceName().getName());
+                        findResourceClasses(inputNames.nextResourceName());
                 }
     
                 return (classes != null  &&  classes.hasNext())

@@ -60,7 +60,6 @@ package org.apache.commons.discovery.resource;
 import org.apache.commons.discovery.Resource;
 import org.apache.commons.discovery.ResourceDiscover;
 import org.apache.commons.discovery.ResourceIterator;
-import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.resource.names.ResourceNameDiscoverImpl;
 
@@ -160,9 +159,9 @@ public abstract class ResourceDiscoverImpl
             }
             
             private Resource getNextResource() {
-                while (inputNames.hasNext() && (resources == null  ||  !resources.hasNext())) {
-                    resources =
-                        findResources(inputNames.nextResourceName().getName());
+                while (inputNames.hasNext() &&
+                       (resources == null  ||  !resources.hasNext())) {
+                    resources = findResources(inputNames.nextResourceName());
                 }
     
                 return (resources != null  &&  resources.hasNext())

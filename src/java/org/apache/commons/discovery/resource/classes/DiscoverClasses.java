@@ -65,7 +65,6 @@ import org.apache.commons.discovery.ResourceClass;
 import org.apache.commons.discovery.ResourceClassDiscover;
 import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.ResourceIterator;
-import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.discovery.resource.ClassLoaders;
@@ -117,14 +116,6 @@ public class DiscoverClasses
                     resource = getNextClass();
                 }
                 return resource != null;
-            }
-            
-            public ResourceName nextResourceName() {
-                return nextResourceClass();
-            }
-            
-            public Resource nextResource() {
-                return nextResourceClass();
             }
             
             public ResourceClass nextResourceClass() {

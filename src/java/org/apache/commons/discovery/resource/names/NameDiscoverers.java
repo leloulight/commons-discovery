@@ -59,7 +59,6 @@ package org.apache.commons.discovery.resource.names;
 
 import java.util.Vector;
 
-import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
@@ -132,7 +131,7 @@ public class NameDiscoverers
                 return iterator.hasNext();
             }
             
-            public ResourceName nextResourceName() {
+            public String nextResourceName() {
                 return iterator.nextResourceName();
             }
             

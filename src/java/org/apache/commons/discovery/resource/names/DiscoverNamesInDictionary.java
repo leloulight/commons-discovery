@@ -60,7 +60,6 @@ package org.apache.commons.discovery.resource.names;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
@@ -143,8 +142,8 @@ public class DiscoverNamesInDictionary
                 return (resources != null && idx < resources.length);
             }
             
-            public ResourceName nextResourceName() {
-                return new ResourceName(resources[idx++]);
+            public String nextResourceName() {
+                return resources[idx++];
             }
         };
     }
