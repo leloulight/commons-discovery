@@ -70,6 +70,9 @@ import java.util.Enumeration;
  * @author Richard A. Sitze
  */
 class JDK12Hooks extends JDKHooks {
+    private static final ClassLoader systemClassLoader
+        = findSystemClassLoader();
+
     /**
      * The thread context class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
@@ -109,19 +112,7 @@ class JDK12Hooks extends JDKHooks {
      *         Otherwise return null.
      */
     public ClassLoader getSystemClassLoader() {
-        ClassLoader classLoader;
-        
-        try {
-            classLoader = ClassLoader.getSystemClassLoader();
-        } catch (SecurityException e) {
-            /**
-             * Ignore and keep going.
-             */
-            classLoader = null;  // ignore
-        }
-        
-        // Return the selected class loader
-        return classLoader;
+        return systemClassLoader;
     }
 
     /**
@@ -206,5 +197,25 @@ class JDK12Hooks extends JDKHooks {
                 return n;
             }
         };
+    }
+    
+    static private ClassLoader findSystemClassLoader() {
+        ClassLoader classLoader;
+        
+        try {
+            classLoader = ClassLoader.getSystemClassLoader();
+        } catch (SecurityException e) {
+            /**
+             * Ignore and keep going.
+             */
+            classLoader = null;
+        }
+
+        if (classLoader == null) {
+            classLoader = new PsuedoSystemClassLoader();
+        }
+        
+        // Return the selected class loader
+        return classLoader;
     }
 }
