@@ -59,12 +59,20 @@
       <includes>
         <include>**/TestAll.java</include>
       </includes>
+      <resources>
+        <resource>
+          <directory>${basedir}/src</directory>
+          <includes><include>**/testResource</include></includes>
+        </resource>
+      </resources>  
     </unitTest>
 
     <resources>
-      <includes>
-        <include>**/*.properties</include>
-      </includes>
+      <resource>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
     </resources>
   </build>
 
