@@ -59,59 +59,75 @@
  *
  */
 
-package org.apache.commons.discovery.load;
-
-import java.io.InputStream;
-import java.net.URL;
+package org.apache.commons.discovery.types;
 
 
 /**
- * A wrapper class that gives us a "bootstrap" loader.
- * For the moment, we cheat and return the system class loader.
- * Getting a wrapper for the bootstrap loader that works
- * in JDK 1.1.x may require a bit more work...
+ * Represents a Service Programming Interface (spi) context,
+ * to include an spi and the Thread Context Class Loader for
+ * the thread that created an instance of this object.
  * 
- * Expected use:  call BootstrapLoader.wrap(loader),
- * which will return loader (loader != null) or a wrapper class
- * in place of the bootstrap loader (loader == null).
+ * @author Richard A. Sitze
  */
-public class BootstrapLoader {
-    private static ClassLoader bootstrapLoader =
-        new SystemClassLoader();
-    
-    private BootstrapLoader() {
-    }
-    
-    public static ClassLoader wrap(ClassLoader incoming) {
-        return (incoming == null) ? getBootstrapLoader() : incoming;
-    }
-    
-    public static boolean isBootstrapLoader(ClassLoader incoming) {
-        return incoming == null  ||  incoming == getBootstrapLoader();
-    }
-    
-    public static ClassLoader getBootstrapLoader() {
-        return bootstrapLoader;
-    }
+public class SPInterface {
+    /**
+     * The service programming interface name
+     */
+    private final String name;
     
     /**
-     * JDK 1.1.x compatible?
-     * There is no direct way to get the system class loader
-     * in 1.1.x, so work around...
+     * The service programming interface: intended to be
+     * an interface or abstract class, but not limited
+     * to those two.
+     */        
+    private final Class provider;
+    
+    /**
+     * The property name to be used for finding the name of
+     * the SPI implementation class.
      */
-    private static class SystemClassLoader extends ClassLoader {
-        protected Class loadClass(String className, boolean resolve)
-            throws ClassNotFoundException
-        {
-            return findSystemClass(className);
-        }
-        
-        public URL getResource(String resName) {
-            return getSystemResource(resName);
-        }
-        
-        public InputStream getResourceAsStream(String resName) {
-            return getSystemResourceAsStream(resName);
-        }
+    private final String propertyName;
+    
+    
+    private Class  paramClasses[] = null;
+    private Object params[] = null;
+
+
+    public SPInterface(Class provider) {
+        this(provider, provider.getName());
+    }
+    
+    public SPInterface(Class provider, String propertyName) {
+        this.name = provider.getName();
+        this.provider = provider;
+        this.propertyName = propertyName;
+    }
+
+    public SPInterface(Class provider, Class paramClasses[], Object params[]) {
+        this(provider, provider.getName(), paramClasses, params);
+    }
+    
+    public SPInterface(Class provider, String propertyName, Class paramClasses[], Object params[]) {
+        this.name = provider.getName();
+        this.provider = provider;
+        this.propertyName = propertyName;
+        this.paramClasses = paramClasses;
+        this.params = params;
+    }
+    
+    public String getSPName() {
+        return name;
+    }
+    
+    public Class getSPClass() {
+        return provider;
+    }
+    
+    public String getPropertyName() {
+        return propertyName;
+    }
+    
+    public ImplClass createImplClass(String className) {
+        return new ImplClass(className, paramClasses, params);
     }
 }

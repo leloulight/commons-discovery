@@ -167,17 +167,17 @@ public class ClassLoaderUtils {
         return loadClass(serviceImplName, loaders, loaders.length);
     }
     
-    /**
-     * Load the class <code>serviceImplName</code> using the
-     * class loaders associated with the SPI's context.
-     * 
-     * @param serviceImplName The name of the class to load.
-     */
-    public static Class loadClass(String serviceImplName, SPIContext spiContext)
-        throws DiscoveryException
-    {
-        return loadClass(serviceImplName, spiContext.getClassLoaders());
-    }
+//    /**
+//     * Load the class <code>serviceImplName</code> using the
+//     * class loaders associated with the SPI's context.
+//     * 
+//     * @param serviceImplName The name of the class to load.
+//     */
+//    public static Class loadClass(String serviceImplName, EnvContext spi)
+//        throws DiscoveryException
+//    {
+//        return loadClass(serviceImplName, spi.getClassLoaders());
+//    }
 
 
     /**
@@ -221,17 +221,17 @@ public class ClassLoaderUtils {
         return getResourceAsStream(resourceName, loaders, loaders.length);
     }
     
-    /**
-     * Load the resource resourceName using the
-     * class loaders associated with the SPI's context.
-     * 
-     * @param resourceName The name of the resource to load.
-     */
-    public static InputStream getResourceAsStream(String resourceName, SPIContext spiContext)
-        throws DiscoveryException
-    {
-        return getResourceAsStream(resourceName, spiContext.getClassLoaders());
-    }
+//    /**
+//     * Load the resource resourceName using the
+//     * class loaders associated with the SPI's context.
+//     * 
+//     * @param resourceName The name of the resource to load.
+//     */
+//    public static InputStream getResourceAsStream(String resourceName, SPSpec spiContext)
+//        throws DiscoveryException
+//    {
+//        return getResourceAsStream(resourceName, spiContext.getClassLoaders());
+//    }
 
     /**
      * Load the resource <code>resourceName</code>.
@@ -292,13 +292,13 @@ public class ClassLoaderUtils {
      * 
      * @param resourceName The name of the resource to load.
      */
-    public static InputStream getResourceAsStream(String packageName,
-                                                  String resourceName,
-                                                  SPIContext spiContext)
-        throws DiscoveryException
-    {
-        return getResourceAsStream(packageName, resourceName, spiContext.getClassLoaders());
-    }
+//    public static InputStream getResourceAsStream(String packageName,
+//                                                  String resourceName,
+//                                                  SPSpec spiContext)
+//        throws DiscoveryException
+//    {
+//        return getResourceAsStream(packageName, resourceName, spiContext.getClassLoaders());
+//    }
 
     
     /**
@@ -310,7 +310,7 @@ public class ClassLoaderUtils {
     public static final boolean wouldUseClassLoader(ClassLoader thisClassLoader,
                                                     ClassLoader classLoader) {
         /* bootstrap classloader, at root of all trees! */
-        if (BootstrapLoader.isBootstrapLoader(classLoader))
+        if (classLoader == null)
             return true;
         
         while (thisClassLoader != null) {
@@ -370,6 +370,7 @@ public class ClassLoaderUtils {
     public static final ClassLoader[] compactUniq(ClassLoader[] array) {        
         ClassLoader[] uniqLoaders = new ClassLoader[array.length];
         int length = uniq(array, uniqLoaders);
+        
         return copy(uniqLoaders, 0, length);
     }
     
@@ -409,8 +410,7 @@ public class ClassLoaderUtils {
     
             // Get the thread context class loader (if there is one)
             try {
-                classLoader =
-                    BootstrapLoader.wrap((ClassLoader)method.invoke(Thread.currentThread(), null));
+                classLoader = (ClassLoader)method.invoke(Thread.currentThread(), null);
             } catch (IllegalAccessException e) {
                 throw new DiscoveryException("Unexpected IllegalAccessException", e);
             } catch (InvocationTargetException e) {
@@ -494,8 +494,7 @@ public class ClassLoaderUtils {
     
             // Get the system class loader (if there is one)
             try {
-                classLoader =
-                    BootstrapLoader.wrap((ClassLoader)method.invoke(null, null));
+                classLoader = (ClassLoader)method.invoke(null, null);
             } catch (IllegalAccessException e) {
                 throw new DiscoveryException("Unexpected IllegalAccessException", e);
             } catch (InvocationTargetException e) {
@@ -519,7 +518,7 @@ public class ClassLoaderUtils {
             }
         } catch (NoSuchMethodException e) {
             // Assume we are running on JDK 1.1
-            classLoader = null;
+            classLoader = new PsuedoSystemClassLoader();
         }
     
         // Return the selected class loader

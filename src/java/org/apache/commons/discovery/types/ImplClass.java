@@ -59,64 +59,78 @@
  *
  */
 
-package org.apache.commons.discovery.load;
+package org.apache.commons.discovery.types;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
+
+import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.load.Loaders;
 
 
 /**
- * Represents a Service Programming Interface (spi) context,
- * to include an spi and the Thread Context Class Loader for
- * the thread that created an instance of this object.
- * 
  * @author Richard A. Sitze
  */
-public class SPIContext {
-    /**
-     * Thread context class loader or null if not available (JDK 1.1).
-     * Wrapped bootstrap classloader if classLoader == null.
-     */
-    private final ClassLoader threadContextClassLoader =
-        ClassLoaderUtils.getThreadContextClassLoader();
+public class ImplClass {
+    private final String implName;
 
-    /**
-     * List of class loaders
-     */
-    private final ClassLoader[] loaders;
-
-    private final String groupContext;
+    private Class implClass;
     
-    /**
-     * The service programming interface: intended to be
-     * an interface or abstract class, but not limited
-     * to those two.
-     */        
-    private final Class spi;
+    private Class  paramClasses[] = null;
+    private Object params[] = null;
+
+
+    public ImplClass(String implName) {
+        this.implName = implName;
+        this.implClass = null;
+    }
+    
+    public ImplClass(Class implClass) {
+        this.implName = (implClass != null) ? implClass.getName() : null;
+        this.implClass = implClass;
+    }
     
 
-    public SPIContext(String groupContext, Class spi) {
-        this.groupContext = groupContext;
-        this.spi = spi;
-        this.loaders = ClassLoaderUtils.compactUniq(
-            new ClassLoader[] { threadContextClassLoader,
-                                BootstrapLoader.wrap(spi.getClassLoader()),
-                                ClassLoaderUtils.getSystemClassLoader() });
+    public ImplClass(String implName, Class paramClasses[], Object params[]) {
+        this(implName);
+        this.paramClasses = paramClasses;
+        this.params = params;
     }
     
-    public ClassLoader getThreadContextClassLoader() {
-        return threadContextClassLoader;
+    public ImplClass(Class implClass, Class paramClasses[], Object params[]) {
+        this(implClass);
+        this.paramClasses = paramClasses;
+        this.params = params;
+    }
+
+
+    public String getImplName() {
+        return implName;
     }
     
-    public ClassLoader[] getClassLoaders() {
-        return loaders;
+    public Class getImplClass() {
+        return implClass;
     }
     
-    public String getGroupContext() {
-        return groupContext;
+    public Class loadImplClass(Loaders loaders, boolean systemOnly) {
+        if (implClass == null) {
+            implClass = loaders.loadClass(getImplName(), systemOnly);
+        }
+
+        return implClass;
     }
     
-    public Class getSPI() {
-        return spi;
+    public Object newInstance()
+        throws DiscoveryException
+    {
+        try {
+            if (paramClasses == null || params == null) {
+                return getImplClass().newInstance();
+            } else {
+                Constructor constructor = getImplClass().getConstructor(paramClasses);
+                return constructor.newInstance(params);
+           }
+        } catch (Exception e) {
+            throw new DiscoveryException("Unable to instantiate " + getImplName(), e);
+        }
     }
 }

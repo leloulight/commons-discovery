@@ -66,8 +66,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.types.ImplClass;
+import org.apache.commons.discovery.types.SPInterface;
 import org.apache.commons.discovery.load.Loaders;
-import org.apache.commons.discovery.load.SPIContext;
 
 
 /**
@@ -91,14 +92,14 @@ public interface LoadStrategy {
      * @param properties May use, but must pass to implementation.init() method
      *                   if implementation implements Service interface.
      * 
-     * @param defaultImplName Default implementation name.
+     * @param defaultImpl Default implementation.
      * 
      * @return Class class implementing the SPI.
      * 
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, or if the class cannot be loaded.
      */
-    public Class loadClass(Properties properties, String defaultImplName)
+    public ImplClass loadClass(Properties properties, ImplClass defaultImpl)
         throws DiscoveryException;
     
     /**

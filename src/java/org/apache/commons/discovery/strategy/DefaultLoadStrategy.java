@@ -66,8 +66,10 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.types.Environment;
+import org.apache.commons.discovery.types.ImplClass;
+import org.apache.commons.discovery.types.SPInterface;
 import org.apache.commons.discovery.load.Loaders;
-import org.apache.commons.discovery.load.SPIContext;
 
 
 /**
@@ -85,12 +87,14 @@ import org.apache.commons.discovery.load.SPIContext;
  * @version $Revision$ $Date$
  */
 public class DefaultLoadStrategy implements LoadStrategy {
-    private final SPIContext spiContext;
+    private final Environment env;
+    private final SPInterface spi;
     private final Loaders loaders;
     
-    public DefaultLoadStrategy(SPIContext spiContext, Class rootFinderClass) {
-        this.spiContext = spiContext;
-        this.loaders = new Loaders(spiContext, rootFinderClass);
+    public DefaultLoadStrategy(Environment env, SPInterface spi) {
+        this.env = env;
+        this.spi = spi;
+        this.loaders = new Loaders(env, spi);
     }
     
     /**
@@ -128,12 +132,12 @@ public class DefaultLoadStrategy implements LoadStrategy {
      *   </li></p>
      *   <p><li>
      *   If the name of the implementation class is null, AND the default
-     *   implementation class name (<code>defaultImplName</code>) is null,
+     *   implementation class (<code>defaultImpl</code>) is null,
      *   then an exception is thrown.
      *   </li></p>
      *   <p><li>
      *   If the name of the implementation class is null, AND the default
-     *   implementation class name (<code>defaultImplName</code>) is non-null,
+     *   implementation class (<code>defaultImpl</code>) is non-null,
      *   then load the default implementation class.  The class loaded is the
      *   first class loaded by the following sequence of class loaders:
      *   <ul>
@@ -153,59 +157,76 @@ public class DefaultLoadStrategy implements LoadStrategy {
      *   </li></p>
      * </ul>
      * 
-     * @param ClassFinder  Represents the spiContext, class loaders
-     *        (including root finder class), and the groupContext.
-     * 
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
      * 
-     * @param defaultImplName Default implementation name.
+     * @param defaultImpl Default implementation.
      * 
      * @return Class class implementing the SPI.
      * 
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, or if the class cannot be loaded.
      */
-    public Class loadClass(Properties properties, String defaultImplName)
+    public ImplClass loadClass(Properties properties, ImplClass defaultImpl)
         throws DiscoveryException
     {
-        String spiName = spiContext.getSPI().getName();
-        Object service = null;
+        String spiName = spi.getSPName();
+        String propertyName = spi.getPropertyName();
 
-        // First, try the (managed) system property
+        // First, try the (managed) system property spiName
         String className = Utils.getManagedProperty(spiName);
-
         if (className == null) {
-            // Second, try the properties parameter
-            if (properties != null)
-                className = properties.getProperty(spiName);
-        
+            if (spiName.equals(propertyName)) {
+                if (properties != null) {
+                    // Second, try the properties parameter spiName
+                    className = properties.getProperty(spiName);
+                }
+            } else {
+                // Second, try the (managed) system property propertyName
+                className = Utils.getManagedProperty(propertyName);
+                if (className == null) {
+                    if (properties != null) {
+                        // Third, try the properties parameter spiName
+                        className = properties.getProperty(spiName);
+                        
+                        if (className == null) {
+                            // Fourth, try the properties parameter propertyName
+                            className = properties.getProperty(propertyName);
+                        }
+                    }
+                }
+            }
+    
             if (className == null) {
-                // Third, try to find a service by using the JDK1.3 jar
+                // Last, try to find a service by using the JDK1.3 jar
                 // discovery mechanism.
                 className = Utils.getJDK13ClassName(
-                    spiContext.getThreadContextClassLoader(), spiName);
+                    env.getThreadContextClassLoader(), spiName);
             }
         }
 
-        Class clazz = null;
+        ImplClass implClass = null;
 
         if (className != null) {
-            clazz = loaders.loadClass(className, false);
-        } else {        
-            // Fourth, try the fallback implementation class,
+            implClass = spi.createImplClass(className);
+            implClass.loadImplClass(loaders, false);
+        } else {
+            // All else fails: try the fallback implementation class,
             // but limit loaders to 'system' loaders, in an
             // attempt to ensure that the default picked up is
             // the one that was intended.
-            clazz = loaders.loadClass(defaultImplName, true);
+            implClass = defaultImpl;
+            if (implClass != null) {
+                implClass.loadImplClass(loaders, true);
+            }
         }
 
-        if (clazz == null) {
+        if (implClass == null  ||  implClass.getImplClass() == null) {
             throw new DiscoveryException("No implementation defined for " + spiName);
         }
 
-        return clazz;
+        return implClass;
     }
     
     /**
@@ -219,9 +240,6 @@ public class DefaultLoadStrategy implements LoadStrategy {
      *     <li>DiscoverSingleton's (this class) Class Loader</li>
      *     <li>System Class Loader</li>
      *   </ul>
-     * 
-     * @param ClassFinder  Represents the spiContext, class loaders
-     *        (including root finder class), and the groupContext.
      * 
      * @param propertiesFileName The property file name.
      * 

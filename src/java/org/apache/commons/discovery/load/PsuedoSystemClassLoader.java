@@ -59,67 +59,29 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.load;
+
+import java.io.InputStream;
+import java.net.URL;
 
 
 /**
- * <p>An exception that is thrown only if a suitable service
- * instance cannot be created by <code>ServiceFactory</code></p>
- * 
- * <p>Copied from LogConfigurationException<p>
- *
- * @author Craig R. McClanahan
- * @version $Revision$ $Date$
+ * JDK 1.1.x compatible?
+ * There is no direct way to get the system class loader
+ * in 1.1.x, but this should be a good work around...
  */
-public class DiscoveryException extends RuntimeException {
-
-
-    /**
-     * Construct a new exception with <code>null</code> as its detail message.
-     */
-    public DiscoveryException() {
-        super();
+public class PsuedoSystemClassLoader extends ClassLoader {
+    protected Class loadClass(String className, boolean resolve)
+        throws ClassNotFoundException
+    {
+        return findSystemClass(className);
     }
-
-    /**
-     * Construct a new exception with the specified detail message.
-     *
-     * @param message The detail message
-     */
-    public DiscoveryException(String message) {
-        super(message);
+    
+    public URL getResource(String resName) {
+        return getSystemResource(resName);
     }
-
-    /**
-     * Construct a new exception with the specified cause and a derived
-     * detail message.
-     *
-     * @param cause The underlying cause
-     */
-    public DiscoveryException(Throwable cause) {
-        this((cause == null) ? null : cause.toString(), cause);
-    }
-
-    /**
-     * Construct a new exception with the specified detail message and cause.
-     *
-     * @param message The detail message
-     * @param cause The underlying cause
-     */
-    public DiscoveryException(String message, Throwable cause) {
-        super(message);
-        this.cause = cause; // Two-argument version requires JDK 1.4 or later
-    }
-
-    /**
-     * The underlying cause of this exception.
-     */
-    protected Throwable cause = null;
-
-    /**
-     * Return the underlying cause of this exception (if any).
-     */
-    public Throwable getCause() {
-        return this.cause;
+    
+    public InputStream getResourceAsStream(String resName) {
+        return getSystemResourceAsStream(resName);
     }
 }

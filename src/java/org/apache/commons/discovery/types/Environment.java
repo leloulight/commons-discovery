@@ -59,67 +59,44 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.types;
+
+import org.apache.commons.discovery.load.ClassLoaderUtils;
 
 
 /**
- * <p>An exception that is thrown only if a suitable service
- * instance cannot be created by <code>ServiceFactory</code></p>
+ * Represents a environment context:
+ * the Thread Context Class Loader, the group context id, and the
+ * root discovery class (class representing the discovery front-door).
  * 
- * <p>Copied from LogConfigurationException<p>
- *
- * @author Craig R. McClanahan
- * @version $Revision$ $Date$
+ * @author Richard A. Sitze
  */
-public class DiscoveryException extends RuntimeException {
-
-
+public class Environment {
     /**
-     * Construct a new exception with <code>null</code> as its detail message.
+     * Thread context class loader or null if not available (JDK 1.1).
+     * Wrapped bootstrap classloader if classLoader == null.
      */
-    public DiscoveryException() {
-        super();
+    private final ClassLoader threadContextClassLoader =
+        ClassLoaderUtils.getThreadContextClassLoader();
+
+    private final String groupContext;
+
+    private final Class rootDiscoveryClass;
+    
+    public Environment(String groupContext, Class rootDiscoveryClass) {
+        this.groupContext = groupContext;
+        this.rootDiscoveryClass = rootDiscoveryClass;
     }
-
-    /**
-     * Construct a new exception with the specified detail message.
-     *
-     * @param message The detail message
-     */
-    public DiscoveryException(String message) {
-        super(message);
+    
+    public ClassLoader getThreadContextClassLoader() {
+        return threadContextClassLoader;
     }
-
-    /**
-     * Construct a new exception with the specified cause and a derived
-     * detail message.
-     *
-     * @param cause The underlying cause
-     */
-    public DiscoveryException(Throwable cause) {
-        this((cause == null) ? null : cause.toString(), cause);
+    
+    public String getGroupContext() {
+        return groupContext;
     }
-
-    /**
-     * Construct a new exception with the specified detail message and cause.
-     *
-     * @param message The detail message
-     * @param cause The underlying cause
-     */
-    public DiscoveryException(String message, Throwable cause) {
-        super(message);
-        this.cause = cause; // Two-argument version requires JDK 1.4 or later
-    }
-
-    /**
-     * The underlying cause of this exception.
-     */
-    protected Throwable cause = null;
-
-    /**
-     * Return the underlying cause of this exception (if any).
-     */
-    public Throwable getCause() {
-        return this.cause;
+    
+    public Class getRootDiscoveryClass() {
+        return rootDiscoveryClass;
     }
 }

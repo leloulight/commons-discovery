@@ -64,6 +64,8 @@ package org.apache.commons.discovery.load;
 import java.io.InputStream;
 
 import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.types.Environment;
+import org.apache.commons.discovery.types.SPInterface;
 
 
 /**
@@ -74,11 +76,8 @@ import org.apache.commons.discovery.DiscoveryException;
  * @author Costin Manolache
  */
 public class Loaders {
-    /**
-     * The SPI (and thread context) for which we are (presumably)
-     * looking for an implementation of.
-     */
-    private final SPIContext spiContext;
+    private final Environment env;
+    private final Class      spiClass;
     
     /**
      * System ClassLoaders only
@@ -88,23 +87,23 @@ public class Loaders {
      */
     private final ClassLoader[] systemLoaders;
     
-    private final ClassLoader[] allLoaders;
+    private final ClassLoader[] appLoaders;
 
 
-    /**
-     * @param rootFinderClass a wrapper class encapsulating use of DiscoverSingleton.
-     *   If DiscoverSingleton is used directly, then this would be DiscoverSingleton itself.
-     *   The root finder class is used to determine the 'real' caller, and
-     *   hence the caller's class loader - thereby preserving knowledge that
-     *   is relevant to finding the correct/expected implementation class.
-     */
-    public Loaders(SPIContext spiContext, Class rootFinderClass)
+    public Loaders(Environment env, SPInterface spi)
     {
-        this.spiContext = spiContext;
-        this.systemLoaders = getSystemLoaders(spiContext, rootFinderClass);
-        this.allLoaders = getAllLoaders(spiContext, rootFinderClass);
-
-        //System.out.println("Finding '" + groupContext + "::" + spiContext.getSPI().getName() + "'");
+        this.env = env;
+        this.spiClass = spi.getSPClass();
+        this.systemLoaders = createSystemLoaders();
+        this.appLoaders = createAppLoaders();
+    }
+    
+    public ClassLoader[] getSystemLoaders() {
+        return systemLoaders;
+    }
+    
+    public ClassLoader[] getAppLoaders() {
+        return appLoaders;
     }
     
     /**
@@ -127,11 +126,11 @@ public class Loaders {
         throws DiscoveryException
     {
         Class clazz = ClassLoaderUtils.loadClass(className,
-                           systemOnly ? systemLoaders : allLoaders);
+                           systemOnly ? systemLoaders : appLoaders);
             
-        if (clazz != null  &&  !spiContext.getSPI().isAssignableFrom(clazz)) {
+        if (clazz != null  &&  !spiClass.isAssignableFrom(clazz)) {
             throw new DiscoveryException("Class " + className +
-                          " does not implement " + spiContext.getSPI().getName());
+                          " does not implement " + spiClass.getName());
         }
         
         return clazz;
@@ -156,19 +155,19 @@ public class Loaders {
     public InputStream loadResourceAsStream(String resourceName)
         throws DiscoveryException
     {
-        String packageName = ClassLoaderUtils.getPackageName(spiContext.getSPI());
+        String packageName = ClassLoaderUtils.getPackageName(spiClass);
 
         InputStream stream =
-            (spiContext.getGroupContext() == null)
+            (env.getGroupContext() == null)
                 ? null
                 : ClassLoaderUtils.getResourceAsStream(packageName,
-                          spiContext.getGroupContext() + "." + resourceName,
-                          allLoaders);
+                          env.getGroupContext() + "." + resourceName,
+                          appLoaders);
 
         if (stream == null)
             stream = ClassLoaderUtils.getResourceAsStream(packageName,
                                                           resourceName,
-                                                          allLoaders);
+                                                          appLoaders);
 
         return stream;
     }
@@ -186,28 +185,28 @@ public class Loaders {
      * 
      */
     private static final ClassLoader getCallerClassLoader(Class rootFinderClass) {
-        return BootstrapLoader.wrap(null);
+        return null;
     }
 
     /**
-     * List of 'system' class loaders to the SPI
+     * List of 'system' class loaders to the SPI.
+     * The last should always return a non-null loader, so we
+     * always (?!) have a list of at least one classloader.
      */
-    private static final ClassLoader[] getSystemLoaders(SPIContext spiContext,
-                                                        Class rootFinderClass) {
+    private final ClassLoader[] createSystemLoaders() {
         return ClassLoaderUtils.compactUniq(
-                new ClassLoader[] {BootstrapLoader.wrap(spiContext.getSPI().getClassLoader()),
-                                   BootstrapLoader.wrap(rootFinderClass.getClassLoader()),
+                new ClassLoader[] {spiClass.getClassLoader(),
+                                   env.getRootDiscoveryClass().getClassLoader(),
                                    ClassLoaderUtils.getSystemClassLoader()
                                   });
     }
     
-    private static final ClassLoader[] getAllLoaders(SPIContext spiContext,
-                                                     Class rootFinderClass) {
+    private final ClassLoader[] createAppLoaders() {
         return ClassLoaderUtils.compactUniq(
-                new ClassLoader[] {spiContext.getThreadContextClassLoader(),
-                                   getCallerClassLoader(rootFinderClass),
-                                   BootstrapLoader.wrap(spiContext.getSPI().getClassLoader()),
-                                   BootstrapLoader.wrap(rootFinderClass.getClassLoader()),
+                new ClassLoader[] {env.getThreadContextClassLoader(),
+                                   getCallerClassLoader(env.getRootDiscoveryClass()),
+                                   spiClass.getClassLoader(),
+                                   env.getRootDiscoveryClass().getClassLoader(),
                                    ClassLoaderUtils.getSystemClassLoader()
                                   });
     }
