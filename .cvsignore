@@ -1,1 +1,6 @@
+.cvsignore
+.project
+.classpath
+bin
+dist
 target
