@@ -55,70 +55,54 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.resource;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
+import org.apache.commons.discovery.Resource;
+import org.apache.commons.discovery.ResourceDiscover;
+import org.apache.commons.discovery.ResourceIterator;
+import org.apache.commons.discovery.ResourceName;
 import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
 
 
 /**
- * The find() method will check every loader.
- *
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
  * @author James Strachan
  */
-public class DiscoverClassLoaderResources implements Discover
+public class DiscoverResources
+    extends ResourceDiscoverImpl
+    implements ResourceDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverClassLoaderResources.class);
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverResources.class);
     public static void setLog(Log _log) {
         log = _log;
     }
-
-    private ClassLoaders classLoaders;
     
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer
      */
-    public DiscoverClassLoaderResources() {
-        setClassLoaders(new ClassLoaders());
+    public DiscoverResources() {
+        super();
     }
     
-    /** Construct a new resource discoverer
-     */
-    public DiscoverClassLoaderResources(ClassLoaders classLoaders) {
-        setClassLoaders(classLoaders);
-    }
-
-    private ClassLoaders getClassLoaders() {
-        return classLoaders;
-    }
-
     /**
-     * Specify set of class loaders to be used in searching.
+     *  Construct a new resource discoverer
      */
-    public void setClassLoaders(ClassLoaders loaders) {
-        classLoaders = loaders;
-    }
-
-    /**
-     * Specify a new class loader to be used in searching.
-     * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
-     */
-    public void addClassLoader(ClassLoader loader) {
-        classLoaders.put(loader);
+    public DiscoverResources(ClassLoaders classLoaders) {
+        super(classLoaders);
     }
 
     /**
      * @return ResourceIterator
      */
-    public ResourceIterator find(final String resourceName) {
+    public ResourceIterator findResources(final String resourceName) {
         if (log.isDebugEnabled())
             log.debug("find: resourceName='" + resourceName + "'");
 
@@ -126,7 +110,7 @@ public class DiscoverClassLoaderResources implements Discover
             private int idx = 0;
             private ClassLoader loader = null;
             private Enumeration resources = null;
-            private ResourceInfo resource = null;
+            private Resource resource = null;
             
             public boolean hasNext() {
                 if (resource == null) {
@@ -135,25 +119,29 @@ public class DiscoverClassLoaderResources implements Discover
                 return resource != null;
             }
             
-            public ResourceInfo next() {
-                ResourceInfo element = resource;
+            public ResourceName nextResourceName() {
+                return nextResource();
+            }
+            
+            public Resource nextResource() {
+                Resource element = resource;
                 resource = null;
                 return element;
             }
             
-            private ResourceInfo getNextResource() {
+            private Resource getNextResource() {
                 if (resources == null || !resources.hasMoreElements()) {
                     resources = getNextResources();
                 }
 
-                ResourceInfo resourceInfo;
+                Resource resourceInfo;
                 if (resources != null) {
                     URL url = (URL)resources.nextElement();
 
                     if (log.isDebugEnabled())
                         log.debug("getNextResource: next URL='" + url + "'");
 
-                    resourceInfo = new ResourceInfo(resourceName, url, loader);
+                    resourceInfo = new Resource(resourceName, url, loader);
                 } else {
                     resourceInfo = null;
                 }

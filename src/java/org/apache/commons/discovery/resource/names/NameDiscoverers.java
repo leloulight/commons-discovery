@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -59,66 +55,98 @@
  *
  */
 
-package org.apache.commons.discovery.tools;
+package org.apache.commons.discovery.resource.names;
 
-import org.apache.commons.discovery.ResourceClass;
-import org.apache.commons.discovery.ResourceClassIterator;
-import org.apache.commons.discovery.resource.classes.DiscoverClasses;
-import org.apache.commons.discovery.resource.ClassLoaders;
+import java.util.Vector;
+
+import org.apache.commons.discovery.ResourceName;
+import org.apache.commons.discovery.ResourceNameDiscover;
+import org.apache.commons.discovery.ResourceNameIterator;
+import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.logging.Log;
 
 
 /**
- * Holder for a default class.
- * 
- * Class may be specified by name (String) or class (Class).
- * Using the holder complicates the users job, but minimized # of API's.
- * 
+ * Holder for multiple ResourceNameDiscover instances.
+ * The result is the union of the results from each
+ * (not a chained sequence, where results feed the next in line.
+ *
  * @author Richard A. Sitze
  */
-public class DefaultClassHolder {
-    private Class        defaultClass;
-    private final String defaultName;
+public class NameDiscoverers
+    extends ResourceNameDiscoverImpl
+    implements ResourceNameDiscover
+{
+    private static Log log = DiscoveryLogFactory.newLog(NameDiscoverers.class);
+    public static void setLog(Log _log) {
+        log = _log;
+    }
+
+    private Vector discoverers = new Vector();
     
-    public DefaultClassHolder(Class defaultClass) {
-        this.defaultClass = defaultClass;
-        this.defaultName = defaultClass.getName();
+    /**
+     *  Construct a new resource name discoverer
+     */
+    public NameDiscoverers() {
     }
     
-    public DefaultClassHolder(String defaultName) {
-        this.defaultClass = null;
-        this.defaultName = defaultName;
+    /**
+     * Specify an additional class loader to be used in searching.
+     * The order of loaders determines the order of the result.
+     * It is recommended to add the most specific loaders first.
+     */
+    public void addResourceNameDiscover(ResourceNameDiscover discover) {
+        if (discover != null) {
+            discoverers.addElement(discover);
+        }
+    }
+
+    protected ResourceNameDiscover getResourceNameDiscover(int idx) {
+        return (ResourceNameDiscover)discoverers.get(idx);
+    }
+
+    protected int size() {
+        return discoverers.size();
     }
 
     /**
-     * @param spi non-null SPI
-     * @param loaders Used only if class needs to be loaded.
+     * Set of results of all discoverers.
      * 
-     * @return Default Class.  Load the class if necessary,
-     *         and verify that it implements the SPI.
-     *         (this forces the check, no way out..).
+     * @return ResourceIterator
      */
-    public Class getDefaultClass(SPInterface spi, ClassLoaders loaders) {
-        if (defaultClass == null) {
-            DiscoverClasses classDiscovery = new DiscoverClasses(loaders);
-            ResourceClassIterator classes = classDiscovery.findResourceClasses(getDefaultName());
-            if (classes.hasNext()) {
-                ResourceClass info = classes.nextResourceClass();
-                try {
-                    defaultClass = info.loadClass();
-                } catch (Exception e) {
-                    // ignore
+    public ResourceNameIterator findResourceNames(final String resourceName) {
+        if (log.isDebugEnabled())
+            log.debug("find: resourceName='" + resourceName + "'");
+
+        return new ResourceNameIterator() {
+            private int idx = 0;
+            private ResourceNameIterator iterator = null;
+            
+            public boolean hasNext() {
+                if (iterator == null  ||  !iterator.hasNext()) {
+                    iterator = getNextIterator();
+                    if (iterator == null) {
+                        return false;
+                    }
                 }
+                return iterator.hasNext();
             }
-        }
-        
-        if (defaultClass != null) {
-            spi.verifyAncestory(defaultClass);
-        }
+            
+            public ResourceName nextResourceName() {
+                return iterator.nextResourceName();
+            }
+            
+            private ResourceNameIterator getNextIterator() {
+                while (idx < size()) {
+                    ResourceNameIterator iter =
+                        getResourceNameDiscover(idx++).findResourceNames(resourceName);
 
-        return defaultClass;
-    }
-
-    public String getDefaultName() {
-        return defaultName;
+                    if (iter.hasNext()) {
+                        return iter;
+                    }
+                }
+                return null;
+            }
+        };
     }
 }

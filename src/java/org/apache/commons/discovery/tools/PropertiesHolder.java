@@ -63,7 +63,7 @@ package org.apache.commons.discovery.tools;
 
 import java.util.Properties;
 
-import org.apache.commons.discovery.ClassLoaders;
+import org.apache.commons.discovery.resource.ClassLoaders;
 
 
 /**

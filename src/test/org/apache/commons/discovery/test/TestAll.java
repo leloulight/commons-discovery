@@ -141,7 +141,7 @@ public class TestAll extends TestCase {
             ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_2.class.getName());
 
-            // factory should be cached LogFactoryImpl
+            // factory should be cached
             assertTrue("2. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_1.class.getName()));
         } finally {
@@ -166,7 +166,7 @@ public class TestAll extends TestCase {
             ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_2.class.getName());
 
-            // factory should be cached LogFactoryImpl
+            // factory should be cached
             assertTrue("2. " + ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_2.class.getName()));
         } finally {
@@ -218,7 +218,7 @@ public class TestAll extends TestCase {
     }
     
 
-    public void testFindGroupLogFactoryImplPropFileDefault() {
+    public void testFindPropFileDefault() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
@@ -236,7 +236,7 @@ public class TestAll extends TestCase {
         }
     }
 
-    public void testFindGroupLogFactoryImplServiceFileDefault() {
+    public void testFindServiceFileDefault() {
 //        org.apache.commons.discovery.log.SimpleLog.setLevel(org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_DEBUG);
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 

@@ -65,12 +65,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.commons.discovery.ClassLoaders;
-import org.apache.commons.discovery.DiscoverClasses;
-import org.apache.commons.discovery.DiscoverServicesResources;
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.ResourceInfo;
-import org.apache.commons.discovery.ResourceIterator;
+import org.apache.commons.discovery.ResourceClass;
+import org.apache.commons.discovery.ResourceClassIterator;
+import org.apache.commons.discovery.ResourceNameIterator;
+import org.apache.commons.discovery.resource.ClassLoaders;
+import org.apache.commons.discovery.resource.classes.DiscoverClasses;
+import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
 
 
 /**
@@ -365,11 +366,12 @@ public class DiscoverClass {
         if (classNames.length > 0) {
             DiscoverClasses classDiscovery = new DiscoverClasses(loaders);
             
-            ResourceIterator classes = classDiscovery.find(classNames[0]);
+            ResourceClassIterator classes =
+                classDiscovery.findResourceClasses(classNames[0]);
             
             // If it's set as a property.. it had better be there!
             if (classes.hasNext()) {
-                ResourceInfo info = classes.next();
+                ResourceClass info = classes.nextResourceClass();
                 try {
                     return info.loadClass();
                 } catch (Exception e) {
@@ -377,10 +379,12 @@ public class DiscoverClass {
                 }
             }
         } else {
-            DiscoverServicesResources serviceDiscovery =
-                new DiscoverServicesResources(loaders);
-            
-            ResourceIterator classes = serviceDiscovery.find(spi.getSPName());
+            ResourceNameIterator classIter =
+                (new DiscoverServiceNames(loaders)).findResourceNames(spi.getSPName());
+
+            ResourceClassIterator classes =
+                (new DiscoverClasses(loaders)).findResourceClasses(classIter);
+                
             
             if (!classes.hasNext()  &&  defaultImpl != null) {
                 return defaultImpl.getDefaultClass(spi, loaders);
@@ -388,7 +392,7 @@ public class DiscoverClass {
             
             // Services we iterate through until we find one that loads..
             while (classes.hasNext()) {
-                ResourceInfo info = classes.next();
+                ResourceClass info = classes.nextResourceClass();
                 try {
                     return info.loadClass();
                 } catch (Exception e) {

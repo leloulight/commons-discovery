@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -59,86 +55,53 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.resource.names;
+
+import org.apache.commons.discovery.ResourceName;
+import org.apache.commons.discovery.ResourceNameDiscover;
+import org.apache.commons.discovery.ResourceNameIterator;
+import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.logging.Log;
 
 
 /**
- * <p>An exception that is thrown only if a suitable service
- * instance cannot be created by <code>ServiceFactory</code></p>
+ * Recover resource name from System Properties.
  * 
- * <p>Copied from LogConfigurationException<p>
- *
- * @author Craig R. McClanahan
- * @version $Revision$ $Date$
+ * @author Richard A. Sitze
  */
-public class DiscoveryException extends RuntimeException {
-
-
-    /**
-     * Construct a new exception with <code>null</code> as its detail message.
-     */
-    public DiscoveryException() {
-        super();
-    }
-
-    /**
-     * Construct a new exception with the specified detail message.
-     *
-     * @param message The detail message
-     */
-    public DiscoveryException(String message) {
-        super(message);
-    }
-
-    /**
-     * Construct a new exception with the specified cause and a derived
-     * detail message.
-     *
-     * @param cause The underlying cause
-     */
-    public DiscoveryException(Throwable cause) {
-        this((cause == null) ? null : cause.toString(), cause);
-    }
-
-    /**
-     * Construct a new exception with the specified detail message and cause.
-     *
-     * @param message The detail message
-     * @param cause The underlying cause
-     */
-    public DiscoveryException(String message, Throwable cause) {
-        super(message);
-        this.cause = cause; // Two-argument version requires JDK 1.4 or later
-    }
-
-    /**
-     * The underlying cause of this exception.
-     */
-    protected Throwable cause = null;
-
-    /**
-     * Return the underlying cause of this exception (if any).
-     */
-    public Throwable getCause() {
-        return this.cause;
+public class DiscoverNamesInSystemProperties
+    extends ResourceNameDiscoverImpl
+    implements ResourceNameDiscover
+{
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverNamesInSystemProperties.class);
+    public static void setLog(Log _log) {
+        log = _log;
     }
     
-    public String toString() {
-        String ls = System.getProperty("line.separator");
-        String str = super.toString();
-        if (cause != null) {
-            str = str + ls +
-                  "*****" + ls +
-                  stackToString(cause);
-        }
-        return str;
+    /** Construct a new resource discoverer
+     */
+    public DiscoverNamesInSystemProperties() {
     }
 
-    private static String stackToString(Throwable e){
-      java.io.StringWriter sw= new java.io.StringWriter(1024); 
-      java.io.PrintWriter pw= new java.io.PrintWriter(sw); 
-      e.printStackTrace(pw);
-      pw.close();
-      return sw.toString();
+    /**
+     * @return Enumeration of ResourceInfo
+     */
+    public ResourceNameIterator findResourceNames(final String resourceName) {
+        if (log.isDebugEnabled())
+            log.debug("find: resourceName='" + resourceName + "'");
+
+        return new ResourceNameIterator() {
+            private String resource = System.getProperty(resourceName);
+            
+            public boolean hasNext() {
+                return resource != null;
+            }
+            
+            public ResourceName nextResourceName() {
+                ResourceName element = new ResourceName(resource);
+                resource = null;
+                return element;
+            }
+        };
     }
 }

@@ -57,56 +57,50 @@
 
 package org.apache.commons.discovery;
 
+import java.util.Enumeration;
+import java.util.Vector;
+
 
 /**
- * This is a helper-class for chains,
- * where the results of one feed the next.
- * The only place where this makes sense is when
- * a Discover implementation returns names that
- * differ from the input name
- * (i.e. DiscoverFiledResources & ServiceResources).
+ * 'Resource' located by discovery.
+ * Naming of methods becomes a real pain ('getClass()')
+ * so I've patterned this after ClassLoader...
  * 
- * Default discoverer is DiscoverClassLoaderResources,
- * but it can be set to any other.
- *
+ * I think it works well as it will give users a point-of-reference.
+ * 
+ * @author Craig R. McClanahan
+ * @author Costin Manolache
  * @author Richard A. Sitze
  */
-public abstract class DiscoverChainLink implements Discover
+public class ResourceName
 {
-    private Discover discoverResources;
-    
-    /**
-     *  Construct a new resource discoverer
-     */
-    public DiscoverChainLink() {
-        discoverResources = new DiscoverClassLoaderResources();
-    }
-    
-    /**
-     *  Construct a new resource discoverer
-     */
-    public DiscoverChainLink(ClassLoaders loaders) {
-        discoverResources = new DiscoverClassLoaderResources(loaders);
-    }
-    
-    /**
-     *  Construct a new resource discoverer
-     */
-    public DiscoverChainLink(Discover discoverer) {
-        this.discoverResources = discoverer;
+    protected String      name;
+
+    public ResourceName(String resourceName) {
+        this.name = resourceName;
     }
 
     /**
-     * Specify set of class loaders to be used in searching.
+     * Get the value of resourceName.
+     * @return value of resourceName.
      */
-    public void setDiscoverer(Discover discoverer) {
-        this.discoverResources = discoverer;
+    public String getName() {
+        return name;
     }
-
-    /**
-     * To be used by downstream elements..
-     */
-    public Discover getDiscoverer() {
-        return discoverResources;
+    
+    public String toString() {
+        return "Resource[" + getName() + "]";
+    }
+    
+    public static ResourceName[] toArray(Enumeration enum) {
+        Vector vector = new Vector();
+        while (enum.hasMoreElements()) {
+            ResourceName resourceInfo = (ResourceName)enum.nextElement();
+            vector.add(resourceInfo);
+        }
+        ResourceName[] resources = new ResourceName[vector.size()];
+        vector.copyInto(resources);
+        
+        return resources;
     }
 }

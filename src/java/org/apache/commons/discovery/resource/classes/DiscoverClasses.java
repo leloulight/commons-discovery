@@ -55,91 +55,102 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.resource.classes;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.commons.discovery.jdk.JDKHooks;
+import org.apache.commons.discovery.Resource;
+import org.apache.commons.discovery.ResourceClass;
+import org.apache.commons.discovery.ResourceClassDiscover;
+import org.apache.commons.discovery.ResourceClassIterator;
+import org.apache.commons.discovery.ResourceIterator;
+import org.apache.commons.discovery.ResourceName;
+import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.logging.Log;
 
 
 /**
- * Holder for multiple Discover instances.
- * The result is the union of the results from each
- * (not a chained sequence, where results feed the next in line.
+ * The findResources() method will check every loader.
  *
  * @author Richard A. Sitze
+ * @author Craig R. McClanahan
+ * @author Costin Manolache
+ * @author James Strachan
  */
-public class DiscoverResources implements Discover
+public class DiscoverClasses
+    extends ResourceClassDiscoverImpl
+    implements ResourceClassDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverResources.class);
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverClasses.class);
     public static void setLog(Log _log) {
         log = _log;
     }
 
-    private Vector discoverers = new Vector();
+    /** Construct a new resource discoverer
+     */
+    public DiscoverClasses() {
+        super();
+    }
     
     /** Construct a new resource discoverer
      */
-    public DiscoverResources() {
-    }
-
-    public int size() {
-        return discoverers.size();
+    public DiscoverClasses(ClassLoaders classLoaders) {
+        super(classLoaders);
     }
     
-    public Discover get(int idx) {
-        return (Discover)discoverers.get(idx);
-    }
-
-    /**
-     * Specify a new class loader to be used in searching.
-     * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
-     */
-    public void put(Discover discover) {
-        if (discover != null) {
-            discoverers.addElement(discover);
-        }
-    }
-
-    /**
-     * Sum of all discoverers (execute independently [in parallel]),
-     * then put it all together..
-     * 
-     * @return ResourceIterator
-     */
-    public ResourceIterator find(final String resourceName) {
+    public ResourceClassIterator findResourceClasses(final String className) {
+        final String resourceName = className.replace('.','/') + ".class";
+        
         if (log.isDebugEnabled())
-            log.debug("find: resourceName='" + resourceName + "'");
+            log.debug("find: className='" + className + "'");
 
-        return new ResourceIterator() {
+        return new ResourceClassIterator() {
+            private Vector history = new Vector();
             private int idx = 0;
-            private ResourceIterator iterator = null;
+            private ResourceClass resource = null;
             
             public boolean hasNext() {
-                if (iterator == null  ||  !iterator.hasNext()) {
-                    iterator = getNextIterator();
-                    if (iterator == null) {
-                        return false;
-                    }
+                if (resource == null) {
+                    resource = getNextClass();
                 }
-                return iterator.hasNext();
+                return resource != null;
             }
             
-            public ResourceInfo next() {
-                return iterator.next();
+            public ResourceName nextResourceName() {
+                return nextResourceClass();
             }
             
-            private ResourceIterator getNextIterator() {
-                while (idx < size()) {
-                    ResourceIterator iter = get(idx++).find(resourceName);
-                    if (iter.hasNext()) {
-                        return iter;
+            public Resource nextResource() {
+                return nextResourceClass();
+            }
+            
+            public ResourceClass nextResourceClass() {
+                ResourceClass element = resource;
+                resource = null;
+                return element;
+            }
+            
+            private ResourceClass getNextClass() {
+                while (idx < getClassLoaders().size()) {
+                    ClassLoader loader = getClassLoaders().get(idx++);
+                    URL url = loader.getResource(resourceName);
+                    if (url != null) {
+                        if (!history.contains(url)) {
+                            history.addElement(url);
+    
+                            if (log.isDebugEnabled())
+                                log.debug("getNextClass: next URL='" + url + "'");
+    
+                            return new ResourceClass(className, url, loader);
+                        }
+                        if (log.isDebugEnabled())
+                            log.debug("getNextClass: duplicate URL='" + url + "'");
+                    } else {
+                        if (log.isDebugEnabled())
+                            log.debug("getNextClass: loader " + loader + ": '" + resourceName + "' not found");
                     }
                 }
                 return null;

@@ -59,21 +59,15 @@ package org.apache.commons.discovery;
 
 
 /**
- * Let's see how this goes..
- * 
  * @author Richard A. Sitze
  */
-public interface ResourceIterator
+public abstract class ResourceIterator implements ResourceNameIterator
 {
     /**
-     * Specify set of class loaders to be used in searching.
      */
-    public boolean hasNext();
-
-    /**
-     * Specify a new class loader to be used in searching.
-     * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
-     */
-    public ResourceInfo next();
+    public abstract Resource nextResource();
+    
+    public ResourceName nextResourceName() {
+        return nextResource();
+    }
 }

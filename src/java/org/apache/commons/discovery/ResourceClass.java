@@ -57,15 +57,58 @@
 
 package org.apache.commons.discovery;
 
+import java.net.URL;
+
+import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.logging.Log;
+
 
 /**
+ * 'Resource' located by discovery.
+ * Naming of methods becomes a real pain ('getClass()')
+ * so I've patterned this after ClassLoader...
+ * 
+ * I think it works well as it will give users a point-of-reference.
+ * 
  * @author Richard A. Sitze
- * @author Costin Manolache
  */
-public interface Discover
+public class ResourceClass extends Resource
 {
+    private static Log log = DiscoveryLogFactory.newLog(ResourceClass.class);
+    public static void setLog(Log _log) {
+        log = _log;
+    }
+    protected Class       resourceClass;
+
+    public ResourceClass(Class resourceClass, URL resource) {
+        super(resourceClass.getName(), resource, resourceClass.getClassLoader());
+        this.resourceClass = resourceClass;
+    }
+
+    public ResourceClass(String resourceName, URL resource, ClassLoader loader) {
+        super(resourceName, resource, loader);
+        this.resourceClass = resourceClass;
+    }
+    
     /**
-     * @return ResourceIterator
+     * Get the value of resourceClass.
+     * @return value of resourceClass.
      */
-    public ResourceIterator find(String resourceName);
+    public Class loadClass() {
+        if (resourceClass == null  &&  getClassLoader() != null) {
+            if (log.isDebugEnabled())
+                log.debug("getResourceClass: Loading class '" + getName() + "' with " + getClassLoader());
+
+            try {
+                resourceClass = getClassLoader().loadClass(getName());
+            } catch (ClassNotFoundException e) {
+                resourceClass = null;
+            }
+        }
+        return resourceClass;
+    }
+    
+    public String toString() {
+        return "LoadableClass[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
+    }
 }

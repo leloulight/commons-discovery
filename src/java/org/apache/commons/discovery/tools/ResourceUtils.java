@@ -63,14 +63,13 @@ package org.apache.commons.discovery.tools;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
-import org.apache.commons.discovery.ClassLoaders;
-import org.apache.commons.discovery.DiscoverClassLoaderResources;
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.ResourceInfo;
+import org.apache.commons.discovery.Resource;
 import org.apache.commons.discovery.ResourceIterator;
+import org.apache.commons.discovery.resource.ClassLoaders;
+import org.apache.commons.discovery.resource.DiscoverResources;
 
 
 /**
@@ -115,13 +114,13 @@ public class ResourceUtils {
      * 
      * @param resourceName The name of the resource to load.
      */
-    public static URL getResource(Class spi,
-                                  String resourceName,
-                                  ClassLoaders loaders)
+    public static Resource getResource(Class spi,
+                                       String resourceName,
+                                       ClassLoaders loaders)
         throws DiscoveryException
     {
-        DiscoverClassLoaderResources explorer = new DiscoverClassLoaderResources(loaders);
-        ResourceIterator resources = explorer.find(resourceName);
+        DiscoverResources explorer = new DiscoverResources(loaders);
+        ResourceIterator resources = explorer.findResources(resourceName);
         
         if (spi != null  &&
             !resources.hasNext()  &&
@@ -133,42 +132,12 @@ public class ResourceUtils {
              * package name of the spi.
              */
             resourceName = getPackageName(spi).replace('.','/') + "/" + resourceName;
-            resources = explorer.find(resourceName);
+            resources = explorer.findResources(resourceName);
         }
         
         return resources.hasNext()
-               ? ((ResourceInfo)resources.next()).getResource()
+               ? resources.nextResource()
                : null;
-    }
-
-    /**
-     * Load the resource <code>resourceName</code>.
-     * Try each classloader in succession,
-     * until first succeeds, or all fail.
-     * If all fail and <code>resouceName</code> is not absolute
-     * (doesn't start with '/' character), then retry with
-     * <code>packageName/resourceName</code> after changing all
-     * '.' to '/'.
-     * 
-     * @param resourceName The name of the resource to load.
-     */
-    public static InputStream getResourceAsStream(Class spi,
-                                                  String resourceName,
-                                                  ClassLoaders loaders)
-        throws DiscoveryException
-    {
-        URL url = getResource(spi, resourceName, loaders);
-        InputStream stream = null;
-        
-        if (url != null) {
-            try {
-                stream = url.openStream();
-            } catch (IOException e) {
-                stream = null;  // ignore
-            }
-        }
-        
-        return stream;
     }
     
     /**
@@ -204,9 +173,9 @@ public class ResourceUtils {
         if (propertiesFileName != null) {
             try {
                 InputStream stream =
-                    ResourceUtils.getResourceAsStream(spi,
-                                                         propertiesFileName,
-                                                         classLoaders);
+                    getResource(spi,
+                                propertiesFileName,
+                                classLoaders).getResourceAsStream();
     
                 if (stream != null) {
                     properties = new Properties();

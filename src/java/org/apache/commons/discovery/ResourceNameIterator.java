@@ -57,49 +57,17 @@
 
 package org.apache.commons.discovery;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
-import org.apache.commons.logging.Log;
-
 
 /**
- * Recover resource name from System Properties.
- * 
  * @author Richard A. Sitze
  */
-public class DiscoverSystemProperties implements Discover
+public interface ResourceNameIterator
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverSystemProperties.class);
-    public static void setLog(Log _log) {
-        log = _log;
-    }
-    
-    /** Construct a new resource discoverer
+    /**
      */
-    public DiscoverSystemProperties() {
-    }
+    public boolean hasNext();
 
     /**
-     * @return Enumeration of ResourceInfo
      */
-    public ResourceIterator find(final String resourceName) {
-        if (log.isDebugEnabled())
-            log.debug("find: resourceName='" + resourceName + "'");
-
-        return new ResourceIterator() {
-            private String resource = System.getProperty(resourceName);
-            
-            public boolean hasNext() {
-                return resource != null;
-            }
-            
-            public ResourceInfo next() {
-                ResourceInfo element = new ResourceInfo(resource);
-                resource = null;
-                return element;
-            }
-        };
-    }
+    public ResourceName nextResourceName();
 }

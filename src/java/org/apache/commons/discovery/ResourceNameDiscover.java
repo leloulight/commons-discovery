@@ -57,90 +57,28 @@
 
 package org.apache.commons.discovery;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
-import org.apache.commons.logging.Log;
-
 
 /**
- * Recover resources from a Dictionary.  This covers Properties as well,
- * since <code>Properties extends Hashtable extends Dictionary</code>.
- * 
- * The recovered value is expected to be either a <code>String</code>
- * or a <code>String[]</code>.
+ * Interface representing a mapping
+ * from a set of source resource names
+ * to a resultant set of resource names.
  * 
  * @author Richard A. Sitze
+ * @author Costin Manolache
  */
-public class DiscoverDictionaryResources implements Discover
+public interface ResourceNameDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverDictionaryResources.class);
-    public static void setLog(Log _log) {
-        log = _log;
-    }
-
-    private Dictionary dictionary;
-    
-    /** Construct a new resource discoverer
+    /**
+     * Locate names of resources that are bound to <code>resourceName</code>.
+     * 
+     * @return ResourceNameIterator
      */
-    public DiscoverDictionaryResources() {
-        setDictionary(new Hashtable());
-    }
-    
-    /** Construct a new resource discoverer
-     */
-    public DiscoverDictionaryResources(Dictionary dictionary) {
-        setDictionary(dictionary);
-    }
-
-    protected Dictionary getDictionary() {
-        return dictionary;
-    }
+    public ResourceNameIterator findResourceNames(String resourceName);
 
     /**
-     * Specify set of class loaders to be used in searching.
+     * Locate names of resources that are bound to <code>resourceNames</code>.
+     * 
+     * @return ResourceNameIterator
      */
-    public void setDictionary(Dictionary table) {
-        this.dictionary = dictionary;
-    }
-    
-    public void addResource(String resourceName, String resource) {
-        dictionary.put(resourceName, resource);
-    }
-    
-    public void addResource(String resourceName, String[] resources) {
-        dictionary.put(resourceName, resources);
-    }
-
-    /**
-     * @return Enumeration of ResourceInfo
-     */
-    public ResourceIterator find(final String resourceName) {
-        if (log.isDebugEnabled())
-            log.debug("find: resourceName='" + resourceName + "'");
-
-        Object baseResource = dictionary.get(resourceName);
-
-        final String[] resources;
-        if (baseResource instanceof String) {
-            resources = new String[] { (String)baseResource };
-        } else if (baseResource instanceof String[]) {
-            resources = (String[])baseResource;
-        } else {
-            resources = null;
-        }
-
-        return new ResourceIterator() {
-            private int idx = 0;
-            
-            public boolean hasNext() {
-                return (resources != null && idx < resources.length);
-            }
-            
-            public ResourceInfo next() {
-                return new ResourceInfo(resources[idx++]);
-            }
-        };
-    }
+    public ResourceNameIterator findResourceNames(ResourceNameIterator resourceNames);
 }

@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -59,86 +55,54 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.resource.names;
+
+import org.apache.commons.discovery.ResourceDiscover;
+import org.apache.commons.discovery.ResourceNameDiscover;
+import org.apache.commons.discovery.ResourceNameIterator;
+import org.apache.commons.discovery.resource.ClassLoaders;
 
 
 /**
- * <p>An exception that is thrown only if a suitable service
- * instance cannot be created by <code>ServiceFactory</code></p>
+ * Provide JDK 1.3 style service discovery...
  * 
- * <p>Copied from LogConfigurationException<p>
+ * The caller will first configure the discoverer by creating a
+ * root Discoverer for the files.
  *
+ * @author Richard A. Sitze
  * @author Craig R. McClanahan
- * @version $Revision$ $Date$
+ * @author Costin Manolache
+ * @author James Strachan
  */
-public class DiscoveryException extends RuntimeException {
-
-
-    /**
-     * Construct a new exception with <code>null</code> as its detail message.
+public class DiscoverServiceNames
+    extends DiscoverNamesInFile
+    implements ResourceNameDiscover
+{
+    protected static final String SERVICE_HOME = "META-INF/services/";
+    
+    /** Construct a new service discoverer
      */
-    public DiscoveryException() {
+    public DiscoverServiceNames() {
         super();
     }
-
+    
     /**
-     * Construct a new exception with the specified detail message.
-     *
-     * @param message The detail message
+     *  Construct a new resource discoverer
      */
-    public DiscoveryException(String message) {
-        super(message);
-    }
-
-    /**
-     * Construct a new exception with the specified cause and a derived
-     * detail message.
-     *
-     * @param cause The underlying cause
-     */
-    public DiscoveryException(Throwable cause) {
-        this((cause == null) ? null : cause.toString(), cause);
-    }
-
-    /**
-     * Construct a new exception with the specified detail message and cause.
-     *
-     * @param message The detail message
-     * @param cause The underlying cause
-     */
-    public DiscoveryException(String message, Throwable cause) {
-        super(message);
-        this.cause = cause; // Two-argument version requires JDK 1.4 or later
-    }
-
-    /**
-     * The underlying cause of this exception.
-     */
-    protected Throwable cause = null;
-
-    /**
-     * Return the underlying cause of this exception (if any).
-     */
-    public Throwable getCause() {
-        return this.cause;
+    public DiscoverServiceNames(ClassLoaders loaders) {
+        super(loaders);
     }
     
-    public String toString() {
-        String ls = System.getProperty("line.separator");
-        String str = super.toString();
-        if (cause != null) {
-            str = str + ls +
-                  "*****" + ls +
-                  stackToString(cause);
-        }
-        return str;
+    /** Construct a new service discoverer
+     */
+    public DiscoverServiceNames(ResourceDiscover discoverer) {
+        super(discoverer);
     }
-
-    private static String stackToString(Throwable e){
-      java.io.StringWriter sw= new java.io.StringWriter(1024); 
-      java.io.PrintWriter pw= new java.io.PrintWriter(sw); 
-      e.printStackTrace(pw);
-      pw.close();
-      return sw.toString();
+    
+    /**
+     * @return Enumeration of ServiceInfo
+     */
+    public ResourceNameIterator findResourceNames(String serviceName) {
+        return super.findResourceNames(SERVICE_HOME + serviceName);
     }
 }

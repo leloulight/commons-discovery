@@ -60,11 +60,6 @@ package org.apache.commons.discovery;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
-import org.apache.commons.logging.Log;
 
 
 /**
@@ -78,54 +73,23 @@ import org.apache.commons.logging.Log;
  * @author Costin Manolache
  * @author Richard A. Sitze
  */
-public class ResourceInfo
+public class Resource extends ResourceName
 {
-    private static Log log = DiscoveryLogFactory.newLog(ResourceInfo.class);
-    public static void setLog(Log _log) {
-        log = _log;
-    }
-
-    protected String      name;
     protected URL         resource;
-    protected Class       resourceClass;
-    protected ClassLoader classLoader;
+    protected ClassLoader loader;
 
-    public ResourceInfo(String resourceName) {
-        this(resourceName, null, null);
-    }
-
-    public ResourceInfo(Class resourceClass) {
-        this(resourceClass, null, null);
-    }
-
-    public ResourceInfo(String resourceName, URL resource, ClassLoader loader) {
-        this.name = resourceName;
+    public Resource(String resourceName, URL resource, ClassLoader loader) {
+        super(resourceName);
         setResource(resource);
-        resourceClass = null;
         setClassLoader(loader);
-    }
-
-    public ResourceInfo(Class resourceClass, URL resource, ClassLoader loader) {
-        this.name = resourceClass.getName();
-        setResource(resource);
-        this.resourceClass = resourceClass;
-        setClassLoader(loader);
-    }
-
-    /**
-     * Get the value of resourceName.
-     * @return value of resourceName.
-     */
-    public String getName() {
-        return name;
     }
 
     /**
      * Set the value of URL.
      * @param v  Value to assign to URL.
      */
-    public void setResource(URL  location) {
-        this.resource = location;
+    public void setResource(URL  resource) {
+        this.resource = resource;
     }
     
     /**
@@ -149,29 +113,11 @@ public class ResourceInfo
     }
     
     /**
-     * Get the value of resourceClass.
-     * @return value of resourceClass.
-     */
-    public Class loadClass() {
-        if (resourceClass == null  &&  getClassLoader() != null) {
-            if (log.isDebugEnabled())
-                log.debug("getResourceClass: Loading class '" + getName() + "' with " + getClassLoader());
-
-            try {
-                resourceClass = getClassLoader().loadClass(getName());
-            } catch (ClassNotFoundException e) {
-                resourceClass = null;
-            }
-        }
-        return resourceClass;
-    }
-    
-    /**
      * Get the value of loader.
      * @return value of loader.
      */
     public ClassLoader getClassLoader() {
-        return classLoader ;
+        return loader ;
     }
     
     /**
@@ -179,22 +125,10 @@ public class ResourceInfo
      * @param v  Value to assign to loader.
      */
     public void setClassLoader(ClassLoader  loader) {
-        this.classLoader = loader;
+        this.loader = loader;
     }
     
     public String toString() {
-        return "ResourceInfo[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
-    }
-    
-    public static ResourceInfo[] toArray(Enumeration enum) {
-        Vector vector = new Vector();
-        while (enum.hasMoreElements()) {
-            ResourceInfo resourceInfo = (ResourceInfo)enum.nextElement();
-            vector.add(resourceInfo);
-        }
-        ResourceInfo[] resources = new ResourceInfo[vector.size()];
-        vector.copyInto(resources);
-        
-        return resources;
+        return "LoadableResourceInfo[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
     }
 }

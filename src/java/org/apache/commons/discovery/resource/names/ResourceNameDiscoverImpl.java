@@ -55,47 +55,60 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.resource.names;
+
+import org.apache.commons.discovery.ResourceName;
+import org.apache.commons.discovery.ResourceNameDiscover;
+import org.apache.commons.discovery.ResourceNameIterator;
 
 
 /**
- * Provide JDK 1.3 style service discovery...
+ * Helper class for methods implementing the ResourceNameDiscover interface.
  * 
- * The caller will first configure the discoverer by creating a
- * root Discoverer for the files.
- *
  * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author James Strachan
  */
-public class DiscoverServicesResources extends DiscoverFiledResources
+public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover
 {
-    protected static final String SERVICE_HOME = "META-INF/services/";
-    
-    /** Construct a new service discoverer
-     */
-    public DiscoverServicesResources() {
-        super();
-    }
-    
     /**
-     *  Construct a new resource discoverer
+     * Locate names of resources that are bound to <code>resourceName</code>.
+     * 
+     * @return ResourceNameIterator
      */
-    public DiscoverServicesResources(ClassLoaders loaders) {
-        super(loaders);
-    }
-    
-    /** Construct a new service discoverer
-     */
-    public DiscoverServicesResources(Discover discoverer) {
-        super(discoverer);
-    }
-    
+    public abstract ResourceNameIterator findResourceNames(String resourceName);
+
     /**
-     * @return Enumeration of ServiceInfo
+     * Locate names of resources that are bound to <code>resourceName</code>.
+     * 
+     * @return ResourceNameIterator
      */
-    public ResourceIterator find(String serviceName) {
-        return super.find(SERVICE_HOME + serviceName);
+    public ResourceNameIterator findResourceNames(final ResourceNameIterator inputNames) {
+        return new ResourceNameIterator() {
+            private ResourceNameIterator resourceNames = null;
+            private ResourceName resourceName = null;
+            
+            public boolean hasNext() {
+                if (resourceName == null) {
+                    resourceName = getNextResourceName();
+                }
+                return resourceName != null;
+            }
+            
+            public ResourceName nextResourceName() {
+                ResourceName name = resourceName;
+                resourceName = null;
+                return name;
+            }
+            
+            private ResourceName getNextResourceName() {
+                while (inputNames.hasNext() && (resourceNames == null  ||  !resourceNames.hasNext())) {
+                    resourceNames =
+                        findResourceNames(inputNames.nextResourceName().getName());
+                }
+    
+                return (resourceNames != null  &&  resourceNames.hasNext())
+                       ? resourceNames.nextResourceName()
+                       : null;
+            }
+        };
     }
 }

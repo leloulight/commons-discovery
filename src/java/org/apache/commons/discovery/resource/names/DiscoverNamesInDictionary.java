@@ -55,49 +55,96 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.resource.names;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+import org.apache.commons.discovery.ResourceName;
+import org.apache.commons.discovery.ResourceNameDiscover;
+import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
-import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.logging.Log;
 
 
 /**
- * Recover resource name from Managed Properties.
- * @see org.apache.commons.discovery.tools.ManagedProperties
+ * Recover resources from a Dictionary.  This covers Properties as well,
+ * since <code>Properties extends Hashtable extends Dictionary</code>.
+ * 
+ * The recovered value is expected to be either a <code>String</code>
+ * or a <code>String[]</code>.
  * 
  * @author Richard A. Sitze
  */
-public class DiscoverManagedProperties implements Discover
+public class DiscoverNamesInDictionary
+    extends ResourceNameDiscoverImpl
+    implements ResourceNameDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverManagedProperties.class);
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverNamesInDictionary.class);
     public static void setLog(Log _log) {
         log = _log;
+    }
+
+    private Dictionary dictionary;
+    
+    /** Construct a new resource discoverer
+     */
+    public DiscoverNamesInDictionary() {
+        setDictionary(new Hashtable());
     }
     
     /** Construct a new resource discoverer
      */
-    public DiscoverManagedProperties() {
+    public DiscoverNamesInDictionary(Dictionary dictionary) {
+        setDictionary(dictionary);
+    }
+
+    protected Dictionary getDictionary() {
+        return dictionary;
+    }
+
+    /**
+     * Specify set of class loaders to be used in searching.
+     */
+    public void setDictionary(Dictionary table) {
+        this.dictionary = dictionary;
+    }
+    
+    public void addResource(String resourceName, String resource) {
+        dictionary.put(resourceName, resource);
+    }
+    
+    public void addResource(String resourceName, String[] resources) {
+        dictionary.put(resourceName, resources);
     }
 
     /**
      * @return Enumeration of ResourceInfo
      */
-    public ResourceIterator find(final String resourceName) {
+    public ResourceNameIterator findResourceNames(final String resourceName) {
         if (log.isDebugEnabled())
             log.debug("find: resourceName='" + resourceName + "'");
 
-        return new ResourceIterator() {
-            private String resource = ManagedProperties.getProperty(resourceName);
+        Object baseResource = dictionary.get(resourceName);
+
+        final String[] resources;
+        if (baseResource instanceof String) {
+            resources = new String[] { (String)baseResource };
+        } else if (baseResource instanceof String[]) {
+            resources = (String[])baseResource;
+        } else {
+            resources = null;
+        }
+
+        return new ResourceNameIterator() {
+            private int idx = 0;
             
             public boolean hasNext() {
-                return resource != null;
+                return (resources != null && idx < resources.length);
             }
             
-            public ResourceInfo next() {
-                ResourceInfo element = new ResourceInfo(resource);
-                resource = null;
-                return element;
+            public ResourceName nextResourceName() {
+                return new ResourceName(resources[idx++]);
             }
         };
     }

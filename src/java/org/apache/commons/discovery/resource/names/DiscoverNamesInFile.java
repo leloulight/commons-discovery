@@ -55,7 +55,7 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.resource.names;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,7 +63,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Vector;
 
+import org.apache.commons.discovery.Resource;
+import org.apache.commons.discovery.ResourceDiscover;
+import org.apache.commons.discovery.ResourceIterator;
+import org.apache.commons.discovery.ResourceName;
+import org.apache.commons.discovery.ResourceNameDiscover;
+import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.discovery.resource.ClassLoaders;
+import org.apache.commons.discovery.resource.DiscoverResources;
 import org.apache.commons.logging.Log;
 
 
@@ -84,46 +92,66 @@ import org.apache.commons.logging.Log;
  * @author Costin Manolache
  * @author James Strachan
  */
-public class DiscoverFiledResources extends DiscoverChainLink implements Discover
+public class DiscoverNamesInFile
+    extends ResourceNameDiscoverImpl
+    implements ResourceNameDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverFiledResources.class);
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverNamesInFile.class);
     public static void setLog(Log _log) {
         log = _log;
     }
     
+    private ResourceDiscover discoverResources;
+    
     /**
      *  Construct a new resource discoverer
      */
-    public DiscoverFiledResources() {
-        super();
+    public DiscoverNamesInFile() {
+        discoverResources = new DiscoverResources();
     }
     
     /**
      *  Construct a new resource discoverer
      */
-    public DiscoverFiledResources(ClassLoaders loaders) {
-        super(loaders);
+    public DiscoverNamesInFile(ClassLoaders loaders) {
+        discoverResources = new DiscoverResources(loaders);
     }
     
     /**
      *  Construct a new resource discoverer
      */
-    public DiscoverFiledResources(Discover discoverer) {
-        super(discoverer);
+    public DiscoverNamesInFile(ResourceDiscover discoverer) {
+        this.discoverResources = discoverer;
+    }
+
+    /**
+     * Specify set of class loaders to be used in searching.
+     */
+    public void setDiscoverer(ResourceDiscover discover) {
+        this.discoverResources = discover;
+    }
+
+    /**
+     * To be used by downstream elements..
+     */
+    public ResourceDiscover getDiscover() {
+        return discoverResources;
     }
 
     /**
      * @return Enumeration of ServiceInfo
      */
-    public ResourceIterator find(final String fileName) {
+    public ResourceNameIterator findResourceNames(final String fileName) {
         if (log.isDebugEnabled())
             log.debug("find: fileName='" + fileName + "'");
 
-        return new ResourceIterator() {
-            private ResourceIterator files = getDiscoverer().find(fileName);
+        return new ResourceNameIterator() {
+            private ResourceIterator files =
+                getDiscover().findResources(fileName);
+
             private int idx = 0;
             private Vector classNames = null;
-            private ResourceInfo resource = null;
+            private ResourceName resource = null;
             
             public boolean hasNext() {
                 if (resource == null) {
@@ -132,13 +160,13 @@ public class DiscoverFiledResources extends DiscoverChainLink implements Discove
                 return resource != null;
             }
             
-            public ResourceInfo next() {
-                ResourceInfo element = resource;
+            public ResourceName nextResourceName() {
+                ResourceName element = resource;
                 resource = null;
                 return element;
             }
             
-            private ResourceInfo getNextClassName() {
+            private ResourceName getNextClassName() {
                 if (classNames == null || idx >= classNames.size()) {
                     classNames = getNextClassNames();
                     idx = 0;
@@ -152,12 +180,12 @@ public class DiscoverFiledResources extends DiscoverChainLink implements Discove
                 if (log.isDebugEnabled())
                     log.debug("getNextClassResource: next class='" + className + "'");
 
-                return new ResourceInfo(className);
+                return new ResourceName(className);
             }
 
             private Vector getNextClassNames() {
                 while (files.hasNext()) {
-                    Vector results = readServices(files.next());
+                    Vector results = readServices(files.nextResource());
                     if (results != null  &&  results.size() > 0) {
                         return results;
                     }
@@ -171,7 +199,7 @@ public class DiscoverFiledResources extends DiscoverChainLink implements Discove
      * Read everything, no defering here..
      * Ensure that files are closed before we leave.
      */
-    private Vector readServices(final ResourceInfo info) {
+    private Vector readServices(final Resource info) {
         Vector results = new Vector();
         
         InputStream is = info.getResourceAsStream();

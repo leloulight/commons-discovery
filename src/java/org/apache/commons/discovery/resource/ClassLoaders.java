@@ -55,7 +55,7 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.resource;
 
 import java.util.Vector;
 
