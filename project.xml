@@ -20,6 +20,24 @@
       <email></email>
       <organization></organization>
     </developer>
+    <developer>
+      <name>Craig R. McClanahan</name>
+      <id></id>
+      <email></email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>Costin Manolache</name>
+      <id></id>
+      <email></email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>James Strachan</name>
+      <id>jstrachan</id>
+      <email>jstrachan@apache.org</email>
+      <organization>SpiritSoft, Inc.</organization>
+    </developer>
   </developers>
   
   <dependencies>
