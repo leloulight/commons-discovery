@@ -67,6 +67,10 @@ package org.apache.commons.discovery;
  * For the moment, we cheat and return the system class loader.
  * Getting a wrapper for the bootstrap loader that works
  * in JDK 1.1.x may require a bit more work...
+ * 
+ * Expected use:  call BootstrapLoader.wrap(loader),
+ * which will return loader (loader != null) or a wrapper class
+ * in place of the bootstrap loader (loader == null).
  */
 public class BootstrapLoader {
     private static ClassLoader bootstrapLoader =
