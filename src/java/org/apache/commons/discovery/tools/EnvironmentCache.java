@@ -82,10 +82,10 @@ import org.apache.commons.discovery.load.ClassLoaderUtils;
  *         Key   : Thread Context Class Loader (<code>ClassLoader</code>)
  *         Value : groupContext::SPI Cache (<code>HashMap</code>)
  * 
- * - groupContext::Object Cache
- *         Cache : HashMap
- *         Key   : groupContext (<code>String</code>)
- *         Value : <code>Object</code>
+ * //- groupContext::Object Cache
+ * //         Cache : HashMap
+ * //         Key   : groupContext (<code>String</code>)
+ * //        Value : <code>Object</code>
  * 
  * When we 'release', it is expected that the caller of the 'release'
  * have the same thread context class loader... as that will be used
@@ -116,12 +116,13 @@ public class EnvironmentCache {
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
-        HashMap groups =
-            (HashMap)root_cache.get(env.getThreadContextClassLoader());
-
-        return (groups != null)
-               ? (HashMap)groups.get(env.getGroupContext())
-               : null;
+//        HashMap groups =
+//            (HashMap)root_cache.get(env.getThreadContextClassLoader());
+//
+//        return (groups != null)
+//               ? (HashMap)groups.get(env.getGroupContext())
+//               : null;
+        return root_cache.get(env.getThreadContextClassLoader());
     }
     
     /**
@@ -135,15 +136,16 @@ public class EnvironmentCache {
          */
         if (object != null)
         {
-            HashMap groups =
-                (HashMap)root_cache.get(env.getThreadContextClassLoader());
-                
-            if (groups == null) {
-                groups = new HashMap(smallHashSize);
-                root_cache.put(env.getThreadContextClassLoader(), groups);
-            }
-
-            groups.put(env.getGroupContext(), object);
+//            HashMap groups =
+//                (HashMap)root_cache.get(env.getThreadContextClassLoader());
+//                
+//            if (groups == null) {
+//                groups = new HashMap(smallHashSize);
+//                root_cache.put(env.getThreadContextClassLoader(), groups);
+//            }
+//
+//            groups.put(env.getGroupContext(), object);
+            root_cache.put(env.getThreadContextClassLoader(), object);
         }
     }
 
@@ -169,16 +171,17 @@ public class EnvironmentCache {
         ClassLoader threadContextClassLoader =
             ClassLoaderUtils.getThreadContextClassLoader();
 
-        HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
+//        HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
+//
+//        if (groups != null) {
+//            Iterator groupIter = groups.values().iterator();
+//
+//            while (groupIter.hasNext()) {
+//                Object object = groupIter.next();
+//            }
+//            groups.clear();
+//        }
 
-        if (groups != null) {
-            Iterator groupIter = groups.values().iterator();
-
-            while (groupIter.hasNext()) {
-                Object object = groupIter.next();
-            }
-            groups.clear();
-        }
         root_cache.remove(threadContextClassLoader);
     }
     
@@ -194,11 +197,13 @@ public class EnvironmentCache {
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
-        HashMap groups =
-            (HashMap)root_cache.get(env.getThreadContextClassLoader());
+//        HashMap groups =
+//            (HashMap)root_cache.get(env.getThreadContextClassLoader());
+//
+//        if (groups != null) {
+//            groups.remove(env.getGroupContext());
+//        }
 
-        if (groups != null) {
-            groups.remove(env.getGroupContext());
-        }
+        root_cache.remove(env.getThreadContextClassLoader());
     }
 }

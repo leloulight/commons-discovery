@@ -594,35 +594,35 @@ public class DiscoverSingleton {
     }
     
     
-    /**
-     * Release any internal references to a previously created service
-     * instance associated with the current thread context class loader.
-     * If the SPI instance implements <code>Service</code>, then call
-     * <code>release()</code>.
-     */
-    public static synchronized void release(String groupContext) {
-        HashMap spis = (HashMap)root_cache.get(new Environment(groupContext));
-        
-        if (spis != null) {
-            spis.clear();
-        }
-        
-        root_cache.release(new Environment(groupContext));
-    }
-
-    /**
-     * Release any internal references to a previously created service
-     * instance associated with the current thread context class loader.
-     * If the SPI instance implements <code>Service</code>, then call
-     * <code>release()</code>.
-     */
-    public static synchronized void release(String groupContext, Class spiClass) {
-        HashMap spis = (HashMap)root_cache.get(new Environment(groupContext));
-        
-        if (spis != null) {
-            spis.remove(spiClass.getName());
-        }
-    }
+//    /**
+//     * Release any internal references to a previously created service
+//     * instance associated with the current thread context class loader.
+//     * If the SPI instance implements <code>Service</code>, then call
+//     * <code>release()</code>.
+//     */
+//    public static synchronized void release(String groupContext) {
+//        HashMap spis = (HashMap)root_cache.get(new Environment(groupContext));
+//        
+//        if (spis != null) {
+//            spis.clear();
+//        }
+//        
+//        root_cache.release(new Environment(groupContext));
+//    }
+//
+//    /**
+//     * Release any internal references to a previously created service
+//     * instance associated with the current thread context class loader.
+//     * If the SPI instance implements <code>Service</code>, then call
+//     * <code>release()</code>.
+//     */
+//    public static synchronized void release(String groupContext, Class spiClass) {
+//        HashMap spis = (HashMap)root_cache.get(new Environment(groupContext));
+//        
+//        if (spis != null) {
+//            spis.remove(spiClass.getName());
+//        }
+//    }
 
     /**
      * Release any internal references to a previously created service
@@ -631,7 +631,11 @@ public class DiscoverSingleton {
      * <code>release()</code>.
      */
     public static synchronized void release(Class spiClass) {
-        release(Environment.defaultGroupContext, spiClass);
+        HashMap spis = (HashMap)root_cache.get(new Environment());
+        
+        if (spis != null) {
+            spis.remove(spiClass.getName());
+        }
     }
     
     
