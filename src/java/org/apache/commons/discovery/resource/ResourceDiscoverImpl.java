@@ -38,7 +38,6 @@ public abstract class ResourceDiscoverImpl
      * Construct a new resource discoverer
      */
     public ResourceDiscoverImpl() {
-        setClassLoaders(new ClassLoaders());
     }
     
     /**
@@ -61,10 +60,13 @@ public abstract class ResourceDiscoverImpl
      * It is recommended to add the most specific loaders first.
      */
     public void addClassLoader(ClassLoader loader) {
-        classLoaders.put(loader);
+        getClassLoaders().put(loader);
     }
 
     protected ClassLoaders getClassLoaders() {
+        if (classLoaders == null) {
+            classLoaders = ClassLoaders.getLibLoaders(this.getClass(), null, true);
+        }
         return classLoaders;
     }
 
