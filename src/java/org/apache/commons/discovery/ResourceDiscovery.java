@@ -81,6 +81,9 @@ import org.apache.commons.logging.Log;
 public class ResourceDiscovery
 {
     private static Log log = DiscoveryLogFactory.newLog(ResourceDiscovery.class);
+    public static void setLog(Log _log) {
+        log = _log;
+    }
 
     /**
      * this doesn't buy anything except +/- style (subjective).
@@ -192,9 +195,5 @@ public class ResourceDiscovery
                 return null;
             }
         };
-    }
-    
-    public static void setLog(Log _log) {
-        log = _log;
     }
 }

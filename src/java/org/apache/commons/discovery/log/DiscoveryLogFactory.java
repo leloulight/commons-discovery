@@ -68,6 +68,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.tools.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -110,25 +111,12 @@ public class DiscoveryLogFactory {
          * Required to implement 'public static void setLog(Log)'
          */
         try {
-            boolean problem = false;
-            Method setLog = null;
+            Method setLog = ClassUtils.findPublicStaticMethod(clazz,
+                                                              void.class,
+                                                              "setLog",
+                                                              setLogParamClasses);
             
-            // verify 'setLog(Log)' is in class
-            try {
-                setLog = clazz.getDeclaredMethod("setLog", setLogParamClasses);
-            } catch(NoSuchMethodException e) {
-                problem = true;
-            }
-            
-            // verify 'public static void'
-            if (!problem  &&
-                !(Modifier.isPublic(setLog.getModifiers())  &&
-                  Modifier.isStatic(setLog.getModifiers())  &&
-                  setLog.getReturnType() == void.class)) {
-                problem = true;
-            }
-            
-            if (problem) {
+            if (setLog == null) {
                 String msg = "Internal Error: " + clazz.getName() + " required to implement 'public static void setLog(Log)'";
                 log.fatal(msg);
                 throw new DiscoveryException(msg);
@@ -178,7 +166,8 @@ public class DiscoveryLogFactory {
                 
                 Method setLog = null;
                 
-                // verify 'setLog(Log)'
+                // invoke 'setLog(Log)'.. we already know it's 'public static',
+                // have verified parameters, and return type..
                 try {
                     setLog = clazz.getMethod("setLog", setLogParamClasses);
                 } catch(Exception e) {

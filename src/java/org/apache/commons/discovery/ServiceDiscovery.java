@@ -96,6 +96,9 @@ import org.apache.commons.logging.Log;
 public class ServiceDiscovery extends ClassDiscovery
 {
     private static Log log = DiscoveryLogFactory.newLog(ServiceDiscovery.class);
+    public static void setLog(Log _log) {
+        log = _log;
+    }
 
     protected static final String SERVICE_HOME = "META-INF/services/";
     
@@ -252,9 +255,5 @@ public class ServiceDiscovery extends ClassDiscovery
         }
         
         return results;
-    }
-    
-    public static void setLog(Log _log) {
-        log = _log;
     }
 }

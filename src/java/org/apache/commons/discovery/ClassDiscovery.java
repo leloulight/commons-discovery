@@ -80,6 +80,9 @@ import org.apache.commons.logging.Log;
 public class ClassDiscovery extends ResourceDiscovery
 {
     private static Log log = DiscoveryLogFactory.newLog(ClassDiscovery.class);
+    public static void setLog(Log _log) {
+        log = _log;
+    }
 
     protected static final String SERVICE_HOME = "META-INF/services/";
     
@@ -155,9 +158,5 @@ public class ClassDiscovery extends ResourceDiscovery
                 return null;
             }
         };
-    }
-    
-    public static void setLog(Log _log) {
-        log = _log;
     }
 }
