@@ -100,54 +100,107 @@ public class DiscoverNamesInFile
         log = _log;
     }
     
-    private ResourceDiscover discoverResources;
+    private ResourceDiscover _discoverResources;
     
+    private final String _prefix;
+    private final String _suffix;
+        
     /**
      *  Construct a new resource discoverer
      */
     public DiscoverNamesInFile() {
-        discoverResources = new DiscoverResources();
+        _discoverResources = new DiscoverResources();
+        _prefix = null;
+        _suffix = null;
+    }
+        
+    /**
+     *  Construct a new resource discoverer
+     */
+    public DiscoverNamesInFile(String prefix, String suffix) {
+        _discoverResources = new DiscoverResources();
+        _prefix = prefix;
+        _suffix = suffix;
     }
     
     /**
      *  Construct a new resource discoverer
      */
     public DiscoverNamesInFile(ClassLoaders loaders) {
-        discoverResources = new DiscoverResources(loaders);
+        _discoverResources = new DiscoverResources(loaders);
+        _prefix = null;
+        _suffix = null;
+    }
+    
+    /**
+     *  Construct a new resource discoverer
+     */
+    public DiscoverNamesInFile(ClassLoaders loaders, String prefix, String suffix) {
+        _discoverResources = new DiscoverResources(loaders);
+        _prefix = prefix;
+        _suffix = suffix;
     }
     
     /**
      *  Construct a new resource discoverer
      */
     public DiscoverNamesInFile(ResourceDiscover discoverer) {
-        this.discoverResources = discoverer;
+        _discoverResources = discoverer;
+        _prefix = null;
+        _suffix = null;
+    }
+    
+    /**
+     *  Construct a new resource discoverer
+     */
+    public DiscoverNamesInFile(ResourceDiscover discoverer, String prefix, String suffix) {
+        _discoverResources = discoverer;
+        _prefix = prefix;
+        _suffix = suffix;
     }
 
     /**
      * Specify set of class loaders to be used in searching.
      */
     public void setDiscoverer(ResourceDiscover discover) {
-        this.discoverResources = discover;
+        _discoverResources = discover;
     }
 
     /**
      * To be used by downstream elements..
      */
     public ResourceDiscover getDiscover() {
-        return discoverResources;
+        return _discoverResources;
     }
 
     /**
      * @return Enumeration of ServiceInfo
      */
-    public ResourceNameIterator findResourceNames(final String fileName) {
-        if (log.isDebugEnabled())
-            log.debug("find: fileName='" + fileName + "'");
+    public ResourceNameIterator findResourceNames(final String serviceName) {
+        String fileName;
+        if (_prefix != null && _prefix.length() > 0) {
+            fileName = _prefix + serviceName;
+        } else {
+            fileName = serviceName;
+        }
+
+        if (_suffix != null && _suffix.length() > 0) {
+            fileName = fileName + _suffix;
+        }
+
+        if (log.isDebugEnabled()) {
+            if (_prefix != null  &&  _suffix != null) {
+                log.debug("find: serviceName='" + serviceName + "' as '" + fileName + "'");
+            } else {
+                log.debug("find: serviceName = '" + fileName + "'");
+            }
+        }
+
+
+        final ResourceIterator files =
+            getDiscover().findResources(fileName);
 
         return new ResourceNameIterator() {
-            private ResourceIterator files =
-                getDiscover().findResources(fileName);
-
             private int idx = 0;
             private Vector classNames = null;
             private String resource = null;

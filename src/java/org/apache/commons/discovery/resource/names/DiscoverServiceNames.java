@@ -83,26 +83,39 @@ public class DiscoverServiceNames
     /** Construct a new service discoverer
      */
     public DiscoverServiceNames() {
-        super();
+        super(SERVICE_HOME, null);
+    }
+        
+    /**
+     *  Construct a new resource discoverer
+     */
+    public DiscoverServiceNames(String prefix, String suffix) {
+        super((prefix == null) ? SERVICE_HOME : SERVICE_HOME + prefix, suffix);
     }
     
     /**
      *  Construct a new resource discoverer
      */
     public DiscoverServiceNames(ClassLoaders loaders) {
-        super(loaders);
+        super(loaders, SERVICE_HOME, null);
+    }
+    
+    /**
+     *  Construct a new resource discoverer
+     */
+    public DiscoverServiceNames(ClassLoaders loaders, String prefix, String suffix) {
+        super(loaders, (prefix == null) ? SERVICE_HOME : SERVICE_HOME + prefix, suffix);
     }
     
     /** Construct a new service discoverer
      */
     public DiscoverServiceNames(ResourceDiscover discoverer) {
-        super(discoverer);
+        super(discoverer, SERVICE_HOME, null);
     }
     
-    /**
-     * @return Enumeration of ServiceInfo
+    /** Construct a new service discoverer
      */
-    public ResourceNameIterator findResourceNames(String serviceName) {
-        return super.findResourceNames(SERVICE_HOME + serviceName);
+    public DiscoverServiceNames(ResourceDiscover discoverer, String prefix, String suffix) {
+        super(discoverer, (prefix == null) ? SERVICE_HOME : SERVICE_HOME + prefix, suffix);
     }
 }
