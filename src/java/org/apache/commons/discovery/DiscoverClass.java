@@ -188,24 +188,19 @@ public class DiscoverClass {
     private final String groupContext;
     private final Class  rootDiscoveryClass;
     private final Environment env;
-    
-    protected Environment getEnvironment() {
-        /**
-         * The environment may change between calls, so
-         * we cache it if it was 'given' to us, otherwise
-         * we recompute on each call.
-         */
-        return (env != null)
-               ? env
-               : new Environment(groupContext, rootDiscoveryClass);
-    }
 
-    
+    /**
+     * Create a class instance with dynamic environment
+     * (thread context class loader is determined on each call).
+     */    
     public DiscoverClass() {
         this(DiscoverClass.class, Environment.defaultGroupContext);
     }
     
     /**
+     * Create a class instance with dynamic environment
+     * (thread context class loader is determined on each call).
+     * 
      * @param rootDiscoveryClass Wrapper class used by end-user, that ultimately
      *        calls this finder method.  The root finder class is used to
      *        determine the 'real' caller, and hence the caller's class loader -
@@ -217,6 +212,9 @@ public class DiscoverClass {
     }
     
     /**
+     * Create a class instance with dynamic environment
+     * (thread context class loader is determined on each call).
+     * 
      * @param groupContext qualifier for the property file name and for
      *        the system property name used to find the service implementation.
      *        If not found, the unqualified names are used.
@@ -242,6 +240,9 @@ public class DiscoverClass {
     }
     
     /**
+     * Create a class instance with dynamic environment
+     * (thread context class loader is determined on each call).
+     * 
      * @param rootDiscoveryClass Wrapper class used by end-user, that ultimately
      *        calls this finder method.  The root finder class is used to
      *        determine the 'real' caller, and hence the caller's class loader -
@@ -273,11 +274,25 @@ public class DiscoverClass {
         this.rootDiscoveryClass = rootDiscoveryClass;
         this.env = null;
     }
-    
+
+    /**
+     * Create a class instance with static environment.
+     */    
     public DiscoverClass(Environment env) {
         this.groupContext = env.getGroupContext();
         this.rootDiscoveryClass = env.getRootDiscoveryClass();
         this.env = env;
+    }
+
+    /**
+     * Get current <code>Environment</code>.
+     * If a static <code>Environment</code> is not set, then
+     * dynamically construct <code>Environment</code> on each call.
+     */
+    protected Environment getEnvironment() {
+        return (env != null)
+               ? env
+               : new Environment(groupContext, rootDiscoveryClass);
     }
 
     /**
