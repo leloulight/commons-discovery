@@ -1,0 +1,35 @@
+<document>
+<properties>
+<title>Architecture/Design/Coding Guidelines for Jakarta Commons &quot;Discovery&quot; Component</title>
+</properties>
+<body>
+
+
+
+<section name="Architecture/Design/Coding Guidelines for Jakarta Commons &quot;Discovery&quot; Component">
+$Id: adc-guidelines.xml,v 1.1 2004/02/18 10:14:01 bayard Exp $<br/>
+<a href="#Introduction">[Introduction]</a>
+<a href="#Security and doPrivileged()">[Security and doPrivileged()]</a>
+<br/><br/>
+
+
+
+<a name="Introduction"></a>
+
+<subsection name="1.  Introduction">
+
+Kick-off: set of design/architectural guidelines.
+This should serve as both a record of decisions made,
+and a list of open issues.
+
+
+<a name="Security and doPrivileged()"></a>
+</subsection>
+<subsection name="2.  Security and doPrivileged()">
+Do not use doPrivileged() instructions within discovery.
+That remains the responsibility of the end-user.
+
+</subsection>
+</section>
+</body>
+</document>
