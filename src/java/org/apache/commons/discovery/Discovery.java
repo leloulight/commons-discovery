@@ -220,8 +220,8 @@ import java.io.InputStreamReader;
  * </ul>
  * </p>
  * 
- * <p><strong>IMPLEMENTATION NOTE</strong> - This implementation is heavily
- * based on the SAXParserFactory and DocumentBuilderFactory implementations
+ * <p><strong>IMPLEMENTATION NOTE</strong> - This implementation is modelled
+ * after the SAXParserFactory and DocumentBuilderFactory implementations
  * (corresponding to the JAXP pluggability APIs) found in Apache Xerces.
  * </p>
  * 
@@ -875,8 +875,12 @@ public class Discovery {
     /**
      * Allows null key, important as default groupContext is null.
      */
-    private static final HashMap spi_caches = new HashMap(13);
+    private static final HashMap spi_caches = new HashMap();
 
+    /**
+     * Initial hash size for SPI's, default just seem TO big today..
+     */
+    private static final int smallHashSize = 13;
     
     /**
      * Get service keyed by spi & classLoader.
@@ -921,7 +925,7 @@ public class Discovery {
                     (HashMap)spi_caches.get(spiContext.getThreadContextClassLoader());
 
                 if (spis == null) {
-                    spis = new HashMap(13);
+                    spis = new HashMap(smallHashSize);
                     spi_caches.put(spiContext.getThreadContextClassLoader(), spis);
                 }
 
