@@ -77,7 +77,7 @@ import java.net.URL;
  */
 public class BootstrapLoader {
     private static ClassLoader bootstrapLoader =
-        null;
+        new SystemClassLoader();
     
     private BootstrapLoader() {
     }
@@ -99,7 +99,7 @@ public class BootstrapLoader {
      * There is no direct way to get the system class loader
      * in 1.1.x, so work around...
      */
-    private class SystemClassLoader extends ClassLoader {
+    private static class SystemClassLoader extends ClassLoader {
         protected Class loadClass(String className, boolean resolve)
             throws ClassNotFoundException
         {
