@@ -54,4 +54,19 @@
 
   </dependencies>
 
+  <build>
+    <unitTest>
+      <includes>
+        <include>**/TestAll.java</include>
+      </includes>
+    </unitTest>
+
+    <resources>
+      <includes>
+        <include>**/*.properties</include>
+      </includes>
+    </resources>
+  </build>
+
+
 </project>
