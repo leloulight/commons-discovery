@@ -10,14 +10,17 @@
 
 <h3>(0) Rationale</h3>
 
+<p>The Discovery Component is about discovering, or finding,
+implementations for pluggable interfaces.
+It provides facilities intantiating classes in general,
+and for lifecycle management of singleton (factory) classes.
+</p>
 <p>
-Discovery locates and manages singleton class instances,
-loading configuration and instantiating if necessary,
-that implement a given Java interface.
-Discovery is, in fact, a pattern used in many projects
-including JAXP (SaxParserFactory and others) and commons-logging (LogFactory).
-By extracting this fundamental pattern,
-other projects can reuse the existing pattern,
+Fundamentally, Discovery locates classes that implement a given Java interface.
+The discovery pattern, though not necessarily this package,
+is used in many projects including JAXP (SaxParserFactory and others)
+and commons-logging (LogFactory).
+By extracting this pattern, other projects can (re)use it
 and take advantage of improvements to the pattern as Discovery evolves.
 </p>
 <p>
