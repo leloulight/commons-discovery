@@ -61,90 +61,47 @@
 
 package org.apache.commons.discovery.strategy;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Properties;
 
-import org.apache.commons.discovery.ManagedProperties;
+import org.apache.commons.discovery.base.Environment;
+import org.apache.commons.discovery.base.SPInterface;
 
 
 /**
- * Helper methods for locating resource names.
+ * <p>The strategy for discovering the class name.  Someday this might be pluggable..
+ * </p>
  * 
  * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
+ * @version $Revision$ $Date$
  */
-public class Utils {
+public interface DiscoverStrategy {
     /**
-     * JDK1.3+ 'Service Provider' specification 
-     * ( http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html )
-     */
-    private static final String SERVICE_HOME = "META-INF/services/";
-
-    
-    /**
-     * Load the class whose name is given by the value of a (Managed)
-     * System Property.
+     * Discover names of SPI implementation Classes.
      * 
-     * @see ManagedProperties
+     * @param properties Properties that may define the implementation
+     *                   class name(s).
      * 
-     * @param attribute the name of the system property whose value is
-     *        the name of the class to load.
+     * @return String[] Name of classes implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found.
      */
-    public static String getManagedProperty(String propertyName) {
-        String value;
-        try {
-            value = ManagedProperties.getProperty(propertyName);
-        } catch (SecurityException e) {
-            value = null;
-        }
-        return value;
-    }
+    public String discoverClassName(Environment env,
+                                    SPInterface spi,
+                                    Properties properties);
 
     /**
-     * Find the name of a service using the JDK 1.3 jar discovery mechanism.
-     * This will allow users to plug a service implementation by just
-     * placing it in the META-INF/services directory of the webapp
-     * (or in CLASSPATH or equivalent).
+     * Discover names of SPI implementation Classes.
+     * 
+     * @param properties Properties that may define the implementation
+     *                   class name(s).
+     * 
+     * @return String[] Name of classes implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found.
      */
-    public static String getJDK13ClassName(ClassLoader classLoader, String spiName) {
-        String serviceImplName = null;
-
-        // Name of J2EE application file that identifies the service implementation.
-        String servicePropertyFile = SERVICE_HOME + spiName;
-
-        InputStream is = (classLoader == null
-                          ? ClassLoader.getSystemResourceAsStream(servicePropertyFile)
-                          : classLoader.getResourceAsStream(servicePropertyFile));
-
-        if( is != null ) {
-            try {
-                try {
-                    // This code is needed by EBCDIC and other strange systems.
-                    // It's a fix for bugs reported in xerces
-                    BufferedReader rd;
-                    
-                    try {
-                        rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                    } catch (java.io.UnsupportedEncodingException e) {
-                        rd = new BufferedReader(new InputStreamReader(is));
-                    }
-                        
-                    try {
-                        serviceImplName = rd.readLine();
-                    } finally {
-                        rd.close();
-                    }
-                } finally {
-                    is.close();
-                }
-            } catch (IOException ioe) {
-                ; // ignore
-            }
-        }
-        
-        return serviceImplName;
-    }
+    public String[] discoverClassNames(Environment env,
+                                       SPInterface spi,
+                                       Properties properties);
 }

@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.tools;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -63,6 +63,9 @@ import java.util.Properties;
 
 
 /**
+ * <p>This class may disappear in the future, or be moved to another project..
+ * </p>
+ * 
  * <p>Extend the concept of System properties to a hierarchical scheme
  * based around class loaders.  System properties are global in nature,
  * so using them easily violates sound architectural and design principles

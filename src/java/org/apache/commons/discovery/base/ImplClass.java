@@ -59,9 +59,10 @@
  *
  */
 
-package org.apache.commons.discovery.types;
+package org.apache.commons.discovery.base;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.discovery.DiscoveryException;
 import org.apache.commons.discovery.load.Loaders;
@@ -79,38 +80,102 @@ public class ImplClass {
     private Object params[] = null;
 
 
+    /**
+     * Construct object representing implementation
+     * Class whose name is <code>implName</code>.
+     * 
+     * @param implName The SPI class name
+     */
     public ImplClass(String implName) {
         this.implName = implName;
         this.implClass = null;
     }
     
+    /**
+     * Construct object representing implementation
+     * Class <code>implClass</code>.
+     * 
+     * @param implClass The SPI class
+     */
     public ImplClass(Class implClass) {
         this.implName = (implClass != null) ? implClass.getName() : null;
         this.implClass = implClass;
     }
     
 
-    public ImplClass(String implName, Class paramClasses[], Object params[]) {
+    /**
+     * Construct object representing implementation
+     * Class whose name is <code>implName</code>.
+     * 
+     * @param implName The SPI class name
+     * 
+     * @param constructorParamClasses classes representing the
+     *        constructor argument types.
+     * 
+     * @param constructorParams objects representing the
+     *        constructor arguments.
+     */
+    public ImplClass(String implName,
+                     Class constructorParamClasses[],
+                     Object constructorParams[])
+    {
         this(implName);
-        this.paramClasses = paramClasses;
-        this.params = params;
+        this.paramClasses = constructorParamClasses;
+        this.params = constructorParams;
     }
     
-    public ImplClass(Class implClass, Class paramClasses[], Object params[]) {
+    /**
+     * Construct object representing implementation
+     * Class <code>implClass</code>.
+     * 
+     * @param implClass The SPI class
+     * 
+     * @param constructorParamClasses classes representing the
+     *        constructor argument types.
+     * 
+     * @param constructorParams objects representing the
+     *        constructor arguments.
+     */
+    public ImplClass(Class implClass,
+                     Class constructorParamClasses[],
+                     Object constructorParams[])
+    {
         this(implClass);
-        this.paramClasses = paramClasses;
-        this.params = params;
+        this.paramClasses = constructorParamClasses;
+        this.params = constructorParams;
     }
 
 
     public String getImplName() {
         return implName;
     }
-    
+
+    /**
+     * The implementation's Class.
+     * If the original constructor specified the class using a
+     * <code>String implName</code>, then this will return <code>null</code>.
+     * Resolution of the class is defered until it is
+     * <ul>
+     *   <li>required, and</li>
+     *   <li>loaded by <code>loadImplClass</code></li>.
+     * </ul>
+     * 
+     * @return implementation class or null.
+     */    
     public Class getImplClass() {
         return implClass;
     }
-    
+
+    /**
+     * Load and return the class using the list of class loaders
+     * specified by <code>loaders</code>.
+     * 
+     * @param loaders
+     * 
+     * @param systemOnly Use system loaders, as opposed to application
+     *                   class loaders.  System loaders do not include
+     *                   the thread context class loader.
+     */    
     public Class loadImplClass(Loaders loaders, boolean systemOnly) {
         if (implClass == null) {
             implClass = loaders.loadClass(getImplName(), systemOnly);
@@ -118,19 +183,25 @@ public class ImplClass {
 
         return implClass;
     }
-    
+
+    /**
+     * Instantiate a new 
+     */    
     public Object newInstance()
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
-        try {
-            if (paramClasses == null || params == null) {
-                return getImplClass().newInstance();
-            } else {
-                Constructor constructor = getImplClass().getConstructor(paramClasses);
-                return constructor.newInstance(params);
-           }
-        } catch (Exception e) {
-            throw new DiscoveryException("Unable to instantiate " + getImplName(), e);
+        if (getImplClass() == null)
+            throw new DiscoveryException("Class " + getImplName() + " not loaded!");
+            
+        if (paramClasses == null || params == null) {
+            return getImplClass().newInstance();
+        } else {
+            Constructor constructor = getImplClass().getConstructor(paramClasses);
+            return constructor.newInstance(params);
         }
     }
 }

@@ -66,9 +66,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.types.Environment;
-import org.apache.commons.discovery.types.ImplClass;
-import org.apache.commons.discovery.types.SPInterface;
+import org.apache.commons.discovery.base.Environment;
+import org.apache.commons.discovery.base.ImplClass;
+import org.apache.commons.discovery.base.SPInterface;
 import org.apache.commons.discovery.load.Loaders;
 
 
@@ -87,6 +87,9 @@ import org.apache.commons.discovery.load.Loaders;
  * @version $Revision$ $Date$
  */
 public class DefaultLoadStrategy implements LoadStrategy {
+    private static final DiscoverStrategy discoverStrategy =
+        new DefaultDiscoverStrategy();
+
     private final Environment env;
     private final SPInterface spi;
     private final Loaders loaders;
@@ -104,18 +107,8 @@ public class DefaultLoadStrategy implements LoadStrategy {
      * </p>
      * <ul>
      *   <p><li>
-     *   Get the name of an implementation class.  The name is the first
-     *   non-null value obtained from the following resources:
-     *   <ul>
-     *     <li>ManagedProperty.getProperty(SPI.class.getName());</li>
-     *     <li>properties.getProperty(SPI.class.getName());</li>
-     *     <li>
-     *     The value obtained using the JDK1.3+ 'Service Provider' specification
-     *     (http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html) to locate a
-     *     service named <code>SPI.class.getName()</code>.  This is implemented
-     *     internally, so there is not a dependency on JDK 1.3+.
-     *     </li>
-     *   </ul>
+     *   Get the name of an implementation class using the discover strategy
+     *   (@see DiscoverStrategy).
      *   </li></p>
      *   <p><li>
      *   If the name of the implementation class is non-null, load that class.
@@ -157,9 +150,7 @@ public class DefaultLoadStrategy implements LoadStrategy {
      *   </li></p>
      * </ul>
      * 
-     * @param properties Used to determine name of SPI implementation,
-     *                   and passed to implementation.init() method if
-     *                   implementation implements Service interface.
+     * @param properties Used to determine name of SPI implementation.
      * 
      * @param defaultImpl Default implementation.
      * 
@@ -171,40 +162,8 @@ public class DefaultLoadStrategy implements LoadStrategy {
     public ImplClass loadClass(Properties properties, ImplClass defaultImpl)
         throws DiscoveryException
     {
-        String spiName = spi.getSPName();
-        String propertyName = spi.getPropertyName();
-
-        // First, try the (managed) system property spiName
-        String className = Utils.getManagedProperty(spiName);
-        if (className == null) {
-            if (spiName.equals(propertyName)) {
-                if (properties != null) {
-                    // Second, try the properties parameter spiName
-                    className = properties.getProperty(spiName);
-                }
-            } else {
-                // Second, try the (managed) system property propertyName
-                className = Utils.getManagedProperty(propertyName);
-                if (className == null) {
-                    if (properties != null) {
-                        // Third, try the properties parameter spiName
-                        className = properties.getProperty(spiName);
-                        
-                        if (className == null) {
-                            // Fourth, try the properties parameter propertyName
-                            className = properties.getProperty(propertyName);
-                        }
-                    }
-                }
-            }
-    
-            if (className == null) {
-                // Last, try to find a service by using the JDK1.3 jar
-                // discovery mechanism.
-                className = Utils.getJDK13ClassName(
-                    env.getThreadContextClassLoader(), spiName);
-            }
-        }
+        String className =
+            discoverStrategy.discoverClassName(env, spi, properties);
 
         ImplClass implClass = null;
 
@@ -222,8 +181,10 @@ public class DefaultLoadStrategy implements LoadStrategy {
             }
         }
 
-        if (implClass == null  ||  implClass.getImplClass() == null) {
-            throw new DiscoveryException("No implementation defined for " + spiName);
+        if (implClass == null  ||              // class name couldn't be found
+            implClass.getImplClass() == null)  // class couldn't be loaded
+        {
+            throw new DiscoveryException("No implementation defined for " + spi.getSPName());
         }
 
         return implClass;

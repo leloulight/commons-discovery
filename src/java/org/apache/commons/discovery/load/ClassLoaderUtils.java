@@ -167,18 +167,6 @@ public class ClassLoaderUtils {
         return loadClass(serviceImplName, loaders, loaders.length);
     }
     
-//    /**
-//     * Load the class <code>serviceImplName</code> using the
-//     * class loaders associated with the SPI's context.
-//     * 
-//     * @param serviceImplName The name of the class to load.
-//     */
-//    public static Class loadClass(String serviceImplName, EnvContext spi)
-//        throws DiscoveryException
-//    {
-//        return loadClass(serviceImplName, spi.getClassLoaders());
-//    }
-
 
     /**
      * Load the resource <code>resourceName</code>.

@@ -64,8 +64,8 @@ package org.apache.commons.discovery.load;
 import java.io.InputStream;
 
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.types.Environment;
-import org.apache.commons.discovery.types.SPInterface;
+import org.apache.commons.discovery.base.Environment;
+import org.apache.commons.discovery.base.SPInterface;
 
 
 /**

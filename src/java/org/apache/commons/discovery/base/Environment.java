@@ -59,75 +59,44 @@
  *
  */
 
-package org.apache.commons.discovery.types;
+package org.apache.commons.discovery.base;
+
+import org.apache.commons.discovery.load.ClassLoaderUtils;
 
 
 /**
- * Represents a Service Programming Interface (spi) context,
- * to include an spi and the Thread Context Class Loader for
- * the thread that created an instance of this object.
+ * Represents a environment context:
+ * the Thread Context Class Loader, the group context id, and the
+ * root discovery class (class representing the discovery front-door).
  * 
  * @author Richard A. Sitze
  */
-public class SPInterface {
+public class Environment {
     /**
-     * The service programming interface name
+     * Thread context class loader or null if not available (JDK 1.1).
+     * Wrapped bootstrap classloader if classLoader == null.
      */
-    private final String name;
-    
-    /**
-     * The service programming interface: intended to be
-     * an interface or abstract class, but not limited
-     * to those two.
-     */        
-    private final Class provider;
-    
-    /**
-     * The property name to be used for finding the name of
-     * the SPI implementation class.
-     */
-    private final String propertyName;
-    
-    
-    private Class  paramClasses[] = null;
-    private Object params[] = null;
+    private final ClassLoader threadContextClassLoader =
+        ClassLoaderUtils.getThreadContextClassLoader();
 
+    private final String groupContext;
 
-    public SPInterface(Class provider) {
-        this(provider, provider.getName());
+    private final Class rootDiscoveryClass;
+    
+    public Environment(String groupContext, Class rootDiscoveryClass) {
+        this.groupContext = groupContext;
+        this.rootDiscoveryClass = rootDiscoveryClass;
     }
     
-    public SPInterface(Class provider, String propertyName) {
-        this.name = provider.getName();
-        this.provider = provider;
-        this.propertyName = propertyName;
-    }
-
-    public SPInterface(Class provider, Class paramClasses[], Object params[]) {
-        this(provider, provider.getName(), paramClasses, params);
+    public ClassLoader getThreadContextClassLoader() {
+        return threadContextClassLoader;
     }
     
-    public SPInterface(Class provider, String propertyName, Class paramClasses[], Object params[]) {
-        this.name = provider.getName();
-        this.provider = provider;
-        this.propertyName = propertyName;
-        this.paramClasses = paramClasses;
-        this.params = params;
+    public String getGroupContext() {
+        return groupContext;
     }
     
-    public String getSPName() {
-        return name;
-    }
-    
-    public Class getSPClass() {
-        return provider;
-    }
-    
-    public String getPropertyName() {
-        return propertyName;
-    }
-    
-    public ImplClass createImplClass(String className) {
-        return new ImplClass(className, paramClasses, params);
+    public Class getRootDiscoveryClass() {
+        return rootDiscoveryClass;
     }
 }

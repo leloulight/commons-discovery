@@ -61,23 +61,24 @@
 
 package org.apache.commons.discovery;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.apache.commons.discovery.types.Environment;
-import org.apache.commons.discovery.types.ImplClass;
-import org.apache.commons.discovery.types.SPInterface;
+import org.apache.commons.discovery.base.Environment;
+import org.apache.commons.discovery.base.ImplClass;
+import org.apache.commons.discovery.base.SPInterface;
 import org.apache.commons.discovery.load.ClassLoaderUtils;
 
 
 /**
- * <p>Discover singleton service providers,  with discovery and configuration features
- * similar to that employed by standard Java APIs such as JAXP.
+ * <p>Discover singleton service providers.
+ * This 
  * </p>
  * 
- * <p>DiscoverSingleton instances are managed (life-cycle) by the Discovery
- * service, which maintains a cache keyed by a combination of
+ * <p>DiscoverSingleton instances are cached by the Discovery service,
+ * keyed by a combination of
  * <ul>
  *   <li>thread context class loader,</li>
  *   <li>groupContext, and</li>
@@ -105,8 +106,10 @@ import org.apache.commons.discovery.load.ClassLoaderUtils;
  * <li>static Object find(Class spi);</li>
  * <li>static Object find(Class spi, Properties properties);</li>
  * <li>static Object find(Class spi, String defaultImpl);</li>
- * <li>static Object find(Class spi, Properties properties, String defaultImpl);</li>
- * <li>static Object find(Class spi, String propertiesFileName, String defaultImpl);</li>
+ * <li>static Object find(Class spi,
+ *                        Properties properties, String defaultImpl);</li>
+ * <li>static Object find(Class spi,
+ *                        String propertiesFileName, String defaultImpl);</li>
  * <li>static Object find(String groupContext, Class spi,
  *                        Properties properties, String defaultImpl);</li>
  * <li>static Object find(String groupContext, Class spi,
@@ -178,8 +181,8 @@ import org.apache.commons.discovery.load.ClassLoaderUtils;
  *   </ul>
  *   <p>
  *   This limits the scope in which the default class loader can be found
- *   to the SPI, DiscoverSingleton, and System class loaders.  The assumption here
- *   is that the default implementation is closely associated with the SPI
+ *   to the SPI, DiscoverSingleton, and System class loaders.  The assumption
+ *   here is that the default implementation is closely associated with the SPI
  *   or system, and is not defined in the user's application space.
  *   </p>
  *   <p>
@@ -192,11 +195,6 @@ import org.apache.commons.discovery.load.ClassLoaderUtils;
  *   </li></p>
  *   <p><li>
  *   Create an instance of the class.
- *   </li></p>
- *   <p><li>
- *   If the loaded class implements the <code>Service</code> interface,
- *   then invoke the <code>init(Properties)</code> method, passing in the
- *   <code>Properties properties</code> parameter, if provided.
  *   </li></p>
  * </ul>
  * 
@@ -342,7 +340,10 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class, spiClass, properties, defaultImpl);
+        return find(DiscoverSingleton.class,
+                    spiClass,
+                    properties,
+                    defaultImpl);
     }
     
     /**
@@ -366,7 +367,10 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class, spiClass, propertiesFileName, defaultImpl);
+        return find(DiscoverSingleton.class,
+                    spiClass,
+                    propertiesFileName,
+                    defaultImpl);
     }
 
     /**
@@ -398,7 +402,11 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class, groupContext, spiClass, properties, defaultImpl);
+        return find(DiscoverSingleton.class,
+                    groupContext,
+                    spiClass,
+                    properties,
+                    defaultImpl);
     }
     
     /**
@@ -428,15 +436,19 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class, groupContext, spiClass, propertiesFileName, defaultImpl);
+        return find(DiscoverSingleton.class,
+                    groupContext,
+                    spiClass,
+                    propertiesFileName,
+                    defaultImpl);
     }
 
     
     /*************** FINDERS FOR USE IN FACTORY/HELPER METHODS ***************
      * 
      * These finders provide a rootFinderClass.  The root finder is the wrapper
-     * class (factories or helper classes) that invoke the DiscoverSingleton find
-     * methods, presumably providing (default) values for propertiesFileName
+     * class (factories or helper classes) that invoke the DiscoverSingleton
+     * find methods, presumably providing (default) values for propertiesFileName
      * and defaultImpl.  Having access to this wrapper class provides a
      * way to determine the 'real' caller, and hence the caller's class loader.
      * Thus preserving knowledge that is relevant to finding the
@@ -461,7 +473,10 @@ public class DiscoverSingleton {
     public static Object find(Class rootFinderClass, Class spiClass)
         throws DiscoveryException
     {
-        return find(rootFinderClass, spiClass, DiscoverClass.nullProperties, DiscoverClass.nullDefaultImpl);
+        return find(rootFinderClass,
+                    spiClass,
+                    DiscoverClass.nullProperties,
+                    DiscoverClass.nullDefaultImpl);
     }
 
     /**
@@ -486,7 +501,10 @@ public class DiscoverSingleton {
     public static Object find(Class rootFinderClass, Class spiClass, Properties properties)
         throws DiscoveryException
     {
-        return find(rootFinderClass, spiClass, properties, DiscoverClass.nullDefaultImpl);
+        return find(rootFinderClass,
+                    spiClass,
+                    properties,
+                    DiscoverClass.nullDefaultImpl);
     }
 
     /**
@@ -509,7 +527,10 @@ public class DiscoverSingleton {
     public static Object find(Class rootFinderClass, Class spiClass, String defaultImpl)
         throws DiscoveryException
     {
-        return find(rootFinderClass, spiClass, DiscoverClass.nullProperties, defaultImpl);
+        return find(rootFinderClass,
+                    spiClass,
+                    DiscoverClass.nullProperties,
+                    defaultImpl);
     }
 
     /**
@@ -539,7 +560,11 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(rootFinderClass, DiscoverClass.nullGroupContext, spiClass, properties, defaultImpl);
+        return find(rootFinderClass,
+                    DiscoverClass.nullGroupContext,
+                    spiClass,
+                    properties,
+                    defaultImpl);
     }
     
     /**
@@ -567,8 +592,11 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(rootFinderClass, DiscoverClass.nullGroupContext,
-                    spiClass, propertiesFileName, defaultImpl);
+        return find(rootFinderClass,
+                    DiscoverClass.nullGroupContext,
+                    spiClass,
+                    propertiesFileName,
+                    defaultImpl);
     }
 
     /**
@@ -603,13 +631,16 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        /**
-         * Env can change between calls... so we don't cache this.
-         */
-        return find(new Environment(groupContext, rootFinderClass),
-                    new SPInterface(spiClass),
-                    properties,
-                    new ImplClass(defaultImpl));
+        try {
+            return find(new Environment(groupContext, rootFinderClass),
+                        new SPInterface(spiClass),
+                        properties,
+                        new ImplClass(defaultImpl));
+        } catch (DiscoveryException de) {
+            throw de;
+        } catch (Exception e) {
+            throw new DiscoveryException("Unable to create class " + spiClass.getName(), e);
+        }
     }
 
     /**
@@ -642,93 +673,16 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        /**
-         * Env can change between calls... so we don't cache this.
-         */
-        return find(new Environment(groupContext, rootFinderClass),
-                    new SPInterface(spiClass),
-                    propertiesFileName,
-                    new ImplClass(defaultImpl));
-    }
-
-    /**
-     * Find implementation of SPI.
-     * 
-     * @param rootFinderClass Wrapper class used by end-user, that ultimately
-     *        calls this finder method.
-     * 
-     * @param groupContext qualifier for the property file name and for
-     *        the system property name used to find the service implementation.
-     *        If not found, the unqualified names are used.
-     * 
-     * @param spiClass Service Provider Interface Class.
-     * 
-     * @param properties Used to determine name of SPI implementation,
-     *                   and passed to implementation.init() method if
-     *                   implementation implements Service interface.
-     * 
-     * @param defaultImpl Default implementation.
-     * 
-     * @return Instance of a class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, if the class cannot be loaded and
-     *            instantiated, or if the resulting class does not implement
-     *            (or extend) the SPI.
-     */    
-    public static Object find(Class rootFinderClass,
-                              String groupContext,
-                              SPInterface spi,
-                              Properties properties,
-                              ImplClass defaultImpl)
-        throws DiscoveryException
-    {
-        /**
-         * Env can change between calls... so we don't cache this.
-         */
-        return find(new Environment(groupContext, rootFinderClass),
-                    spi,
-                    properties,
-                    defaultImpl);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * 
-     * @param rootFinderClass Wrapper class used by end-user, that ultimately
-     *        calls this finder method.
-     * 
-     * @param groupContext qualifier for the property file name and for
-     *        the system property name used to find the service implementation.
-     *        If not found, the unqualified names are used.
-     * 
-     * @param spiClass Service Provider Interface Class.
-     * 
-     * @param propertiesFileName The property file name.
-     * 
-     * @param defaultImpl Default implementation.
-     * 
-     * @return Instance of a class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, if the class cannot be loaded and
-     *            instantiated, or if the resulting class does not implement
-     *            (or extend) the SPI.
-     */    
-    public static Object find(Class  rootFinderClass,
-                              String groupContext,
-                              SPInterface spi,
-                              String propertiesFileName,
-                              ImplClass defaultImpl)
-        throws DiscoveryException
-    {
-        /**
-         * Env can change between calls... so we don't cache this.
-         */
-        return find(new Environment(groupContext, rootFinderClass),
-                    spi,
-                    propertiesFileName,
-                    defaultImpl);
+        try {
+            return find(new Environment(groupContext, rootFinderClass),
+                        new SPInterface(spiClass),
+                        propertiesFileName,
+                        new ImplClass(defaultImpl));
+        } catch (DiscoveryException de) {
+            throw de;
+        } catch (Exception e) {
+            throw new DiscoveryException("Unable to create class " + spiClass.getName(), e);
+        }
     }
 
     /**
@@ -760,19 +714,29 @@ public class DiscoverSingleton {
                               SPInterface spi,
                               Properties properties,
                               ImplClass defaultImpl)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
         /**
          * Return previously registered service object (not class)
          * for this spi, bound only to current thread context class loader.
          */
-        Object service = get(env.getThreadContextClassLoader(), env.getGroupContext(), spi.getSPName());
+        Object service = get(env.getThreadContextClassLoader(),
+                             env.getGroupContext(),
+                             spi.getSPName());
 
         if (service == null) {
-            service = DiscoverClass.newInstance(env, spi, properties, defaultImpl);
+            service =
+                DiscoverClass.newInstance(env, spi, properties, defaultImpl);
 
             if (service != null) {
-                put(env.getThreadContextClassLoader(), env.getGroupContext(), spi.getSPName(), service);
+                put(env.getThreadContextClassLoader(),
+                    env.getGroupContext(),
+                    spi.getSPName(),
+                    service);
             }
         }
 
@@ -806,19 +770,31 @@ public class DiscoverSingleton {
                               SPInterface spi,
                               String propertiesFileName,
                               ImplClass defaultImpl)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
         /**
          * Return previously registered service object (not class)
          * for this spi, bound only to current thread context class loader.
          */
-        Object service = get(env.getThreadContextClassLoader(), env.getGroupContext(), spi.getSPName());
+        Object service = get(env.getThreadContextClassLoader(),
+                             env.getGroupContext(),
+                             spi.getSPName());
 
         if (service == null) {
-            service = DiscoverClass.newInstance(env, spi, propertiesFileName, defaultImpl);
+            service = DiscoverClass.newInstance(env,
+                                                spi,
+                                                propertiesFileName,
+                                                defaultImpl);
 
             if (service != null) {
-                put(env.getThreadContextClassLoader(), env.getGroupContext(), spi.getSPName(), service);
+                put(env.getThreadContextClassLoader(),
+                    env.getGroupContext(),
+                    spi.getSPName(),
+                    service);
             }
         }
 
@@ -857,14 +833,6 @@ public class DiscoverSingleton {
                     HashMap spis = (HashMap)groupIter.next();
                     
                     if (spis != null) {
-                        Iterator spiIter = spis.values().iterator();
-        
-                        while (spiIter.hasNext()) {
-                            Object service = (Object)spiIter.next();
-                            
-                            if (service instanceof SingletonService)
-                                ((SingletonService)service).release();
-                        }
                         spis.clear();
                     }
                 }
@@ -896,14 +864,6 @@ public class DiscoverSingleton {
                 HashMap spis = (HashMap)groups.get(groupContext);
                 
                 if (spis != null) {
-                    Iterator spiIter = spis.values().iterator();
-    
-                    while (spiIter.hasNext()) {
-                        Object service = (Object)spiIter.next();
-                        
-                        if (service instanceof SingletonService)
-                            ((SingletonService)service).release();
-                    }
                     spis.clear();
                 }
                 groups.remove(groupContext);
@@ -934,11 +894,6 @@ public class DiscoverSingleton {
                     HashMap spis = (HashMap)groups.get(groupContext);
 
                     if (spis != null) {
-                        Object service = (Object)spis.get(spiClass.getName());
-                        
-                        if (service instanceof SingletonService)
-                            ((SingletonService)service).release();
-                        
                         spis.remove(spiClass.getName());
                     }
                 }

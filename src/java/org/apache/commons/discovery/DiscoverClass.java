@@ -61,11 +61,12 @@
 
 package org.apache.commons.discovery;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-import org.apache.commons.discovery.types.Environment;
-import org.apache.commons.discovery.types.ImplClass;
-import org.apache.commons.discovery.types.SPInterface;
+import org.apache.commons.discovery.base.Environment;
+import org.apache.commons.discovery.base.ImplClass;
+import org.apache.commons.discovery.base.SPInterface;
 import org.apache.commons.discovery.strategy.DefaultLoadStrategy;
 import org.apache.commons.discovery.strategy.LoadStrategy;
 
@@ -177,23 +178,23 @@ public class DiscoverClass {
     /**
      * Readable placeholder for a null value.
      */
-    static final String     nullGroupContext = null;
+    public static final String     nullGroupContext = null;
 
     /**
      * Readable placeholder for a null value.
      */
-    static final String     nullDefaultImpl = null;
+    public static final String     nullDefaultImpl = null;
 
     /**
      * Readable placeholder for a null value.
      */
-    static final Properties nullProperties = null;
+    public static final Properties nullProperties = null;
 
     private final String groupContext;
     private final Class  rootDiscoveryClass;
     private final Environment env;
     
-    private Environment getEnvironment() {
+    protected Environment getEnvironment() {
         /**
          * The environment may change between calls, so
          * we cache it if it was 'given' to us, otherwise
@@ -298,7 +299,7 @@ public class DiscoverClass {
     public Class find(Class spiClass)
         throws DiscoveryException
     {
-        return find(spiClass, DiscoverClass.nullProperties, DiscoverClass.nullDefaultImpl);
+        return find(spiClass, nullProperties, nullDefaultImpl);
     }
 
     /**
@@ -317,7 +318,7 @@ public class DiscoverClass {
     public Class find(Class spiClass, Properties properties)
         throws DiscoveryException
     {
-        return find(spiClass, properties, DiscoverClass.nullDefaultImpl);
+        return find(spiClass, properties, nullDefaultImpl);
     }
 
     /**
@@ -336,7 +337,7 @@ public class DiscoverClass {
     public Class find(Class spiClass, String defaultImpl)
         throws DiscoveryException
     {
-        return find(spiClass, DiscoverClass.nullProperties, defaultImpl);
+        return find(spiClass, nullProperties, defaultImpl);
     }
 
     /**
@@ -527,9 +528,13 @@ public class DiscoverClass {
      *            (or extend) the SPI.
      */
     public Object newInstance(Class spiClass)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
-        return newInstance(spiClass, DiscoverClass.nullProperties, DiscoverClass.nullDefaultImpl);
+        return newInstance(spiClass, nullProperties, nullDefaultImpl);
     }
 
     /**
@@ -549,9 +554,13 @@ public class DiscoverClass {
      *            (or extend) the SPI.
      */
     public Object newInstance(Class spiClass, Properties properties)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
-        return newInstance(spiClass, properties, DiscoverClass.nullDefaultImpl);
+        return newInstance(spiClass, properties, nullDefaultImpl);
     }
 
     /**
@@ -569,9 +578,13 @@ public class DiscoverClass {
      *            (or extend) the SPI.
      */
     public Object newInstance(Class spiClass, String defaultImpl)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
-        return newInstance(spiClass, DiscoverClass.nullProperties, defaultImpl);
+        return newInstance(spiClass, nullProperties, defaultImpl);
     }
 
     /**
@@ -593,7 +606,11 @@ public class DiscoverClass {
      *            (or extend) the SPI.
      */
     public Object newInstance(Class spiClass, Properties properties, String defaultImpl)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
         return newInstance(getEnvironment(),
                            new SPInterface(spiClass),
@@ -627,7 +644,11 @@ public class DiscoverClass {
      *            (or extend) the SPI.
      */    
     public Object newInstance(Class spiClass, String propertiesFileName, String defaultImpl)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
         return newInstance(getEnvironment(),
                            new SPInterface(spiClass),
@@ -657,7 +678,11 @@ public class DiscoverClass {
      *            (or extend) the SPI.
      */
     public Object newInstance(SPInterface spi, Properties properties, ImplClass defaultImpl)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
         return newInstance(getEnvironment(), spi, properties, defaultImpl);
     }
@@ -691,7 +716,11 @@ public class DiscoverClass {
      *            (or extend) the SPI.
      */    
     public Object newInstance(SPInterface spi, String propertiesFileName, ImplClass defaultImpl)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
         return newInstance(getEnvironment(), spi, propertiesFileName, defaultImpl);
     }
@@ -719,16 +748,14 @@ public class DiscoverClass {
      *            (or extend) the SPI.
      */
     public static Object newInstance(Environment env, SPInterface spi, Properties properties, ImplClass defaultImpl)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
         LoadStrategy strategy = new DefaultLoadStrategy(env, spi);
-        Object service = strategy.loadClass(properties, defaultImpl).newInstance();
-
-        if (service instanceof Service) {
-            ((Service)service).init(env.getGroupContext(), properties);
-        }
-        
-        return service;
+        return strategy.loadClass(properties, defaultImpl).newInstance();
     }
     
     /**
@@ -760,16 +787,14 @@ public class DiscoverClass {
      *            (or extend) the SPI.
      */    
     public static Object newInstance(Environment env, SPInterface spi, String propertiesFileName, ImplClass defaultImpl)
-        throws DiscoveryException
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
     {
         LoadStrategy strategy = new DefaultLoadStrategy(env, spi);
         Properties properties = strategy.loadProperties(propertiesFileName);
-        Object service = strategy.loadClass(properties, defaultImpl).newInstance();
-
-        if (service instanceof Service) {
-            ((Service)service).init(env.getGroupContext(), properties);
-        }
-        
-        return service;
+        return strategy.loadClass(properties, defaultImpl).newInstance();
     }
 }

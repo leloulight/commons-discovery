@@ -61,28 +61,17 @@
 
 package org.apache.commons.discovery.strategy;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.types.ImplClass;
-import org.apache.commons.discovery.types.SPInterface;
-import org.apache.commons.discovery.load.Loaders;
+import org.apache.commons.discovery.base.ImplClass;
 
 
 /**
- * <p>Implement the search strategy.  Someday this might be pluggable..
- * </p>
- * 
- * <p><strong>IMPLEMENTATION NOTE</strong> - This implementation is modelled
- * after the SAXParserFactory and DocumentBuilderFactory implementations
- * (corresponding to the JAXP pluggability APIs) found in Apache Xerces.
+ * <p>The strategy for loading resources.  Someday this might be pluggable..
  * </p>
  * 
  * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
  * @version $Revision$ $Date$
  */
 public interface LoadStrategy {
