@@ -154,20 +154,16 @@ public class ServiceFinder {
      *            cannot be instantiated,
      *            or is not an instance of <code>spi</code>.
      */
-    public static Object find(Class rootFinderClass,
-                              SPIContext spiContext,
-                              Properties properties,
-                              String defaultImplName)
+    private static Object find(ClassFinder classFinder,
+                               SPIContext spiContext,
+                               Properties properties,
+                               String defaultImplName)
         throws ServiceException
     {
-        // thread context can change on each call,
-        // so establish context for this one call.
-        ClassFinder classFinder = new ClassFinder(spiContext, rootFinderClass);
-
         /**
          * Return previously registered service object (not class)
          * for this spi.  Try contextClassLoader first, and if that
-         * fails then try the local class loader.
+         * fails then try the spi's class loader.
          */
         Object service = (spiContext.getThreadContextClassLoader() == null)
                 ? null
@@ -177,8 +173,8 @@ public class ServiceFinder {
             service = get(spiContext.getSPI().getName(),
                           spiContext.getSPI().getClassLoader());
         }
-        
-        if (service == null) {
+
+        if (service != null) {        
             // First, try the system property
             Class clazz = classFinder.systemFindClass();
     
@@ -222,6 +218,18 @@ public class ServiceFinder {
         return service;
     }
     
+    public static Object find(Class rootFinderClass,
+                              SPIContext spiContext,
+                              Properties properties,
+                              String defaultImplName)
+        throws ServiceException
+    {
+        // thread context can change on each call,
+        // so establish context for this one call.
+        ClassFinder classFinder = new ClassFinder(spiContext, rootFinderClass);
+        return find(classFinder, spiContext, properties, defaultImplName);
+    }
+    
     /**
      * Equivalent to
      * <code>find(ServiceFinder.class, spiContext, properties, defaultImplName)</code>.
@@ -261,20 +269,30 @@ public class ServiceFinder {
 
     /**
      * Load properties file, and call
-     * <code>find(spiContext, properties, defaultImplName)</code>.
+     * <code>find(rootFinderClass, spiContext, properties, defaultImplName)</code>.
      */    
     public static Object find(Class rootFinderClass,
                               SPIContext spiContext,
+                              String overloadPrefix,
                               String propertiesFileName,
                               String defaultImplName)
         throws ServiceException
     {
+        // thread context can change on each call,
+        // so establish context for this one call.
+        ClassFinder classFinder = new ClassFinder(spiContext, rootFinderClass);
+
         Properties properties = null;
         
         if (propertiesFileName != null) {
             try {
                 InputStream stream =
-                    spiContext.getThreadContextClassLoader().getResourceAsStream(propertiesFileName);
+                    (overloadPrefix == null)
+                    ? null
+                    : classFinder.findResourceAsStream(overloadPrefix + "." + propertiesFileName, false);
+
+                if (stream == null)    
+                    stream = classFinder.findResourceAsStream(propertiesFileName, false);
     
                 if (stream != null) {
                     properties = new Properties();
@@ -289,9 +307,62 @@ public class ServiceFinder {
             }
         }
         
-        return find(rootFinderClass, spiContext, properties, defaultImplName);
+        return find(classFinder, spiContext, properties, defaultImplName);
     }
 
+    /**
+     * Load properties file, and call
+     * <code>find(ServiceFinder.class, spiContext, propertiesFileName, defaultImplName)</code>.
+     */    
+    public static Object find(SPIContext spiContext,
+                              String overloadPrefix,
+                              String propertiesFileName,
+                              String defaultImplName)
+        throws ServiceException
+    {
+        return find(ServiceFinder.class, spiContext, overloadPrefix, propertiesFileName, defaultImplName);
+    }
+    
+    /**
+     * Equivalent to
+     * <code>find(rootFinderClass, new SPIContext(spi), propertiesFileName, defaultImplName)</code>.
+     */    
+    public static Object find(Class rootFinderClass,
+                              Class spi,
+                              String overloadPrefix,
+                              String propertiesFileName,
+                              String defaultImplName)
+        throws ServiceException
+    {
+        return find(rootFinderClass, new SPIContext(spi), overloadPrefix, propertiesFileName, defaultImplName);
+    }
+    
+    /**
+     * Equivalent to
+     * <code>find(new SPIContext(spi), propertiesFileName, defaultImplName)</code>.
+     */    
+    public static Object find(Class spi,
+                              String overloadPrefix,
+                              String propertiesFileName,
+                              String defaultImplName)
+        throws ServiceException
+    {
+        return find(new SPIContext(spi), overloadPrefix, propertiesFileName, defaultImplName);
+    }
+
+    /**
+     * Load properties file, and call
+     * <code>find(rootFinderClass, spiContext, properties, defaultImplName)</code>.
+     */    
+    public static Object find(Class rootFinderClass,
+                              SPIContext spiContext,
+                              String propertiesFileName,
+                              String defaultImplName)
+        throws ServiceException
+    {
+        return find(rootFinderClass, spiContext, (String)null, propertiesFileName, defaultImplName);
+    }
+    
     /**
      * Load properties file, and call
      * <code>find(ServiceFinder.class, spiContext, propertiesFileName, defaultImplName)</code>.
@@ -301,7 +372,7 @@ public class ServiceFinder {
                               String defaultImplName)
         throws ServiceException
     {
-        return find(ServiceFinder.class, spiContext, propertiesFileName, defaultImplName);
+        return find(ServiceFinder.class, spiContext, (String)null, propertiesFileName, defaultImplName);
     }
     
     /**
