@@ -113,10 +113,17 @@ import java.io.InputStreamReader;
  *   Get the name of an implementation class.  The name is the first
  *   non-null value obtained from the following resources:
  *   <ul>
- *     <p><li>
- *     The value of the system property whose name is the same as the SPI's
- *     fully qualified class name (as given by SPI.class.getName()).
- *     </li></p>
+ *     <li>
+ *     The value of the (scoped) system property whose name is the same as
+ *     the SPI's fully qualified class name (as given by SPI.class.getName()).
+ *     The <code>ScopedProperties</code> class provides a way to bind
+ *     properties by classloader, in a secure hierarchy similar in concept
+ *     to the way classloader find class and resource files.
+ *     See <code>ScopedProperties</code> for more details.
+ *     <p>If the ScopedProperties are not set by users, then behaviour
+ *     is equivalent to <code>System.getProperty()</code>.
+ *     </p>
+ *     </li>
  *     <p><li>
  *     The value of a <code>Properties properties</code> property, if provided
  *     as a parameter, whose name is the same as the SPI's fully qualifed class
@@ -671,18 +678,16 @@ public class Discovery {
     {
         /**
          * Return previously registered service object (not class)
-         * for this spi.  Try each class loader in succession.
+         * for this spi, bound only to current thread context class loader.
          */
         Object service = null;
         ClassLoader[] allLoaders = classFinder.getAllLoaders();
 
-        for (int idx = 0; service == null  &&  idx < allLoaders.length; idx++) {
-            service = get(classFinder.getSPIContext());
-        }
+        service = get(classFinder.getSPIContext());
 
-        if (service != null) {        
-            // First, try the system property
-            Class clazz = classFinder.systemFindClass();
+        if (service == null) {        
+            // First, try the (managed) system property
+            Class clazz = classFinder.managedPropertyFindClass();
     
             if (clazz == null) {
                 // Second, try the properties parameter

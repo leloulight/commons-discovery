@@ -194,15 +194,18 @@ public class ClassFinder {
     }
     
     /**
-     * Load the class whose name is given by the value of a System Property.
+     * Load the class whose name is given by the value of a (Managed)
+     * System Property.
+     * 
+     * @see ManagedProperties
      * 
      * @param attribute the name of the system property whose value is
      *        the name of the class to load.
      */
-    public Class systemFindClass(String attribute) {
+    public Class managedPropertyFindClass(String attribute) {
         String value;
         try {
-            value = System.getProperty(attribute);
+            value = ManagedProperties.getProperty(attribute);
         } catch (SecurityException e) {
             value = null;
         }
@@ -210,11 +213,14 @@ public class ClassFinder {
     }
 
     /**
-     * Load the class whose name is given by the value of a System Property,
-     * whose name is the fully qualified name of the SPI class.
+     * Load the class whose name is given by the value of a (Managed)
+     * System Property, whose name is the fully qualified name of the
+     * SPI class.
+     * 
+     * @see ManagedProperties
      */
-    public Class systemFindClass() {
-        return systemFindClass(spiContext.getSPI().getName());
+    public Class managedPropertyFindClass() {
+        return managedPropertyFindClass(spiContext.getSPI().getName());
     }
 
     /**
