@@ -2,7 +2,7 @@
 
 
 <!--
-        Simple "Service Discovery" component of the Jakarta Commons Subproject
+        Simple service "Discovery" component of the Jakarta Commons Subproject
         $Id$
 -->
 
@@ -27,10 +27,10 @@
 
 
   <!-- The name of this component -->
-  <property name="component.name"          value="service.discovery"/>
+  <property name="component.name"          value="discovery"/>
 
   <!-- The primary package name of this component -->
-  <property name="component.package"       value="org.apache.commons.service.discovery"/>
+  <property name="component.package"       value="org.apache.commons.discovery"/>
 
   <!-- The title of this component -->
   <property name="component.title"         value="Service Discovery"/>
@@ -186,7 +186,7 @@
     <echo message="Running basic Service tests ..."/>
     <java classname="${test.runner}" fork="yes"
         failonerror="${test.failonerror}">
-      <arg value="org.apache.commons.service.discovery.TestAll"/>
+      <arg value="org.apache.commons.discovery.TestAll"/>
       <classpath refid="test.classpath"/>
     </java>
   </target>
