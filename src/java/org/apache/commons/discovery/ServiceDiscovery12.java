@@ -134,6 +134,7 @@ public class ServiceDiscovery12 extends ServiceDiscovery
                                     sinfo.setImplName( serviceImplName );
                                     sinfo.setLoader( loader );
                                     sinfo.setURL( baseURL );
+                                    results.add(sinfo);
                                     System.out.println("XXX " + sinfo.toString());
                                 }
                             } finally {
