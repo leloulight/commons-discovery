@@ -90,7 +90,6 @@ public class ClassFinder {
      * looking for an implementation of.
      */
     private final SPIContext spiContext;
-    private final String     groupContext;
     private final Class      rootFinderClass;
     
     /**
@@ -103,11 +102,9 @@ public class ClassFinder {
     
     ClassLoader[] getAllLoaders() { return allLoaders; }
 
-    public ClassFinder(String groupContext,
-                       SPIContext spiContext,
+    public ClassFinder(SPIContext spiContext,
                        Class rootFinderClass)
     {
-        this.groupContext = groupContext;
         this.spiContext = spiContext;
         this.rootFinderClass = rootFinderClass;
         this.systemLoaders = getSystemLoaders(spiContext, rootFinderClass);
@@ -120,11 +117,10 @@ public class ClassFinder {
                        Class spi,
                        Class rootFinderClass)
     {
-        this (groupContext, new SPIContext(spi), rootFinderClass);
+        this (new SPIContext(groupContext, spi), rootFinderClass);
     }
     
     
-    public String getGroupContext() { return groupContext; }
     public SPIContext getSPIContext() { return spiContext; }
     
     
@@ -179,10 +175,10 @@ public class ClassFinder {
         String packageName = spiContext.getSPI().getPackage().getName();
 
         InputStream stream =
-            (getGroupContext() == null)
+            (spiContext.getGroupContext() == null)
                 ? null
                 : ClassLoaderUtils.getResourceAsStream(packageName,
-                          getGroupContext() + "." + resourceName,
+                          spiContext.getGroupContext() + "." + resourceName,
                           allLoaders);
 
         if (stream == null)

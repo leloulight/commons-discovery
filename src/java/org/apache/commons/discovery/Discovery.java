@@ -724,7 +724,7 @@ public class Discovery {
                 }
                 
                 if (service instanceof Service) {
-                    ((Service)service).init(classFinder.getGroupContext(), properties);
+                    ((Service)service).init(classFinder.getSPIContext().getGroupContext(), properties);
                 }
             }
         }
@@ -796,26 +796,33 @@ public class Discovery {
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
-        synchronized (spi_caches) {
-            HashMap spis =
-                (HashMap)spi_caches.get(threadContextClassLoader);
+        synchronized (root_cache) {
+            HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
 
-            if (spis != null) {
-                Iterator it = spis.values().iterator();
+            if (groups != null) {
+                Iterator groupIter = groups.values().iterator();
 
-                while (it.hasNext()) {
-                    Object service = (Object)it.next();
+                while (groupIter.hasNext()) {
+                    HashMap spis = (HashMap)groupIter.next();
                     
-                    if (service instanceof Service)
-                        ((Service)service).release();
+                    if (spis != null) {
+                        Iterator spiIter = spis.values().iterator();
+        
+                        while (spiIter.hasNext()) {
+                            Object service = (Object)spiIter.next();
+                            
+                            if (service instanceof Service)
+                                ((Service)service).release();
+                        }
+                        spis.clear();
+                    }
                 }
-
-                spis.clear();
-
-                spi_caches.remove(threadContextClassLoader);
+                groups.clear();
             }
+            root_cache.remove(threadContextClassLoader);
         }
     }
+    
     
     /**
      * Release any internal references to a previously created service
@@ -823,7 +830,44 @@ public class Discovery {
      * If the SPI instance implements <code>Service</code>, then call
      * <code>release()</code>.
      */
-    public static void release(Class spi) {
+    public static void release(String groupContext) {
+        ClassLoader threadContextClassLoader =
+            ClassLoaderUtils.getThreadContextClassLoader();
+
+        /**
+         * 'null' (bootstrap/system class loader) thread context class loader
+         * is ok...  Until we learn otherwise.
+         */
+        synchronized (root_cache) {
+            HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
+
+            if (groups != null) {
+                HashMap spis = (HashMap)groups.get(groupContext);
+                
+                if (spis != null) {
+                    Iterator spiIter = spis.values().iterator();
+    
+                    while (spiIter.hasNext()) {
+                        Object service = (Object)spiIter.next();
+                        
+                        if (service instanceof Service)
+                            ((Service)service).release();
+                    }
+                    spis.clear();
+                }
+                groups.remove(groupContext);
+            }
+            root_cache.remove(threadContextClassLoader);
+        }
+    }
+
+    /**
+     * Release any internal references to a previously created service
+     * instance associated with the current thread context class loader.
+     * If the SPI instance implements <code>Service</code>, then call
+     * <code>release()</code>.
+     */
+    public static void release(String groupContext, Class spi) {
         ClassLoader threadContextClassLoader =
             ClassLoaderUtils.getThreadContextClassLoader();
 
@@ -832,32 +876,39 @@ public class Discovery {
          * is ok...  Until we learn otherwise.
          */
         if (spi != null) {
-            synchronized (spi_caches) {
-                HashMap spis =
-                    (HashMap)spi_caches.get(threadContextClassLoader);
+            synchronized (root_cache) {
+                HashMap groups = (HashMap)root_cache.get(threadContextClassLoader);
 
-                if (spis != null) {
-                    Object service = (Object)spis.get(spi.getName());
-                    
-                    if (service instanceof Service)
-                        ((Service)service).release();
-                    
-                    spis.remove(spi.getName());
+                if (groups != null) {
+                    HashMap spis = (HashMap)groups.get(groupContext);
+
+                    if (spis != null) {
+                        Object service = (Object)spis.get(spi.getName());
+                        
+                        if (service instanceof Service)
+                            ((Service)service).release();
+                        
+                        spis.remove(spi.getName());
+                    }
                 }
             }
         }
     }
 
+    /**
+     * Release any internal references to a previously created service
+     * instance associated with the current thread context class loader.
+     * If the SPI instance implements <code>Service</code>, then call
+     * <code>release()</code>.
+     */
+    public static void release(Class spi) {
+        release(nullGroupContext, spi);
+    }
+    
     
     /************************* SPI CACHE SUPPORT *************************
      * 
      * Cache services by a 'key' unique to the requesting class/environment:
-     * - ONE way to do this is by thread context class loader.
-     * - ANOTHER way is to allow caching by an ID that crossing the thread
-     *   context boundries... much like the <code>'groupContext'</code>.
-     * 
-     * Until such time as we can see more clearly the benefits of the second,
-     * will only cache by the first (thread context class loader).
      * 
      * When we 'release', it is expected that the caller of the 'release'
      * have the same thread context class loader... as that will be used
@@ -866,21 +917,26 @@ public class Discovery {
      * We will manage synchronization directly, so all caches are implemented
      * as HashMap (unsynchronized).
      * 
-     * - Cache of SPI Caches, by ClassLoader:
+     * - ClassLoader::groupContext::SPI::Instance Cache
      *         Cache : HashMap
      *         Key   : Thread Context Class Loader (<code>ClassLoader</code>).
+     *         Value : groupContext::SPI Cache (<code>HashMap</code>).
+     * 
+     * - groupContext::SPI::Instance Cache
+     *         Cache : HashMap
+     *         Key   : groupContext (<code>String</code>).
      *         Value : SPI Cache (<code>HashMap</code>).
      * 
-     * - Cache of SPIs :
+     * - SPI::Instance Cache
      *         Cache : HashMap
-     *         Key   : SPI Interface/Class Name (<code>String</code>).
-     *         Value : SPI Implementation (<code>Object</code>.
+     *         Key   : SPI Class Name (<code>String</code>).
+     *         Value : SPI Instance/Implementation (<code>Object</code>.
      */
 
     /**
      * Allows null key, important as default groupContext is null.
      */
-    private static final HashMap spi_caches = new HashMap();
+    private static final HashMap root_cache = new HashMap();
 
     /**
      * Initial hash size for SPI's, default just seem TO big today..
@@ -900,12 +956,18 @@ public class Discovery {
          */
         if (spiContext.getSPI() != null)
         {
-            synchronized (spi_caches) {
-                HashMap spis =
-                    (HashMap)spi_caches.get(spiContext.getThreadContextClassLoader());
+            synchronized (root_cache) {
+                HashMap groups =
+                    (HashMap)root_cache.get(spiContext.getThreadContextClassLoader());
 
-                if (spis != null) {
-                    service = (Object)spis.get(spiContext.getSPI().getName());
+                if (groups != null) {
+                    HashMap spis =
+                        (HashMap)groups.get(spiContext.getGroupContext());
+    
+                    if (spis != null) {
+                        
+                        service = (Object)spis.get(spiContext.getSPI().getName());
+                    }
                 }
             }
         }
@@ -925,13 +987,21 @@ public class Discovery {
         if (spiContext.getSPI() != null  &&
             service != null)
         {
-            synchronized (spi_caches) {
+            synchronized (root_cache) {
+                HashMap groups =
+                    (HashMap)root_cache.get(spiContext.getThreadContextClassLoader());
+                    
+                if (groups == null) {
+                    groups = new HashMap(smallHashSize);
+                    root_cache.put(spiContext.getThreadContextClassLoader(), groups);
+                }
+
                 HashMap spis =
-                    (HashMap)spi_caches.get(spiContext.getThreadContextClassLoader());
+                    (HashMap)groups.get(spiContext.getGroupContext());
 
                 if (spis == null) {
                     spis = new HashMap(smallHashSize);
-                    spi_caches.put(spiContext.getThreadContextClassLoader(), spis);
+                    root_cache.put(spiContext.getGroupContext(), spis);
                 }
 
                 spis.put(spiContext.getSPI().getName(), service);

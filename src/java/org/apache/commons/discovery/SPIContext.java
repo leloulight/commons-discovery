@@ -85,14 +85,18 @@ public class SPIContext {
      */
     private final ClassLoader[] loaders;
 
+    private final String groupContext;
+    
     /**
      * The service programming interface: intended to be
      * an interface or abstract class, but not limited
      * to those two.
      */        
-    private Class spi;
+    private final Class spi;
+    
 
-    public SPIContext(Class spi) {
+    public SPIContext(String groupContext, Class spi) {
+        this.groupContext = groupContext;
         this.spi = spi;
         this.loaders = ClassLoaderUtils.compactUniq(
             new ClassLoader[] { threadContextClassLoader,
@@ -106,6 +110,10 @@ public class SPIContext {
     
     public ClassLoader[] getClassLoaders() {
         return loaders;
+    }
+    
+    public String getGroupContext() {
+        return groupContext;
     }
     
     public Class getSPI() {
