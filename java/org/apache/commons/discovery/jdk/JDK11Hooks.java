@@ -107,8 +107,79 @@ class JDK11Hooks extends JDKHooks {
         throws IOException
     {
         /**
-         * Not yet implemented...
+         * The simple answer is/was:
+         *    return loader.getResources(resourceName);
+         * 
+         * However, some classloaders overload the behavior of getResource
+         * (loadClass, etc) such that the order of returned results changes
+         * from normally expected behavior.
+         * 
+         * Example: locate classes/resources from child ClassLoaders first,
+         *          parents last (in some J2EE environs).
+         * 
+         * The resource returned by getResource() should be the same as the
+         * first resource returned by getResources().  Unfortunately, this
+         * is not, and cannot be: getResources() is 'final' in the current
+         * JDK's (1.2, 1.3, 1.4).
+         * 
+         * To address this, the implementation of this method will
+         * return an Enumeration such that the first element is the
+         * results of getResource, and all trailing elements are
+         * from getResources.  On each iteration, we check so see
+         * if the resource (from getResources) matches the first resource,
+         * and eliminate the redundent element.
          */
-        return null;
+        
+        final URL first = (URL)loader.getResource(resourceName);
+        final Enumeration rest = loader.getResources(resourceName);
+        
+        return new Enumeration() {
+            private boolean firstDone = (first == null);
+            private URL next = getNext();
+            
+            public Object nextElement() {
+                URL o = next;
+                next = getNext();
+                return o;
+            }
+
+            public boolean hasMoreElements() {
+                return next != null;
+            }
+            
+            private URL getNext() {
+                URL n;
+                
+                if (!firstDone) {
+                    /**
+                     * First time through, use results of getReference()
+                     * if they were non-null.
+                     */
+                    firstDone = true;
+                    n = first;
+                } else {
+                    /**
+                     * Subsequent times through,
+                     * use results of getReferences()
+                     * but take out anything that matches 'first'.
+                     * 
+                     * Iterate through list until we find one that
+                     * doesn't match 'first'.
+                     */
+                    n = null;
+                    while (rest.hasMoreElements()  &&  n == null) {
+                        n = (URL)rest.nextElement();
+                        if (first != null &&
+                            n != null &&
+                            n.equals(first))
+                        {
+                            n = null;
+                        }
+                    }
+                }
+                
+                return n;
+            }
+        };
     }
 }
