@@ -120,7 +120,7 @@ public class DiscoverClassLoaderResources implements Discover
      */
     public ResourceIterator find(final String resourceName) {
         if (log.isDebugEnabled())
-            log.debug("findResources: resourceName='" + resourceName + "'");
+            log.debug("find: resourceName='" + resourceName + "'");
 
         return new ResourceIterator() {
             private int idx = 0;

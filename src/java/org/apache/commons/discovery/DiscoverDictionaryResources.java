@@ -57,113 +57,89 @@
 
 package org.apache.commons.discovery;
 
-import java.net.URL;
-import java.util.Vector;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
 
 
 /**
- * The findResources() method will check every loader.
- *
+ * Recover resources from a Dictionary.  This covers Properties as well,
+ * since <code>Properties extends Hashtable extends Dictionary</code>.
+ * 
+ * The recovered value is expected to be either a <code>String</code>
+ * or a <code>String[]</code>.
+ * 
  * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author James Strachan
  */
-public class DiscoverClasses implements Discover
+public class DiscoverDictionaryResources implements Discover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverClasses.class);
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverDictionaryResources.class);
     public static void setLog(Log _log) {
         log = _log;
     }
 
-    private ClassLoaders classLoaders;
+    private Dictionary dictionary;
     
     /** Construct a new resource discoverer
      */
-    public DiscoverClasses() {
-        setClassLoaders(new ClassLoaders());
+    public DiscoverDictionaryResources() {
+        setDictionary(new Hashtable());
     }
     
     /** Construct a new resource discoverer
      */
-    public DiscoverClasses(ClassLoaders classLoaders) {
-        setClassLoaders(classLoaders);
+    public DiscoverDictionaryResources(Dictionary dictionary) {
+        setDictionary(dictionary);
     }
 
-    private ClassLoaders getClassLoaders() {
-        return classLoaders;
+    protected Dictionary getDictionary() {
+        return dictionary;
     }
 
     /**
      * Specify set of class loaders to be used in searching.
      */
-    public void setClassLoaders(ClassLoaders loaders) {
-        classLoaders = loaders;
-    }
-
-    /**
-     * Specify a new class loader to be used in searching.
-     * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
-     */
-    public void addClassLoader(ClassLoader loader) {
-        classLoaders.put(loader);
+    public void setDictionary(Dictionary table) {
+        this.dictionary = dictionary;
     }
     
+    public void addResource(String resourceName, String resource) {
+        dictionary.put(resourceName, resource);
+    }
+    
+    public void addResource(String resourceName, String[] resources) {
+        dictionary.put(resourceName, resources);
+    }
+
     /**
-     * Find upto one class per class loader, and don't load duplicates
-     * from different class loaders (first one wins).
-     * 
-     * @return Enumeration of ClassInfo
+     * @return Enumeration of ResourceInfo
      */
-    public ResourceIterator find(final String className) {
-        final String resourceName = className.replace('.','/') + ".class";
-        
+    public ResourceIterator find(final String resourceName) {
         if (log.isDebugEnabled())
-            log.debug("find: className='" + className + "'");
+            log.debug("find: resourceName='" + resourceName + "'");
+
+        Object baseResource = dictionary.get(resourceName);
+
+        final String[] resources;
+        if (baseResource instanceof String) {
+            resources = new String[] { (String)baseResource };
+        } else if (baseResource instanceof String[]) {
+            resources = (String[])baseResource;
+        } else {
+            resources = null;
+        }
 
         return new ResourceIterator() {
-            private Vector history = new Vector();
             private int idx = 0;
-            private ResourceInfo resource = null;
             
             public boolean hasNext() {
-                if (resource == null) {
-                    resource = getNextClass();
-                }
-                return resource != null;
+                return (resources != null && idx < resources.length);
             }
             
             public ResourceInfo next() {
-                ResourceInfo element = resource;
-                resource = null;
-                return element;
-            }
-            
-            private ResourceInfo getNextClass() {
-                while (idx < getClassLoaders().size()) {
-                    ClassLoader loader = getClassLoaders().get(idx++);
-                    URL url = loader.getResource(resourceName);
-                    if (url != null) {
-                        if (!history.contains(url)) {
-                            history.addElement(url);
-    
-                            if (log.isDebugEnabled())
-                                log.debug("getNextClass: next URL='" + url + "'");
-    
-                            return new ResourceInfo(className, url, loader);
-                        }
-                        if (log.isDebugEnabled())
-                            log.debug("getNextClass: duplicate URL='" + url + "'");
-                    } else {
-                        if (log.isDebugEnabled())
-                            log.debug("getNextClass: loader " + loader + ": '" + resourceName + "' not found");
-                    }
-                }
-                return null;
+                return new ResourceInfo(resources[idx++]);
             }
         };
     }

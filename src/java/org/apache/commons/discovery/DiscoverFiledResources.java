@@ -117,7 +117,7 @@ public class DiscoverFiledResources extends DiscoverChainLink implements Discove
      */
     public ResourceIterator find(final String fileName) {
         if (log.isDebugEnabled())
-            log.debug("findResources: fileName='" + fileName + "'");
+            log.debug("find: fileName='" + fileName + "'");
 
         return new ResourceIterator() {
             private ResourceIterator files = getDiscoverer().find(fileName);
@@ -142,7 +142,7 @@ public class DiscoverFiledResources extends DiscoverChainLink implements Discove
                 if (classNames == null || idx >= classNames.size()) {
                     classNames = getNextClassNames();
                     idx = 0;
-                    if (classNames != null) {
+                    if (classNames == null) {
                         return null;
                     }
                 }

@@ -57,8 +57,12 @@
 
 package org.apache.commons.discovery;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
 
@@ -89,7 +93,7 @@ public class DiscoverResources implements Discover
     }
     
     public Discover get(int idx) {
-        return (Discover)discoverers.elementAt(idx);
+        return (Discover)discoverers.get(idx);
     }
 
     /**
@@ -109,6 +113,37 @@ public class DiscoverResources implements Discover
      * 
      * @return ResourceIterator
      */
-    public ResourceIterator find(String resourceName) {
+    public ResourceIterator find(final String resourceName) {
+        if (log.isDebugEnabled())
+            log.debug("find: resourceName='" + resourceName + "'");
+
+        return new ResourceIterator() {
+            private int idx = 0;
+            private ResourceIterator iterator = null;
+            
+            public boolean hasNext() {
+                if (iterator == null  ||  !iterator.hasNext()) {
+                    iterator = getNextIterator();
+                    if (iterator == null) {
+                        return false;
+                    }
+                }
+                return iterator.hasNext();
+            }
+            
+            public ResourceInfo next() {
+                return iterator.next();
+            }
+            
+            private ResourceIterator getNextIterator() {
+                while (idx < size()) {
+                    ResourceIterator iter = get(idx++).find(resourceName);
+                    if (iter.hasNext()) {
+                        return iter;
+                    }
+                }
+                return null;
+            }
+        };
     }
 }

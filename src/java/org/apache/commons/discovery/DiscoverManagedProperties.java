@@ -57,45 +57,27 @@
 
 package org.apache.commons.discovery;
 
-import java.util.Properties;
-
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.logging.Log;
 
 
 /**
+ * Recover resource name from Managed Properties.
+ * @see org.apache.commons.discovery.tools.ManagedProperties
+ * 
  * @author Richard A. Sitze
  */
-public class DiscoverPropertyResources implements Discover
+public class DiscoverManagedProperties implements Discover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverPropertyResources.class);
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverManagedProperties.class);
     public static void setLog(Log _log) {
         log = _log;
     }
-
-    private Properties properties;
     
     /** Construct a new resource discoverer
      */
-    public DiscoverPropertyResources() {
-        setProperties(null);
-    }
-    
-    /** Construct a new resource discoverer
-     */
-    public DiscoverPropertyResources(Properties properties) {
-        setProperties(properties);
-    }
-
-    protected Properties getProperties() {
-        return properties;
-    }
-
-    /**
-     * Specify set of class loaders to be used in searching.
-     */
-    public void setProperties(Properties properties) {
-        this.properties = properties;
+    public DiscoverManagedProperties() {
     }
 
     /**
@@ -103,22 +85,19 @@ public class DiscoverPropertyResources implements Discover
      */
     public ResourceIterator find(final String resourceName) {
         if (log.isDebugEnabled())
-            log.debug("findResources: resourceName='" + resourceName + "'");
+            log.debug("find: resourceName='" + resourceName + "'");
 
         return new ResourceIterator() {
-            private ResourceInfo resource = new ResourceInfo(properties.getProperty(resourceName));
+            private String resource = ManagedProperties.getProperty(resourceName);
             
             public boolean hasNext() {
                 return resource != null;
             }
             
             public ResourceInfo next() {
-                if (resource != null) {
-                    ResourceInfo element = resource;
-                    resource = null;
-                    return element;
-                }
-                return null;
+                ResourceInfo element = new ResourceInfo(resource);
+                resource = null;
+                return element;
             }
         };
     }

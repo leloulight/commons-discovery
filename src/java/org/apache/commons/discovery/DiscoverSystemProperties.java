@@ -57,113 +57,48 @@
 
 package org.apache.commons.discovery;
 
-import java.net.URL;
-import java.util.Vector;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
 
 
 /**
- * The findResources() method will check every loader.
- *
+ * Recover resource name from System Properties.
+ * 
  * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author James Strachan
  */
-public class DiscoverClasses implements Discover
+public class DiscoverSystemProperties implements Discover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverClasses.class);
+    private static Log log = DiscoveryLogFactory.newLog(DiscoverSystemProperties.class);
     public static void setLog(Log _log) {
         log = _log;
     }
-
-    private ClassLoaders classLoaders;
     
     /** Construct a new resource discoverer
      */
-    public DiscoverClasses() {
-        setClassLoaders(new ClassLoaders());
-    }
-    
-    /** Construct a new resource discoverer
-     */
-    public DiscoverClasses(ClassLoaders classLoaders) {
-        setClassLoaders(classLoaders);
-    }
-
-    private ClassLoaders getClassLoaders() {
-        return classLoaders;
+    public DiscoverSystemProperties() {
     }
 
     /**
-     * Specify set of class loaders to be used in searching.
+     * @return Enumeration of ResourceInfo
      */
-    public void setClassLoaders(ClassLoaders loaders) {
-        classLoaders = loaders;
-    }
-
-    /**
-     * Specify a new class loader to be used in searching.
-     * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
-     */
-    public void addClassLoader(ClassLoader loader) {
-        classLoaders.put(loader);
-    }
-    
-    /**
-     * Find upto one class per class loader, and don't load duplicates
-     * from different class loaders (first one wins).
-     * 
-     * @return Enumeration of ClassInfo
-     */
-    public ResourceIterator find(final String className) {
-        final String resourceName = className.replace('.','/') + ".class";
-        
+    public ResourceIterator find(final String resourceName) {
         if (log.isDebugEnabled())
-            log.debug("find: className='" + className + "'");
+            log.debug("find: resourceName='" + resourceName + "'");
 
         return new ResourceIterator() {
-            private Vector history = new Vector();
-            private int idx = 0;
-            private ResourceInfo resource = null;
+            private String resource = System.getProperty(resourceName);
             
             public boolean hasNext() {
-                if (resource == null) {
-                    resource = getNextClass();
-                }
                 return resource != null;
             }
             
             public ResourceInfo next() {
-                ResourceInfo element = resource;
+                ResourceInfo element = new ResourceInfo(resource);
                 resource = null;
                 return element;
-            }
-            
-            private ResourceInfo getNextClass() {
-                while (idx < getClassLoaders().size()) {
-                    ClassLoader loader = getClassLoaders().get(idx++);
-                    URL url = loader.getResource(resourceName);
-                    if (url != null) {
-                        if (!history.contains(url)) {
-                            history.addElement(url);
-    
-                            if (log.isDebugEnabled())
-                                log.debug("getNextClass: next URL='" + url + "'");
-    
-                            return new ResourceInfo(className, url, loader);
-                        }
-                        if (log.isDebugEnabled())
-                            log.debug("getNextClass: duplicate URL='" + url + "'");
-                    } else {
-                        if (log.isDebugEnabled())
-                            log.debug("getNextClass: loader " + loader + ": '" + resourceName + "' not found");
-                    }
-                }
-                return null;
             }
         };
     }
