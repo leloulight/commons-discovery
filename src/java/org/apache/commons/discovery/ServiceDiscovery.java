@@ -87,6 +87,7 @@ import java.util.Vector;
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
+ * @author James Strachan
  */
 public abstract class ServiceDiscovery
 {
@@ -99,10 +100,23 @@ public abstract class ServiceDiscovery
     protected ServiceDiscovery() {
     }
 
-    public static ServiceDiscovery getServiceDiscovery() {
+    /**
+     * Creates a new instance of a ServiceDiscovery instance based on the 
+     * abilities of the current JDK. The later the JDK the neater the implementation
+     * of service discovery. 
+     * ServiceDiscovery12 will be used on JDK 1.2 or later JDKs.
+     */
+    public static ServiceDiscovery newInstance() {
         // This is _not_ singleton. 
         return new ServiceDiscovery12();
         // XXX Check if JDK1.1 is used and return the specific version 
+    }
+
+    /**
+     * @deprecated  please now use {@link #newInstance()}
+     */
+    public static ServiceDiscovery getServiceDiscovery() {
+        return newInstance();
     }
 
     /** Specify a new class loader to be used in searching.

@@ -93,7 +93,7 @@ public class ServiceDiscoveryTask
 
     public void execute() throws Exception {
         System.out.println("XXX ");
-        ServiceDiscovery disc=ServiceDiscovery.getServiceDiscovery();
+        ServiceDiscovery disc=ServiceDiscovery.newInstance();
 
         disc.addClassLoader( disc.getThreadClassLoader() );
         disc.addClassLoader( this.getClass().getClassLoader() );
