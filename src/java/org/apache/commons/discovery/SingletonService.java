@@ -61,19 +61,17 @@
 
 package org.apache.commons.discovery;
 
-import java.util.Properties;
-
 
 /**
- * <p>Optional Service interface to facilitate Service instantiation.<p>
+ * <p>Optional Service interface to facilitate life-cycle management.<p>
  * 
- * <p>A class is not required to implement this interface, but if
- * it does then startup properties are passed to the class via <code>init</code>.
- * </p>
+ * <p>A service is not required to implement this interface, but if
+ * it does then the service is notified when it is being initialized
+ * and released by DiscoverSingleton.</p>
  * 
  * @author Richard A. Sitze
  * @version $Revision$ $Date$
  */
-public interface Service {
-    public void init(String groupContext, Properties properties);
+public interface SingletonService extends Service {
+    public void release();
 }

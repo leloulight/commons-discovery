@@ -59,59 +59,92 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.strategy;
 
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.apache.commons.discovery.ManagedProperties;
 
 
 /**
- * A wrapper class that gives us a "bootstrap" loader.
- * For the moment, we cheat and return the system class loader.
- * Getting a wrapper for the bootstrap loader that works
- * in JDK 1.1.x may require a bit more work...
+ * Helper methods for locating resource names.
  * 
- * Expected use:  call BootstrapLoader.wrap(loader),
- * which will return loader (loader != null) or a wrapper class
- * in place of the bootstrap loader (loader == null).
+ * @author Richard A. Sitze
+ * @author Craig R. McClanahan
+ * @author Costin Manolache
  */
-public class BootstrapLoader {
-    private static ClassLoader bootstrapLoader =
-        null;
-    
-    private BootstrapLoader() {
-    }
-    
-    public static ClassLoader wrap(ClassLoader incoming) {
-        return (incoming == null) ? getBootstrapLoader() : incoming;
-    }
-    
-    public static boolean isBootstrapLoader(ClassLoader incoming) {
-        return incoming == null  ||  incoming == getBootstrapLoader();
-    }
-    
-    public static ClassLoader getBootstrapLoader() {
-        return bootstrapLoader;
-    }
+public class Utils {
+    /**
+     * JDK1.3+ 'Service Provider' specification 
+     * ( http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html )
+     */
+    private static final String SERVICE_HOME = "META-INF/services/";
+
     
     /**
-     * JDK 1.1.x compatible?
-     * There is no direct way to get the system class loader
-     * in 1.1.x, so work around...
+     * Load the class whose name is given by the value of a (Managed)
+     * System Property.
+     * 
+     * @see ManagedProperties
+     * 
+     * @param attribute the name of the system property whose value is
+     *        the name of the class to load.
      */
-    private class SystemClassLoader extends ClassLoader {
-        protected Class loadClass(String className, boolean resolve)
-            throws ClassNotFoundException
-        {
-            return findSystemClass(className);
+    public static String getManagedProperty(String propertyName) {
+        String value;
+        try {
+            value = ManagedProperties.getProperty(propertyName);
+        } catch (SecurityException e) {
+            value = null;
+        }
+        return value;
+    }
+
+    /**
+     * Find the name of a service using the JDK 1.3 jar discovery mechanism.
+     * This will allow users to plug a service implementation by just
+     * placing it in the META-INF/services directory of the webapp
+     * (or in CLASSPATH or equivalent).
+     */
+    public static String getJDK13ClassName(ClassLoader classLoader, String spiName) {
+        String serviceImplName = null;
+
+        // Name of J2EE application file that identifies the service implementation.
+        String servicePropertyFile = SERVICE_HOME + spiName;
+
+        InputStream is = (classLoader == null
+                          ? ClassLoader.getSystemResourceAsStream(servicePropertyFile)
+                          : classLoader.getResourceAsStream(servicePropertyFile));
+
+        if( is != null ) {
+            try {
+                try {
+                    // This code is needed by EBCDIC and other strange systems.
+                    // It's a fix for bugs reported in xerces
+                    BufferedReader rd;
+                    
+                    try {
+                        rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                    } catch (java.io.UnsupportedEncodingException e) {
+                        rd = new BufferedReader(new InputStreamReader(is));
+                    }
+                        
+                    try {
+                        serviceImplName = rd.readLine();
+                    } finally {
+                        rd.close();
+                    }
+                } finally {
+                    is.close();
+                }
+            } catch (IOException ioe) {
+                ; // ignore
+            }
         }
         
-        public URL getResource(String resName) {
-            return getSystemResource(resName);
-        }
-        
-        public InputStream getResourceAsStream(String resName) {
-            return getSystemResourceAsStream(resName);
-        }
+        return serviceImplName;
     }
 }

@@ -96,7 +96,7 @@ public class TestAll extends TestCase {
         LogFactory factory = null;
         
         try {
-            factory = (LogFactory)Discovery.find(LogFactory.class,
+            factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
                                                  LogFactoryImpl.class.getName());
 
             assertTrue(factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
@@ -105,7 +105,7 @@ public class TestAll extends TestCase {
             if (factory != null)
                 factory.releaseAll();
 
-            Discovery.release();
+            DiscoverSingleton.release();
         }
     }
     
@@ -113,7 +113,7 @@ public class TestAll extends TestCase {
         LogFactory factory = null;
 
         try {
-            factory = (LogFactory)Discovery.find(LogFactory.class,
+            factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
                                                  MyFactory.class.getName());
 
             assertTrue(factory.getClass().getName() + "!=" + MyFactory.class.getName(),
@@ -122,7 +122,7 @@ public class TestAll extends TestCase {
             if (factory != null)
                 factory.releaseAll();
 
-            Discovery.release();
+            DiscoverSingleton.release();
         }
     }
     
@@ -130,7 +130,7 @@ public class TestAll extends TestCase {
         LogFactory factory = null;
         
         try {
-            factory = (LogFactory)Discovery.find(LogFactory.class,
+            factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
                                                  LogFactoryImpl.class.getName());
 
             assertTrue("1. " + factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
@@ -138,7 +138,7 @@ public class TestAll extends TestCase {
             
             // no release, should get cached value..
             
-            factory = (LogFactory)Discovery.find(LogFactory.class,
+            factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
                                                  MyFactory.class.getName());
 
             // factory should be cached LogFactoryImpl
@@ -148,7 +148,7 @@ public class TestAll extends TestCase {
             if (factory != null)
                 factory.releaseAll();
 
-            Discovery.release();
+            DiscoverSingleton.release();
         }
     }
     
@@ -156,15 +156,15 @@ public class TestAll extends TestCase {
         LogFactory factory = null;
         
         try {
-            factory = (LogFactory)Discovery.find(LogFactory.class,
+            factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
                                                  LogFactoryImpl.class.getName());
 
             assertTrue("1. " + factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
                        factory.getClass().getName().equals(LogFactoryImpl.class.getName()));
             
-            Discovery.release();
+            DiscoverSingleton.release();
             
-            factory = (LogFactory)Discovery.find(LogFactory.class,
+            factory = (LogFactory)DiscoverSingleton.find(LogFactory.class,
                                                  MyFactory.class.getName());
 
             // Cache flushed, get new factory:
@@ -174,7 +174,7 @@ public class TestAll extends TestCase {
             if (factory != null)
                 factory.releaseAll();
 
-            Discovery.release();
+            DiscoverSingleton.release();
         }
     }
     
@@ -190,7 +190,7 @@ public class TestAll extends TestCase {
             props.setProperty(Log.class.getName(),
                               SimpleLog.class.getName());
             
-            factory = (LogFactory)Discovery.find(LogFactory.class, props);
+            factory = (LogFactory)DiscoverSingleton.find(LogFactory.class, props);
 
             assertTrue(factory.getClass().getName() + "!=" + MyFactory.class.getName(),
                        factory.getClass().getName().equals(MyFactory.class.getName()));
@@ -198,7 +198,7 @@ public class TestAll extends TestCase {
             if (factory != null)
                 factory.releaseAll();
 
-            Discovery.release();
+            DiscoverSingleton.release();
         }
     }
     
@@ -212,7 +212,7 @@ public class TestAll extends TestCase {
             ManagedProperties.setProperty(Log.class.getName(),
                                           SimpleLog.class.getName());
             
-            factory = (LogFactory)Discovery.find(LogFactory.class);
+            factory = (LogFactory)DiscoverSingleton.find(LogFactory.class);
 
             assertTrue(factory.getClass().getName() + "!=" + MyFactory.class.getName(),
                        factory.getClass().getName().equals(MyFactory.class.getName()));
@@ -220,7 +220,7 @@ public class TestAll extends TestCase {
             if (factory != null)
                 factory.releaseAll();
 
-            Discovery.release();
+            DiscoverSingleton.release();
             
             /**
              * Cleanup, don't want to affect next test..

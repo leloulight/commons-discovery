@@ -59,80 +59,63 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.load;
 
 import java.io.InputStream;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Properties;
+
+import org.apache.commons.discovery.DiscoveryException;
 
 
 /**
- * Mechanisms to locate and load a class.
- * The load methods locate a class only.
- * The find methods locate a class and verify that the
- * class implements an given interface or extends a given class.
+ * Loads classes and resources.
  * 
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
  */
-public class ClassFinder {
-    /**
-     * JDK1.3+ 'Service Provider' specification 
-     * ( http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html )
-     */
-    private static final String SERVICE_HOME = "META-INF/services/";
-    
+public class Loaders {
     /**
      * The SPI (and thread context) for which we are (presumably)
      * looking for an implementation of.
      */
     private final SPIContext spiContext;
-    private final Class      rootFinderClass;
     
     /**
+     * System ClassLoaders only
+     * 
      * This is NOT the same as spiContext.getClassLoaders(),
      * which includes the thread context class loader.
      */
     private final ClassLoader[] systemLoaders;
     
     private final ClassLoader[] allLoaders;
-    
-    ClassLoader[] getAllLoaders() { return allLoaders; }
 
-    public ClassFinder(SPIContext spiContext,
-                       Class rootFinderClass)
+
+    /**
+     * @param rootFinderClass a wrapper class encapsulating use of DiscoverSingleton.
+     *   If DiscoverSingleton is used directly, then this would be DiscoverSingleton itself.
+     *   The root finder class is used to determine the 'real' caller, and
+     *   hence the caller's class loader - thereby preserving knowledge that
+     *   is relevant to finding the correct/expected implementation class.
+     */
+    public Loaders(SPIContext spiContext, Class rootFinderClass)
     {
         this.spiContext = spiContext;
-        this.rootFinderClass = rootFinderClass;
         this.systemLoaders = getSystemLoaders(spiContext, rootFinderClass);
         this.allLoaders = getAllLoaders(spiContext, rootFinderClass);
 
         //System.out.println("Finding '" + groupContext + "::" + spiContext.getSPI().getName() + "'");
     }
     
-    public ClassFinder(String groupContext,
-                       Class spi,
-                       Class rootFinderClass)
-    {
-        this (new SPIContext(groupContext, spi), rootFinderClass);
-    }
-    
-    
-    public SPIContext getSPIContext() { return spiContext; }
-    
-    
     /**
-     * Return the specified <code>serviceImplName</code> implementation
-     * class.  If <code>systemOnly</code> is <code>true</code>, try the
-     * 'system' class loaders: spi's, root finder class's (default is
-     * Discovery) and system.  If <code>systemOnly</code> is <code>false</code>,
-     * try each of the following class loaders: thread context, caller's, spi's,
-     * root finder class's (default is Discovery), and system.
+     * Load <code>className</code>.  If <code>systemOnly</code> is
+     * <code>true</code>, use the  'system' class loaders: spi's,
+     * root finder class's, and system.  If <code>systemOnly</code> is
+     * <code>false</code>, use the following class loaders: thread context,
+     * caller's, spi's, root finder class's, and system.
      *
      * @param serviceImplName Fully qualified name of the implementation class
+     * 
      * @param systemOnly Use only 'system' class loaders
      *                  (do not try thread context class loader).
      *
@@ -140,14 +123,14 @@ public class ClassFinder {
      *                             or if the class created is not an instance
      *                             of <code>spi</code>
      */
-    public Class findClass(String serviceImplName, boolean systemOnly)
+    public Class loadClass(String className, boolean systemOnly)
         throws DiscoveryException
     {
-        Class clazz = ClassLoaderUtils.loadClass(serviceImplName,
+        Class clazz = ClassLoaderUtils.loadClass(className,
                            systemOnly ? systemLoaders : allLoaders);
             
         if (clazz != null  &&  !spiContext.getSPI().isAssignableFrom(clazz)) {
-            throw new DiscoveryException("Class " + serviceImplName +
+            throw new DiscoveryException("Class " + className +
                           " does not implement " + spiContext.getSPI().getName());
         }
         
@@ -158,18 +141,19 @@ public class ClassFinder {
      * Return the specified <code>resourceName</code> as an
      * <code>InputStream</code>.  If <code>systemOnly</code> is
      * <code>true</code>, try the 'system' class loaders: spi's,
-     * root finder class's (default is Discovery), and system.
+     * root finder class's (default is DiscoverSingleton), and system.
      * If <code>systemOnly</code> is <code>false</code>, try each of
      * the following class loaders: thread context, caller's, spi's,
-     * root finder class's (default is Discovery), and system.
+     * root finder class's (default is DiscoverSingleton), and system.
      *
      * @param resourceName name of the resource
+     * 
      * @param system Use only 'system' class loaders
      *                  (do not try thread context class loader).
      *
      * @exception DiscoveryException if a suitable resource cannot be created.
      */
-    public InputStream findResourceAsStream(String resourceName)
+    public InputStream loadResourceAsStream(String resourceName)
         throws DiscoveryException
     {
         String packageName = spiContext.getSPI().getPackage().getName();
@@ -187,115 +171,6 @@ public class ClassFinder {
                                                           allLoaders);
 
         return stream;
-    }
-    
-    /**
-     * Load the class whose name is given by the value of a (Managed)
-     * System Property.
-     * 
-     * @see ManagedProperties
-     * 
-     * @param attribute the name of the system property whose value is
-     *        the name of the class to load.
-     */
-    public Class managedPropertyFindClass(String attribute) {
-        String value;
-        try {
-            value = ManagedProperties.getProperty(attribute);
-        } catch (SecurityException e) {
-            value = null;
-        }
-        return findClass(value, false);
-    }
-
-    /**
-     * Load the class whose name is given by the value of a (Managed)
-     * System Property, whose name is the fully qualified name of the
-     * SPI class.
-     * 
-     * @see ManagedProperties
-     */
-    public Class managedPropertyFindClass() {
-        return managedPropertyFindClass(spiContext.getSPI().getName());
-    }
-
-    /**
-     * Load the class whose name is given by the value of a property.
-     * 
-     * @param properties the properties set.
-     * @param attribute the name of the property whose value is
-     *        the name of the class to load.
-     */
-    public Class findClass(Properties properties, String attribute) {
-        return findClass(properties.getProperty(attribute), false);
-    }
-
-    /**
-     * Load the class whose name is given by the value of a property.
-     * whose name is the fully qualified name of the SPI class.
-     * 
-     * @param properties the properties set.
-     */
-    public Class findClass(Properties properties) {
-        return findClass(properties, spiContext.getSPI().getName());
-    }
-
-    /**
-     * Load the class implementing the SPI using the JDK 1.3
-     * location discovery mechanism.
-     * This will allow users to plug a service implementation by just
-     * placing it in the META-INF/services directory of the webapp
-     * (or in CLASSPATH or equivalent).
-     */
-    public Class jdk13FindClass() {
-        return findClass(getJDKImplClassName(), false);
-    }
-
-    /**
-     * Find the name of a service using the JDK 1.3 jar discovery mechanism.
-     * This will allow users to plug a service implementation by just
-     * placing it in the META-INF/services directory of the webapp
-     * (or in CLASSPATH or equivalent).
-     */
-    private String getJDKImplClassName() {
-        String serviceImplName = null;
-
-        // Name of J2EE application file that identifies the service implementation.
-        String servicePropertyFile = SERVICE_HOME + spiContext.getSPI().getName();
-
-        ClassLoader contextLoader = spiContext.getThreadContextClassLoader();
-
-        InputStream is = (contextLoader == null
-                          ? ClassLoader.getSystemResourceAsStream(servicePropertyFile)
-                          : contextLoader.getResourceAsStream(servicePropertyFile));
-
-        if( is != null ) {
-            try {
-                try {
-                    // This code is needed by EBCDIC and other strange systems.
-                    // It's a fix for bugs reported in xerces
-                    BufferedReader rd;
-                    
-                    try {
-                        rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                    } catch (java.io.UnsupportedEncodingException e) {
-                        rd = new BufferedReader(new InputStreamReader(is));
-                    }
-                        
-                    try {
-                        serviceImplName = rd.readLine();
-                    } finally {
-                        rd.close();
-                    }
-                } finally {
-                    is.close();
-                }
-            } catch (IOException ioe) {
-                ; // ignore
-            }
-        }
-        
-        return serviceImplName;
     }
     
     /**

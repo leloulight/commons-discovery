@@ -59,21 +59,64 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.load;
 
-import java.util.Properties;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 /**
- * <p>Optional Service interface to facilitate Service instantiation.<p>
- * 
- * <p>A class is not required to implement this interface, but if
- * it does then startup properties are passed to the class via <code>init</code>.
- * </p>
+ * Represents a Service Programming Interface (spi) context,
+ * to include an spi and the Thread Context Class Loader for
+ * the thread that created an instance of this object.
  * 
  * @author Richard A. Sitze
- * @version $Revision$ $Date$
  */
-public interface Service {
-    public void init(String groupContext, Properties properties);
+public class SPIContext {
+    /**
+     * Thread context class loader or null if not available (JDK 1.1).
+     * Wrapped bootstrap classloader if classLoader == null.
+     */
+    private final ClassLoader threadContextClassLoader =
+        ClassLoaderUtils.getThreadContextClassLoader();
+
+    /**
+     * List of class loaders
+     */
+    private final ClassLoader[] loaders;
+
+    private final String groupContext;
+    
+    /**
+     * The service programming interface: intended to be
+     * an interface or abstract class, but not limited
+     * to those two.
+     */        
+    private final Class spi;
+    
+
+    public SPIContext(String groupContext, Class spi) {
+        this.groupContext = groupContext;
+        this.spi = spi;
+        this.loaders = ClassLoaderUtils.compactUniq(
+            new ClassLoader[] { threadContextClassLoader,
+                                BootstrapLoader.wrap(spi.getClassLoader()),
+                                ClassLoaderUtils.getSystemClassLoader() });
+    }
+    
+    public ClassLoader getThreadContextClassLoader() {
+        return threadContextClassLoader;
+    }
+    
+    public ClassLoader[] getClassLoaders() {
+        return loaders;
+    }
+    
+    public String getGroupContext() {
+        return groupContext;
+    }
+    
+    public Class getSPI() {
+        return spi;
+    }
 }

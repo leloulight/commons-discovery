@@ -59,64 +59,58 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.strategy;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.load.Loaders;
+import org.apache.commons.discovery.load.SPIContext;
 
 
 /**
- * Represents a Service Programming Interface (spi) context,
- * to include an spi and the Thread Context Class Loader for
- * the thread that created an instance of this object.
+ * <p>Implement the search strategy.  Someday this might be pluggable..
+ * </p>
+ * 
+ * <p><strong>IMPLEMENTATION NOTE</strong> - This implementation is modelled
+ * after the SAXParserFactory and DocumentBuilderFactory implementations
+ * (corresponding to the JAXP pluggability APIs) found in Apache Xerces.
+ * </p>
  * 
  * @author Richard A. Sitze
+ * @author Craig R. McClanahan
+ * @author Costin Manolache
+ * @version $Revision$ $Date$
  */
-public class SPIContext {
+public interface LoadStrategy {
     /**
-     * Thread context class loader or null if not available (JDK 1.1).
-     * Wrapped bootstrap classloader if classLoader == null.
+     * Load SPI implementation's Class.
+     * 
+     * @param properties May use, but must pass to implementation.init() method
+     *                   if implementation implements Service interface.
+     * 
+     * @param defaultImplName Default implementation name.
+     * 
+     * @return Class class implementing the SPI.
+     * 
+     * @exception DiscoveryException Thrown if the name of a class implementing
+     *            the SPI cannot be found, or if the class cannot be loaded.
      */
-    private final ClassLoader threadContextClassLoader =
-        ClassLoaderUtils.getThreadContextClassLoader();
-
-    /**
-     * List of class loaders
-     */
-    private final ClassLoader[] loaders;
-
-    private final String groupContext;
+    public Class loadClass(Properties properties, String defaultImplName)
+        throws DiscoveryException;
     
     /**
-     * The service programming interface: intended to be
-     * an interface or abstract class, but not limited
-     * to those two.
-     */        
-    private final Class spi;
-    
-
-    public SPIContext(String groupContext, Class spi) {
-        this.groupContext = groupContext;
-        this.spi = spi;
-        this.loaders = ClassLoaderUtils.compactUniq(
-            new ClassLoader[] { threadContextClassLoader,
-                                BootstrapLoader.wrap(spi.getClassLoader()),
-                                ClassLoaderUtils.getSystemClassLoader() });
-    }
-    
-    public ClassLoader getThreadContextClassLoader() {
-        return threadContextClassLoader;
-    }
-    
-    public ClassLoader[] getClassLoaders() {
-        return loaders;
-    }
-    
-    public String getGroupContext() {
-        return groupContext;
-    }
-    
-    public Class getSPI() {
-        return spi;
-    }
+     * Load property file.
+     * 
+     * @param propertiesFileName The property file name.
+     * 
+     * @return Properties loaded from <code>propertiesFileName</code> if found,
+     *         otherwise <code>null</code>.
+     * 
+     * @exception DiscoveryException
+     */    
+    public Properties loadProperties(String propertiesFileName)
+        throws DiscoveryException;
 }

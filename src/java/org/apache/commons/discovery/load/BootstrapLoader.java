@@ -59,21 +59,59 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.load;
 
-import java.util.Properties;
+import java.io.InputStream;
+import java.net.URL;
 
 
 /**
- * <p>Optional Service interface to facilitate Service instantiation.<p>
+ * A wrapper class that gives us a "bootstrap" loader.
+ * For the moment, we cheat and return the system class loader.
+ * Getting a wrapper for the bootstrap loader that works
+ * in JDK 1.1.x may require a bit more work...
  * 
- * <p>A class is not required to implement this interface, but if
- * it does then startup properties are passed to the class via <code>init</code>.
- * </p>
- * 
- * @author Richard A. Sitze
- * @version $Revision$ $Date$
+ * Expected use:  call BootstrapLoader.wrap(loader),
+ * which will return loader (loader != null) or a wrapper class
+ * in place of the bootstrap loader (loader == null).
  */
-public interface Service {
-    public void init(String groupContext, Properties properties);
+public class BootstrapLoader {
+    private static ClassLoader bootstrapLoader =
+        null;
+    
+    private BootstrapLoader() {
+    }
+    
+    public static ClassLoader wrap(ClassLoader incoming) {
+        return (incoming == null) ? getBootstrapLoader() : incoming;
+    }
+    
+    public static boolean isBootstrapLoader(ClassLoader incoming) {
+        return incoming == null  ||  incoming == getBootstrapLoader();
+    }
+    
+    public static ClassLoader getBootstrapLoader() {
+        return bootstrapLoader;
+    }
+    
+    /**
+     * JDK 1.1.x compatible?
+     * There is no direct way to get the system class loader
+     * in 1.1.x, so work around...
+     */
+    private class SystemClassLoader extends ClassLoader {
+        protected Class loadClass(String className, boolean resolve)
+            throws ClassNotFoundException
+        {
+            return findSystemClass(className);
+        }
+        
+        public URL getResource(String resName) {
+            return getSystemResource(resName);
+        }
+        
+        public InputStream getResourceAsStream(String resName) {
+            return getSystemResourceAsStream(resName);
+        }
+    }
 }
