@@ -101,6 +101,23 @@ public class ResourceClass extends Resource
 
             try {
                 resourceClass = getClassLoader().loadClass(getName());
+                
+                /**
+                 * Loading the class does not necessarily link it...
+                 * and we need to know, at this point in the flow,
+                 * if the class is actually loadable or not!
+                 * 
+                 * Force load (for Sun JDK14?):
+                 */
+                try {
+                    resourceClass.getDeclaredMethod("anyName", new Class[0]);
+                } catch(NoClassDefFoundError e) {
+                    // some dependency couldn't be found..
+                    // class cannot be loaded.
+                    resourceClass = null;
+                } catch(NoSuchMethodException e) {
+                    // ignore
+                }
             } catch (ClassNotFoundException e) {
                 resourceClass = null;
             }
