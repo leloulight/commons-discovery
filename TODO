@@ -1,14 +1,11 @@
 1.  Jakarta Web site for commons subproject
 
 2.  Figure out magic incantation for
-    ClassLoader ClassFinder::getCallerClassLoader(Class rootFinderClass)
+    getCallerClassLoader(Class calledClass)
 
 3.  Discovery::release() logic is weak.
     Caching is by threadContextClassLoader (removed broken
     logic...).  It's weak, and doesn't guarentee releases
     if your app plays with classloaders...  Need to
     go over this again someday.
-
-4.  Would like a class that represents constructor arguments (form & value)
-    that can be given to DiscoverClass.newInstance().
     
