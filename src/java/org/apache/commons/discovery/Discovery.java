@@ -61,9 +61,8 @@
 
 package org.apache.commons.discovery;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Properties;
 import java.io.InputStream;
 import java.io.IOException;
@@ -808,13 +807,13 @@ public class Discovery {
      */
     public static void releaseAll(String groupContext) {
         synchronized (group_caches) {
-            Hashtable service_caches = (Hashtable)group_caches.get(groupContext);
+            HashMap service_caches = (HashMap)group_caches.get(groupContext);
 
             if (service_caches != null) {
-                Enumeration caches = service_caches.elements();
+                java.util.Iterator caches = service_caches.values().iterator();
 
-                while (caches.hasMoreElements()) {
-                    ((ServiceCache)caches.nextElement()).releaseAll();
+                while (caches.hasNext()) {
+                    ((ServiceCache)caches.next()).releaseAll();
                 }
 
                 service_caches.clear();
@@ -833,7 +832,7 @@ public class Discovery {
     public static void releaseAll(String groupContext, Class spi) {
         if (spi != null) {
             synchronized (group_caches) {
-                Hashtable service_caches = (Hashtable)group_caches.get(groupContext);
+                HashMap service_caches = (HashMap)group_caches.get(groupContext);
 
                 if (service_caches != null) {
                     ServiceCache cache = (ServiceCache)service_caches.get(spi.getName());
@@ -852,11 +851,11 @@ public class Discovery {
     /************************* SPI CACHE SUPPORT *************************
      * 
      * Cache by
-     * - Group : Cache is a <code>HashMap</code> (unsynchronized, allows null keys(required))
-     *           keyed by groupContext (<code>String</code>).
-     *           Each element is a <code>Hashtable</code> (unsynchronized, no non-null).
+     * - Group : Cache is a <code>HashMap</code> (unsynchronized, allows null
+     *           keys(required))  keyed by groupContext (<code>String</code>).
+     *           Each element is a <code>HashMap</code>.
      * 
-     * - SPI : Cache is a <code>Hashtable</code>
+     * - SPI : Cache is a <code>HashMap</code>
      *         keyed by interface (<code>Class</code>).
      *         Each element is a <code>ServiceCache</code>.
      * 
@@ -883,7 +882,7 @@ public class Discovery {
 
         if (spi != null) {
             synchronized (group_caches) {
-                Hashtable service_caches = (Hashtable)group_caches.get(groupContext);
+                HashMap service_caches = (HashMap)group_caches.get(groupContext);
 
                 if (service_caches != null) {
                     ServiceCache cache = (ServiceCache)service_caches.get(spi);
@@ -906,10 +905,10 @@ public class Discovery {
     {
         if (spi != null  &&  service != null) {
             synchronized (group_caches) {
-                Hashtable service_caches = (Hashtable)group_caches.get(groupContext);
+                HashMap service_caches = (HashMap)group_caches.get(groupContext);
                 
                 if (service_caches == null) {
-                    service_caches = new Hashtable(13);
+                    service_caches = new HashMap(13);
                     group_caches.put(groupContext, service_caches);
                 }
 

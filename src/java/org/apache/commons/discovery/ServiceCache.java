@@ -61,13 +61,15 @@
 
 package org.apache.commons.discovery;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.HashMap;
 
 
 
 /**
  * Cache of previously discovered implementations of SPI's.
+ * 
+ * Unsynchronized, using code must manage threading issues.
  * 
  * @author Richard A. Sitze
  */
@@ -77,7 +79,7 @@ public class ServiceCache
      * Previously encountered service interfaces (spis), keyed by the
      * <code>ClassLoader</code> with which it was created.
      */
-    private Hashtable services = new Hashtable(13);
+    private HashMap services = new HashMap(13);
     
     /**
      * Get service keyed by classLoader.
@@ -115,9 +117,9 @@ public class ServiceCache
      * garbage collection.
      */
     public void releaseAll() {
-        Enumeration elements = services.elements();
-        while (elements.hasMoreElements()) {
-            Object service = elements.nextElement();
+        Iterator elements = services.values().iterator();
+        while (elements.hasNext()) {
+            Object service = elements.next();
             
             if (service instanceof Service)
                 ((Service)service).release();
