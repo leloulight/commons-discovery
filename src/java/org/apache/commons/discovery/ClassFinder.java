@@ -277,9 +277,15 @@ public class ClassFinder {
      * SecurityManager.getClassContext() is out of reach at best,
      * and getting to it in a J2EE environment is likely to be beyond
      * hopeless....
+     * 
+     * If the caller class loader is the bootstrap classloader, then
+     * it is 'wrapped' (see BootstrapLoader).  Therefore this method
+     * only returns 'null' if a caller class loader could not
+     * be identified.
+     * 
      */
     private static final ClassLoader getCallerClassLoader(Class rootFinderClass) {
-        return null;
+        return BootstrapLoader.wrap(null);
     }
 
     /**
@@ -290,20 +296,20 @@ public class ClassFinder {
      */
     private static final ClassLoader[] getLocalLoaders(SPIContext spiContext,
                                                        Class rootFinderClass) {
-        return ClassLoaderUtils.compactUniq(new ClassLoader[] {    
-                                rootFinderClass.getClassLoader(),
-                                spiContext.getSystemClassLoader()
-                          });
+        return ClassLoaderUtils.compactUniq(
+                new ClassLoader[] {BootstrapLoader.wrap(rootFinderClass.getClassLoader()),
+                                   spiContext.getSystemClassLoader()
+                                  });
     }
     
     private static final ClassLoader[] getAllLoaders(SPIContext spiContext,
                                                      Class rootFinderClass) {
-        return ClassLoaderUtils.compactUniq(new ClassLoader[] {    
-                                spiContext.getThreadContextClassLoader(),
-                                getCallerClassLoader(rootFinderClass),
-                                spiContext.getSPI().getClassLoader(),
-                                rootFinderClass.getClassLoader(),
-                                spiContext.getSystemClassLoader()
-                            });
+        return ClassLoaderUtils.compactUniq(
+                new ClassLoader[] {spiContext.getThreadContextClassLoader(),
+                                   getCallerClassLoader(rootFinderClass),
+                                   BootstrapLoader.wrap(spiContext.getSPI().getClassLoader()),
+                                   BootstrapLoader.wrap(rootFinderClass.getClassLoader()),
+                                   spiContext.getSystemClassLoader()
+                                  });
     }
 }

@@ -82,15 +82,17 @@ import java.lang.reflect.Method;
 public class SPIContext {
     /**
      * Thread context class loader or null if not available (JDK 1.1).
+     * Wrapped bootstrap classloader if classLoader == null.
      */
     private final ClassLoader threadContextClassLoader =
-        findThreadContextClassLoader();
+        ClassLoaderUtils.findThreadContextClassLoader();
 
     /**
      * System class loader or null if not available (JDK 1.1).
+     * Wrapped bootstrap classloader if classLoader == null.
      */
     private final ClassLoader systemClassLoader =
-        findSystemClassLoader();
+        ClassLoaderUtils.findSystemClassLoader();
 
     /**
      * List of class loaders
@@ -108,8 +110,8 @@ public class SPIContext {
         this.spi = spi;
         this.loaders = ClassLoaderUtils.compactUniq(
             new ClassLoader[] { threadContextClassLoader,
-                           spi.getClassLoader(),
-                           systemClassLoader });
+                                BootstrapLoader.wrap(spi.getClassLoader()),
+                                systemClassLoader });
     }
     
     public ClassLoader getThreadContextClassLoader() {
@@ -126,121 +128,5 @@ public class SPIContext {
     
     public Class getSPI() {
         return spi;
-    }
-
-    /**
-     * Return the thread context class loader if available.
-     * Otherwise return null.
-     * 
-     * The thread context class loader is available for JDK 1.2
-     * or later, if certain security conditions are met.
-     * 
-     * @exception ServiceException if a suitable class loader
-     * cannot be identified.
-     */
-    private static ClassLoader findThreadContextClassLoader()
-        throws ServiceException
-    {
-        ClassLoader classLoader = null;
-        
-        try {
-            // Are we running on a JDK 1.2 or later system?
-            Method method = Thread.class.getMethod("getContextClassLoader", null);
-    
-            // Get the thread context class loader (if there is one)
-            try {
-                classLoader =
-                    (ClassLoader)method.invoke(Thread.currentThread(), null);
-            } catch (IllegalAccessException e) {
-                throw new ServiceException("Unexpected IllegalAccessException", e);
-            } catch (InvocationTargetException e) {
-                /**
-                 * InvocationTargetException is thrown by 'invoke' when
-                 * the method being invoked (Thread.getContextClassLoader)
-                 * throws an exception.
-                 * 
-                 * Thread.getContextClassLoader() throws SecurityException
-                 * when the context class loader isn't an ancestor of the
-                 * calling class's class loader, or if security permissions
-                 * are restricted.
-                 * 
-                 * In the first case (the context class loader isn't an
-                 * ancestor of the calling class's class loader), we want
-                 * to ignore and keep going.  We cannot help but also ignore
-                 * the second case (restricted security permissions) with
-                 * the logic below, but other calls elsewhere (to obtain
-                 * a class loader) will re-trigger this exception where
-                 * we can make a distinction.
-                 */
-                if (e.getTargetException() instanceof SecurityException) {
-                    classLoader = null;  // ignore
-                } else {
-                    // Capture 'e.getTargetException()' exception for details
-                    // alternate: log 'e.getTargetException()', and pass back 'e'.
-                    throw new ServiceException
-                        ("Unexpected InvocationTargetException",
-                         e.getTargetException());
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            // Assume we are running on JDK 1.1
-            classLoader = null;
-        }
-    
-        // Return the selected class loader
-        return classLoader;
-    }
-
-    /**
-     * Return the system class loader if available.
-     * Otherwise return null.
-     * 
-     * The system class loader is available for JDK 1.2
-     * or later, if certain security conditions are met.
-     * 
-     * @exception ServiceException if a suitable class loader
-     * cannot be identified.
-     */
-    private static ClassLoader findSystemClassLoader()
-        throws ServiceException
-    {
-        ClassLoader classLoader = null;
-        
-        try {
-            // Are we running on a JDK 1.2 or later system?
-            Method method = ClassLoader.class.getMethod("getSystemClassLoader", null);
-    
-            // Get the system class loader (if there is one)
-            try {
-                classLoader =
-                    (ClassLoader)method.invoke(null, null);
-            } catch (IllegalAccessException e) {
-                throw new ServiceException("Unexpected IllegalAccessException", e);
-            } catch (InvocationTargetException e) {
-                /**
-                 * InvocationTargetException is thrown by 'invoke' when
-                 * the method being invoked (ClassLoader.getSystemClassLoader)
-                 * throws an exception.
-                 * 
-                 * ClassLoader.getSystemClassLoader() throws SecurityException
-                 * if security permissions are restricted.
-                 */
-                if (e.getTargetException() instanceof SecurityException) {
-                    classLoader = null;  // ignore
-                } else {
-                    // Capture 'e.getTargetException()' exception for details
-                    // alternate: log 'e.getTargetException()', and pass back 'e'.
-                    throw new ServiceException
-                        ("Unexpected InvocationTargetException",
-                         e.getTargetException());
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            // Assume we are running on JDK 1.1
-            classLoader = null;
-        }
-    
-        // Return the selected class loader
-        return classLoader;
     }
 }

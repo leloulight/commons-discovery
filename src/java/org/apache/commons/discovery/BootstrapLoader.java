@@ -61,67 +61,42 @@
 
 package org.apache.commons.discovery;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
-
-
 
 /**
- * Cache of previously discovered implementations of SPI's.
- * 
- * @author Richard A. Sitze
+ * A wrapper class that gives us a "bootstrap" loader.
+ * For the moment, we cheat and return the system class loader.
+ * Getting a wrapper for the bootstrap loader that works
+ * in JDK 1.1.x may require a bit more work...
  */
-public class ServiceCache
-{
-    /**
-     * Previously encountered service interfaces (spis), keyed by the
-     * <code>ClassLoader</code> with which it was created.
-     */
-    private Hashtable services = new Hashtable(13);
+public class BootstrapLoader {
+    private static ClassLoader bootstrapLoader =
+        null;
     
-    /**
-     * Get service keyed by classLoader.
-     * Special cases null bootstrap classloader (classLoader == null).
-     */
-    public Object get(ClassLoader classLoader)
-    {
-        classLoader = BootstrapLoader.wrap(classLoader);
-
-        return (classLoader == null)
-                ? null
-                : services.get(classLoader);
+    private BootstrapLoader() {
+    }
+    
+    public static ClassLoader wrap(ClassLoader incoming) {
+        return (incoming == null) ? getBootstrapLoader() : incoming;
+    }
+    
+    public static boolean isBootstrapLoader(ClassLoader incoming) {
+        return incoming == null  ||  incoming == getBootstrapLoader();
+    }
+    
+    public static ClassLoader getBootstrapLoader() {
+        return bootstrapLoader;
     }
     
     /**
-     * Put service keyed by classLoader.
-     * Special cases null bootstrap classloader (classLoader == null).
+     * JDK 1.1.x compatible?
+     * There is no direct way to get the system class loader
+     * in 1.1.x, so work around...
      */
-    public void put(ClassLoader classLoader, Object service)
-    {
-        classLoader = BootstrapLoader.wrap(classLoader);
-
-        if (classLoader != null  &&  service != null) {
-            services.put(classLoader, service);
+    private class SystemClassLoader extends ClassLoader {
+        protected Class loadClass(String className, boolean resolve)
+            throws ClassNotFoundException
+        {
+            return findSystemClass(className);
         }
-    }
-
-    /**
-     * Release any internal references to previously created service instances,
-     * after calling the instance method <code>release()</code> on each of them.
-     *
-     * This is useful environments like servlet containers,
-     * which implement application reloading by throwing away a ClassLoader.
-     * Dangling references to objects in that class loader would prevent
-     * garbage collection.
-     */
-    public void releaseAll() {
-        Enumeration elements = services.elements();
-        while (elements.hasMoreElements()) {
-            Object service = elements.nextElement();
-            
-            if (service instanceof Service)
-                ((Service)service).release();
-        }
-        services.clear();
     }
 }

@@ -67,6 +67,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Properties;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 /**
@@ -285,15 +287,17 @@ public class ClassLoaderUtils {
      */
     public static final boolean wouldUseClassLoader(ClassLoader thisClassLoader,
                                                     ClassLoader classLoader) {
-        if (classLoader == null)
+        /* bootstrap classloader, at root of all trees! */
+        if (BootstrapLoader.isBootstrapLoader(classLoader))
             return true;
-            
+        
         while (thisClassLoader != null) {
             if (thisClassLoader == classLoader) {
                 return true;
             }
             thisClassLoader = thisClassLoader.getParent();
         }
+        
         return false;
     }
 
@@ -356,5 +360,129 @@ public class ClassLoaderUtils {
         return (name.charAt(0)=='/')
                ? null
                : packageName.replace('.','/') + "/" + name;
+    }
+
+    /**
+     * Return the system class loader if available.
+     * Otherwise return null.  If the system class loader
+     * is the bootstrap classloader, then it is 'wrapped'
+     * (see BootstrapLoader).  Therefore this method only
+     * returns 'null' if a system class loader could not
+     * be identified.
+     * 
+     * The system class loader is available for JDK 1.2
+     * or later, if certain security conditions are met.
+     * 
+     * @exception ServiceException if a suitable class loader
+     *            cannot be identified.
+     */
+    public static ClassLoader findSystemClassLoader()
+        throws ServiceException
+    {
+        ClassLoader classLoader = null;
+        
+        try {
+            // Are we running on a JDK 1.2 or later system?
+            Method method = ClassLoader.class.getMethod("getSystemClassLoader", null);
+    
+            // Get the system class loader (if there is one)
+            try {
+                classLoader =
+                    BootstrapLoader.wrap((ClassLoader)method.invoke(null, null));
+            } catch (IllegalAccessException e) {
+                throw new ServiceException("Unexpected IllegalAccessException", e);
+            } catch (InvocationTargetException e) {
+                /**
+                 * InvocationTargetException is thrown by 'invoke' when
+                 * the method being invoked (ClassLoader.getSystemClassLoader)
+                 * throws an exception.
+                 * 
+                 * ClassLoader.getSystemClassLoader() throws SecurityException
+                 * if security permissions are restricted.
+                 */
+                if (e.getTargetException() instanceof SecurityException) {
+                    classLoader = null;  // ignore
+                } else {
+                    // Capture 'e.getTargetException()' exception for details
+                    // alternate: log 'e.getTargetException()', and pass back 'e'.
+                    throw new ServiceException
+                        ("Unexpected InvocationTargetException",
+                         e.getTargetException());
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            // Assume we are running on JDK 1.1
+            classLoader = null;
+        }
+    
+        // Return the selected class loader
+        return classLoader;
+    }
+
+    /**
+     * Return the thread context class loader if available.
+     * Otherwise return null.  If the thread context class
+     * loader is the bootstrap classloader, then it is 'wrapped'
+     * (see BootstrapLoader).  Therefore this method only
+     * returns 'null' if a thread context class loader could not
+     * be identified.
+     * 
+     * The thread context class loader is available for JDK 1.2
+     * or later, if certain security conditions are met.
+     * 
+     * @exception ServiceException if a suitable class loader
+     * cannot be identified.
+     */
+    public static ClassLoader findThreadContextClassLoader()
+        throws ServiceException
+    {
+        ClassLoader classLoader = null;
+        
+        try {
+            // Are we running on a JDK 1.2 or later system?
+            Method method = Thread.class.getMethod("getContextClassLoader", null);
+    
+            // Get the thread context class loader (if there is one)
+            try {
+                classLoader =
+                    BootstrapLoader.wrap((ClassLoader)method.invoke(Thread.currentThread(), null));
+            } catch (IllegalAccessException e) {
+                throw new ServiceException("Unexpected IllegalAccessException", e);
+            } catch (InvocationTargetException e) {
+                /**
+                 * InvocationTargetException is thrown by 'invoke' when
+                 * the method being invoked (Thread.getContextClassLoader)
+                 * throws an exception.
+                 * 
+                 * Thread.getContextClassLoader() throws SecurityException
+                 * when the context class loader isn't an ancestor of the
+                 * calling class's class loader, or if security permissions
+                 * are restricted.
+                 * 
+                 * In the first case (the context class loader isn't an
+                 * ancestor of the calling class's class loader), we want
+                 * to ignore and keep going.  We cannot help but also ignore
+                 * the second case (restricted security permissions) with
+                 * the logic below, but other calls elsewhere (to obtain
+                 * a class loader) will re-trigger this exception where
+                 * we can make a distinction.
+                 */
+                if (e.getTargetException() instanceof SecurityException) {
+                    classLoader = null;  // ignore
+                } else {
+                    // Capture 'e.getTargetException()' exception for details
+                    // alternate: log 'e.getTargetException()', and pass back 'e'.
+                    throw new ServiceException
+                        ("Unexpected InvocationTargetException",
+                         e.getTargetException());
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            // Assume we are running on JDK 1.1
+            classLoader = null;
+        }
+    
+        // Return the selected class loader
+        return classLoader;
     }
 }

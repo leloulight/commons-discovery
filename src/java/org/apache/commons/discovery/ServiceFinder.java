@@ -498,10 +498,11 @@ public class ServiceFinder {
     
     /**
      * Get service keyed by spi & classLoader.
+     * Special cases null bootstrap classloader (classLoader == null).
      */
     private static Object get(String spi, ClassLoader classLoader)
     {
-        ServiceCache cache = (spi == null  ||  classLoader == null)
+        ServiceCache cache = (spi == null)
                              ? null
                              : (ServiceCache)service_caches.get(spi);
         
@@ -512,10 +513,11 @@ public class ServiceFinder {
     
     /**
      * Put service keyed by spi & classLoader.
+     * Special cases null bootstrap classloader (classLoader == null).
      */
     private static void put(String spi, ClassLoader classLoader, Object service)
     {
-        if (spi != null  &&  classLoader != null  &&  service != null) {
+        if (spi != null  &&  service != null) {
             ServiceCache cache = (ServiceCache)service_caches.get(spi);
             
             if (cache == null) {
