@@ -72,6 +72,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.discovery.ResourceClass;
 import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.tools.DefaultClassHolder;
+import org.apache.commons.discovery.tools.DiscoverClass;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.discovery.tools.PropertiesHolder;
@@ -262,16 +263,16 @@ public class TestAll extends TestCase {
 
     public void testLowLevelFind() {
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
-        String name = TestInterface2.class.getName();
+        String name = "org.apache.commons.discovery.test.TestImpl2_1";
         
         DiscoverClasses discovery = new DiscoverClasses(loaders);
         ResourceClassIterator iter = discovery.findResourceClasses(name);
         while (iter.hasNext()) {
             ResourceClass resource = iter.nextResourceClass();
             try {                
-                Class typeClass = resource.loadClass();
-                if ( typeClass != null ) {
-                    // worked
+                Class implClass = resource.loadClass();
+                if ( implClass != null ) {
+                    assertEquals("org.apache.commons.discovery.test.TestImpl2_1", implClass.getName());
                     return;
                 }
             }
@@ -280,6 +281,17 @@ public class TestAll extends TestCase {
             }
         }
         fail("failed to load resource: " + name);
+        
+    }
+
+    public void testViaDiscoverClass() {
+        ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
+        
+        DiscoverClass discover = new DiscoverClass(loaders);
+        Class implClass = discover.find(TestInterface2.class);
+        
+        assertTrue("Failed to find an implementation class", implClass != null);
+        assertEquals("org.apache.commons.discovery.test.TestImpl2_1", implClass.getName());
         
     }
     
