@@ -68,11 +68,16 @@ import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.commons.discovery.ResourceClass;
+import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.tools.DefaultClassHolder;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.discovery.tools.PropertiesHolder;
 import org.apache.commons.discovery.tools.SPInterface;
+import org.apache.commons.discovery.resource.ClassLoaders;
+import org.apache.commons.discovery.resource.classes.DiscoverClasses;
 
 
 /**
@@ -255,6 +260,29 @@ public class TestAll extends TestCase {
         }
     }
 
+    public void testLowLevelFind() {
+        ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
+        String name = TestInterface2.class.getName();
+        
+        DiscoverClasses discovery = new DiscoverClasses(loaders);
+        ResourceClassIterator iter = discovery.findResourceClasses(name);
+        while (iter.hasNext()) {
+            ResourceClass resource = iter.nextResourceClass();
+            try {                
+                Class typeClass = resource.loadClass();
+                if ( typeClass != null ) {
+                    // worked
+                    return;
+                }
+            }
+            catch (Exception e) {
+                fail("Could not load service: " + resource );
+            }
+        }
+        fail("failed to load resource: " + name);
+        
+    }
+    
     /**
      * This allows the tests to run as a standalone application.
      */
