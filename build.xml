@@ -68,6 +68,7 @@
   <!-- Construct compile classpath -->
   <path id="compile.classpath">
     <pathelement location="${build.home}/classes"/>
+    <pathelement location="${logger.jar}"/>
   </path>
 
   <!-- Construct unit test classpath -->

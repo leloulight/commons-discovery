@@ -42,12 +42,10 @@
   
   <dependencies>
 
-<!--    
     <dependency>
       <id>commons-logging</id>
       <version>1.0.1</version>
     </dependency>
--->
 
     <dependency>
       <id>junit</id>
