@@ -17,15 +17,27 @@ package org.apache.commons.discovery;
 
 
 /**
+ * Iterate over resource names.
+ * The semantics are somewhat unusual, for better or worse.
+ * hasNext is presumed to be destructive to the current state,
+ * each call will 'move' the cursor.
+ * nextResourceName() MUST BE non-destructive,
+ * it does not change the state.
+ * 
+ * TODO: FIX iterator logic/semantics, possibly add 'currentResourceName()'.
+ * 
  * @author Richard A. Sitze
  */
 public interface ResourceNameIterator
 {
     /**
+     * hasNext()
      */
     public boolean hasNext();
 
     /**
+     * nextResourceName() returns the name of the next resource,
+     * and MUST be non-destructive.  Repeated calls 
      */
     public String nextResourceName();
 }
