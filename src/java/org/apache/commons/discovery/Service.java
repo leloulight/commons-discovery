@@ -75,7 +75,7 @@ import java.util.Properties;
  * @version $Revision$ $Date$
  */
 public interface Service {
-    public void init(Properties properties);
+    public void init(String groupContext, Properties properties);
 
     public void release();
 }

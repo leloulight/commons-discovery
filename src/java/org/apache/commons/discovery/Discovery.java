@@ -86,7 +86,24 @@ import java.io.InputStreamReader;
  * <p>Discovery provides the <code>find</code> methods for locating and
  * instantiating an implementation of a service (SPI).  Each form of
  * <code>find</code> varies slightly, but they all perform the same basic
- * function.  The Discovery <code>find</code> methods proceed as follows:
+ * function.
+ * 
+ * The simplest <code>find</code> methods are intended for direct use by
+ * components looking for a service.  If you are not sure which finder(s)
+ * to use, you can narrow your search to one of these:
+ * <ul>
+ * <li>static Object find(Class spi);</li>
+ * <li>static Object find(Class spi, Properties properties);</li>
+ * <li>static Object find(Class spi, String defaultImplName);</li>
+ * <li>static Object find(Class spi, Properties properties, String defaultImplName);</li>
+ * <li>static Object find(Class spi, String propertiesFileName, String defaultImplName);</li>
+ * <li>static Object find(String groupContext, Class spi,
+ *                        Properties properties, String defaultImplName);</li>
+ * <li>static Object find(String groupContext, Class spi,
+ *                        String propertiesFileName, String defaultImplName);</li>
+ * </ul>
+ * 
+ * The <code>Discovery.find</code> methods proceed as follows:
  * </p>
  * <ul>
  *   <p><li>
@@ -202,10 +219,6 @@ import java.io.InputStreamReader;
  *   </p>
  *   </li>
  * </ul>
- * </p>
- * 
- * <p>
- * Other concepts
  * </p>
  * 
  * <p><strong>IMPLEMENTATION NOTE</strong> - This implementation is heavily
@@ -712,7 +725,7 @@ public class Discovery {
                 }
                 
                 if (service instanceof Service) {
-                    ((Service)service).init(properties);
+                    ((Service)service).init(classFinder.getGroupContext(), properties);
                 }
             }
         }
