@@ -1,9 +1,0 @@
-.cvsignore
-.project
-.classpath
-bin
-dist
-target
-maven.log
-.repositoryIndex
-*.log
