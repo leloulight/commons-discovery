@@ -59,7 +59,6 @@ package org.apache.commons.discovery.resource.names;
 
 import org.apache.commons.discovery.ResourceDiscover;
 import org.apache.commons.discovery.ResourceNameDiscover;
-import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.resource.ClassLoaders;
 
 
