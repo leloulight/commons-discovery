@@ -171,8 +171,8 @@ public class ClassLoaders
     public static ClassLoaders getLibLoaders(Class spi, Class factory, boolean prune) {
         ClassLoaders loaders = new ClassLoaders();
         
-        loaders.put(spi.getClassLoader());
-        loaders.put(factory.getClassLoader(), prune);
+        if (spi != null) loaders.put(spi.getClassLoader());
+        if (factory != null) loaders.put(factory.getClassLoader(), prune);
         loaders.put(JDKHooks.getJDKHooks().getSystemClassLoader(), prune);
         
         return loaders;
@@ -202,8 +202,8 @@ public class ClassLoaders
         ClassLoaders loaders = new ClassLoaders();
 
         loaders.put(JDKHooks.getJDKHooks().getThreadContextClassLoader());
-        loaders.put(spi.getClassLoader(), prune);
-        loaders.put(factory.getClassLoader(), prune);
+        if (spi != null) loaders.put(spi.getClassLoader(), prune);
+        if (factory != null) loaders.put(factory.getClassLoader(), prune);
         loaders.put(JDKHooks.getJDKHooks().getSystemClassLoader(), prune);
         
         return loaders;
