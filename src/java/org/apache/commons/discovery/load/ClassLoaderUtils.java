@@ -88,6 +88,25 @@ public class ClassLoaderUtils {
     private static final boolean debug = false;
     
     /**
+     * Get package name.
+     * Not all class loaders 'keep' package information,
+     * in which case Class.getPackage() returns null.
+     * This means that calling Class.getPackage().getName()
+     * is unreliable at best.
+     */
+    public static String getPackageName(Class clazz) {
+        Package clazzPackage = clazz.getPackage();
+        String packageName;
+        if (clazzPackage != null) {
+            packageName = clazzPackage.getName();
+        } else {
+            String clazzName = clazz.getName();
+            packageName = new String(clazzName.toCharArray(), 0, clazzName.lastIndexOf('.'));
+        }
+        return packageName;
+    }
+    
+    /**
      * Load the class <code>serviceImplName</code>, no safety checking
      * 
      * @param serviceImplName The name of the class to load.

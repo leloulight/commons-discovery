@@ -156,7 +156,7 @@ public class Loaders {
     public InputStream loadResourceAsStream(String resourceName)
         throws DiscoveryException
     {
-        String packageName = spiContext.getSPI().getPackage().getName();
+        String packageName = ClassLoaderUtils.getPackageName(spiContext.getSPI());
 
         InputStream stream =
             (spiContext.getGroupContext() == null)
