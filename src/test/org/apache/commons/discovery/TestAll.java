@@ -80,6 +80,9 @@ import org.apache.commons.logging.impl.SimpleLog;
   * @version $Revision: 1.2 $
  */
 public class TestAll extends TestCase {
+    
+    public static class MyFactory extends LogFactoryImpl {
+    }
 
     public TestAll(String testName) {
         super(testName);
@@ -88,36 +91,142 @@ public class TestAll extends TestCase {
     public static Test suite() {
         return new TestSuite(TestAll.class);
     }
-    
-    public void testServiceFinder1() {
+
+    public void testFindLogFactoryImplDefault() {
+        LogFactory factory = null;
+        
         try {
-            LogFactory factory =
-                (LogFactory)Discovery.find(LogFactory.class,
-                                               LogFactoryImpl.class.getName());
-            Log log = factory.getLog(TestAll.class);
-            log.info("got log!");
+            factory = (LogFactory)Discovery.find(LogFactory.class,
+                                                 LogFactoryImpl.class.getName());
+
+            assertTrue(factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
+                       factory.getClass().getName().equals(LogFactoryImpl.class.getName()));
         } finally {
-            LogFactory.releaseAll();
+            if (factory != null)
+                factory.releaseAll();
+
             Discovery.release();
         }
     }
     
-    public void testServiceFinder2() {
-        Properties props = new Properties();
-        
-        props.setProperty(LogFactory.class.getName(),
-                          LogFactoryImpl.class.getName());
-                          
-        props.setProperty(Log.class.getName(), SimpleLog.class.getName());
+    public void testMyFactoryDefault() {
+        LogFactory factory = null;
+
+        try {
+            factory = (LogFactory)Discovery.find(LogFactory.class,
+                                                 MyFactory.class.getName());
+
+            assertTrue(factory.getClass().getName() + "!=" + MyFactory.class.getName(),
+                       factory.getClass().getName().equals(MyFactory.class.getName()));
+        } finally {
+            if (factory != null)
+                factory.releaseAll();
+
+            Discovery.release();
+        }
+    }
+    
+    public void testCache() {
+        LogFactory factory = null;
         
         try {
-            LogFactory factory =
-                (LogFactory)Discovery.find(LogFactory.class, props);
-            Log log = factory.getLog(TestAll.class);
-            log.info("got log factory via service");
+            factory = (LogFactory)Discovery.find(LogFactory.class,
+                                                 LogFactoryImpl.class.getName());
+
+            assertTrue("1. " + factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
+                       factory.getClass().getName().equals(LogFactoryImpl.class.getName()));
+            
+            // no release, should get cached value..
+            
+            factory = (LogFactory)Discovery.find(LogFactory.class,
+                                                 MyFactory.class.getName());
+
+            // factory should be cached LogFactoryImpl
+            assertTrue("2. " + factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
+                       factory.getClass().getName().equals(LogFactoryImpl.class.getName()));
         } finally {
-            LogFactory.releaseAll();
+            if (factory != null)
+                factory.releaseAll();
+
             Discovery.release();
+        }
+    }
+    
+    public void testRelease() {
+        LogFactory factory = null;
+        
+        try {
+            factory = (LogFactory)Discovery.find(LogFactory.class,
+                                                 LogFactoryImpl.class.getName());
+
+            assertTrue("1. " + factory.getClass().getName() + "!=" + LogFactoryImpl.class.getName(),
+                       factory.getClass().getName().equals(LogFactoryImpl.class.getName()));
+            
+            Discovery.release();
+            
+            factory = (LogFactory)Discovery.find(LogFactory.class,
+                                                 MyFactory.class.getName());
+
+            // Cache flushed, get new factory:
+            assertTrue("2. " + factory.getClass().getName() + "!=" + MyFactory.class.getName(),
+                       factory.getClass().getName().equals(MyFactory.class.getName()));
+        } finally {
+            if (factory != null)
+                factory.releaseAll();
+
+            Discovery.release();
+        }
+    }
+    
+    public void testMyFactoryProperty() {
+        LogFactory factory = null;
+
+        try {
+            Properties props = new Properties();
+            
+            props.setProperty(LogFactory.class.getName(),
+                              MyFactory.class.getName());
+                              
+            props.setProperty(Log.class.getName(),
+                              SimpleLog.class.getName());
+            
+            factory = (LogFactory)Discovery.find(LogFactory.class, props);
+
+            assertTrue(factory.getClass().getName() + "!=" + MyFactory.class.getName(),
+                       factory.getClass().getName().equals(MyFactory.class.getName()));
+        } finally {
+            if (factory != null)
+                factory.releaseAll();
+
+            Discovery.release();
+        }
+    }
+    
+    public void testMyFactoryManagedProperty() {
+        LogFactory factory = null;
+
+        try {
+            ManagedProperties.setProperty(LogFactory.class.getName(),
+                                          MyFactory.class.getName());
+                              
+            ManagedProperties.setProperty(Log.class.getName(),
+                                          SimpleLog.class.getName());
+            
+            factory = (LogFactory)Discovery.find(LogFactory.class);
+
+            assertTrue(factory.getClass().getName() + "!=" + MyFactory.class.getName(),
+                       factory.getClass().getName().equals(MyFactory.class.getName()));
+        } finally {
+            if (factory != null)
+                factory.releaseAll();
+
+            Discovery.release();
+            
+            /**
+             * Cleanup, don't want to affect next test..
+             */
+            ManagedProperties.setProperty(LogFactory.class.getName(), null);
+            ManagedProperties.setProperty(Log.class.getName(), null);
         }
     }
 
