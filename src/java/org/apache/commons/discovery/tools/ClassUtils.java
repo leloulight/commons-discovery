@@ -61,8 +61,12 @@
 
 package org.apache.commons.discovery.tools;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
+import org.apache.commons.discovery.DiscoveryException;
 
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
@@ -137,5 +141,44 @@ public class ClassUtils {
         }
         
         return method;
+    }
+
+    /**
+     * Instantiate a new 
+     */    
+    public static Object newInstance(Class impl, Class paramClasses[], Object params[])
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
+    {
+        if (paramClasses == null || params == null) {
+            return impl.newInstance();
+        } else {
+            Constructor constructor = impl.getConstructor(paramClasses);
+            return constructor.newInstance(params);
+        }
+    }
+    
+    /**
+     * Throws exception if <code>impl</code> does not
+     * implement or extend the SPI.
+     */
+    public static void verifyAncestory(Class spi, Class impl)
+        throws DiscoveryException
+    {
+        if (spi == null) {
+            throw new DiscoveryException("No interface defined!");
+        }
+
+        if (impl == null) {
+            throw new DiscoveryException("No implementation defined for " + spi.getName());
+        }
+
+        if (!spi.isAssignableFrom(impl)) {
+            throw new DiscoveryException("Class " + impl.getName() +
+                                         " does not implement " + spi.getName());
+        }
     }
 }

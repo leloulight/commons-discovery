@@ -193,28 +193,12 @@ public class SPInterface {
                NoSuchMethodException,
                InvocationTargetException
     {
-        if (impl == null) {
-            throw new DiscoveryException("No implementation defined for " + getSPName());
-        }
-
-        verifyAncestory(impl);            
-
-        if (paramClasses == null || params == null) {
-            return impl.newInstance();
-        } else {
-            Constructor constructor = impl.getConstructor(paramClasses);
-            return constructor.newInstance(params);
-        }
+        verifyAncestory(impl);
+        
+        return ClassUtils.newInstance(impl, paramClasses, params);
     }
     
-    /**
-     * Throws exception if <code>impl</code> does not
-     * implement or extend the SPI.
-     */
     public void verifyAncestory(Class impl) {
-        if (!getSPClass().isAssignableFrom(impl)) {
-            throw new DiscoveryException("Class " + impl.getName() +
-                                         " does not implement " + getSPName());
-        }
+        ClassUtils.verifyAncestory(spi, impl);
     }
 }
