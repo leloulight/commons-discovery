@@ -65,11 +65,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.discover.jdk.JDKHooks;
 import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.base.ClassLoaders;
 import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.base.SPInterface;
-import org.apache.commons.discovery.load.Loaders;
+import org.apache.commons.discovery.tools.ClassLoaderUtils;
 
 
 /**
@@ -92,12 +94,10 @@ public class DefaultLoadStrategy implements LoadStrategy {
 
     private final Environment env;
     private final SPInterface spi;
-    private final Loaders loaders;
     
     public DefaultLoadStrategy(Environment env, SPInterface spi) {
         this.env = env;
         this.spi = spi;
-        this.loaders = new Loaders(env, spi);
     }
     
     /**
@@ -169,7 +169,7 @@ public class DefaultLoadStrategy implements LoadStrategy {
 
         if (className != null) {
             implClass = spi.createImplClass(className);
-            implClass.loadImplClass(loaders, env.getSearchLibOnly());
+            implClass.loadImplClass(getLoaders(env.getSearchLibOnly()));
         } else {
             // All else fails: try the fallback implementation class,
             // but limit loaders to 'system' loaders, in an
@@ -177,7 +177,7 @@ public class DefaultLoadStrategy implements LoadStrategy {
             // the one that was intended.
             implClass = defaultImpl;
             if (implClass != null) {
-                implClass.loadImplClass(loaders, true);
+                implClass.loadImplClass(getLoaders(true));
             }
         }
 
@@ -218,8 +218,19 @@ public class DefaultLoadStrategy implements LoadStrategy {
         
         if (propertiesFileName != null) {
             try {
+                String packageName = ClassLoaderUtils.getPackageName(spi.getSPClass());
+        
                 InputStream stream =
-                    loaders.loadResourceAsStream(propertiesFileName);
+                    (env.getGroupContext() == null)
+                        ? null
+                        : ClassLoaderUtils.getResourceAsStream(packageName,
+                                  env.getGroupContext() + "." + propertiesFileName,
+                                  appLoaders);
+        
+                if (stream == null)
+                    stream = ClassLoaderUtils.getResourceAsStream(packageName,
+                                                                  propertiesFileName,
+                                                                  appLoaders);
     
                 if (stream != null) {
                     properties = new Properties();
@@ -237,5 +248,50 @@ public class DefaultLoadStrategy implements LoadStrategy {
         }
         
         return properties;
+    }
+    
+    
+    public final ClassLoaders getLoaders(boolean libOnly) {
+        return libOnly ? getLibLoaders() : getAppLoaders();
+    }
+
+
+    /**
+     * List of 'library' class loaders to the SPI.
+     * The last should always return a non-null loader, so we
+     * always (?!) have a list of at least one classloader.
+     */
+    private ClassLoaders libLoaders;
+    public ClassLoaders getLibLoaders()
+    {
+        if (libLoaders == null) {
+            libLoaders = new ClassLoaders();
+            
+            libLoaders.put(spi.getSPClass().getClassLoader());
+            libLoaders.put(env.getRootDiscoveryClass().getClassLoader());
+            libLoaders.put(JDKHooks.getJDKHooks().getSystemClassLoader());
+        }
+        
+        return libLoaders;
+    }
+    
+    private ClassLoaders appLoaders;
+    public ClassLoaders getAppLoaders()
+    {
+        if (appLoaders == null) {
+            appLoaders = new ClassLoaders();
+            
+            appLoaders.put(env.getThreadContextClassLoader());
+            
+            if (env.getCallingClass() != null) {
+                appLoaders.put(env.getCallingClass().getClassLoader());
+            }
+            
+            appLoaders.put(spi.getSPClass().getClassLoader());
+            appLoaders.put(env.getRootDiscoveryClass().getClassLoader());
+            appLoaders.put(JDKHooks.getJDKHooks().getSystemClassLoader());
+        }
+        
+        return appLoaders;
     }
 }

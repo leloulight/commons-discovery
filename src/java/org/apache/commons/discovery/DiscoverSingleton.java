@@ -69,7 +69,7 @@ import java.util.Properties;
 import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.base.SPInterface;
-import org.apache.commons.discovery.load.ClassLoaderUtils;
+import org.apache.commons.discovery.tools.ClassLoaderUtils;
 import org.apache.commons.discovery.tools.EnvironmentCache;
 
 
@@ -321,10 +321,11 @@ public class DiscoverSingleton {
     public static Object find(Class spiClass, String defaultImpl)
         throws DiscoveryException
     {
+        SPInterface spi = new SPInterface(spiClass);
         return find(new Environment(DiscoverSingleton.class),
-                    new SPInterface(spiClass),
+                    spi,
                     DiscoverClass.nullProperties,
-                    new ImplClass(defaultImpl));
+                    spi.createImplClass(defaultImpl));
     }
 
     /**
@@ -350,10 +351,11 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
+        SPInterface spi = new SPInterface(spiClass);
         return find(new Environment(DiscoverSingleton.class),
-                    new SPInterface(spiClass),
+                    spi,
                     properties,
-                    new ImplClass(defaultImpl));
+                    spi.createImplClass(defaultImpl));
     }
     
     /**
@@ -377,10 +379,11 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
+        SPInterface spi = new SPInterface(spiClass);
         return find(new Environment(DiscoverSingleton.class),
-                    new SPInterface(spiClass),
+                    spi,
                     propertiesFileName,
-                    new ImplClass(defaultImpl));
+                    spi.createImplClass(defaultImpl));
     }
 
     /**
@@ -412,10 +415,11 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
+        SPInterface spi = new SPInterface(spiClass);
         return find(new Environment(groupContext, DiscoverSingleton.class),
-                    new SPInterface(spiClass),
+                    spi,
                     properties,
-                    new ImplClass(defaultImpl));
+                    spi.createImplClass(defaultImpl));
     }
     
     /**
@@ -445,10 +449,11 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
+        SPInterface spi = new SPInterface(spiClass);
         return find(new Environment(groupContext, DiscoverSingleton.class),
-                    new SPInterface(spiClass),
+                    spi,
                     propertiesFileName,
-                    new ImplClass(defaultImpl));
+                    spi.createImplClass(defaultImpl));
     }
 
     

@@ -57,16 +57,13 @@
 
 package org.apache.commons.discovery;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
 import org.apache.commons.discover.jdk.JDKHooks;
+import org.apache.commons.discovery.base.ClassLoaders;
 
 
 /**
@@ -87,7 +84,7 @@ public class ResourceDiscovery
      */
     protected static JDKHooks jdkHooks = JDKHooks.getJDKHooks();
     
-    protected Vector classLoaders = null;
+    protected ClassLoaders classLoaders = new ClassLoaders();
     
     /** Construct a new resource discoverer
      */
@@ -107,44 +104,48 @@ public class ResourceDiscovery
      * Specify set of class loaders to be used in searching.
      */
     public void setClassLoaders(ClassLoaders loaders) {
-        classLoaders = loaders.getClassLoaders();
+        classLoaders = loaders;
+    }
+
+    /**
+     * Specify a new class loader to be used in searching.
+     * The order of loaders determines the order of the result.
+     * It is recommended to add the most specific loaders first.
+     */
+    public void addClassLoader(ClassLoader loader) {
+        classLoaders.put(loader);
     }
 
     public ResourceInfo[] findResources(String resourceName) {
-        ResourceInfo resultA[];
-        
-        if (classLoaders != null) {
-            Vector results = new Vector();
-        
-            // For each loader
-            for( int i=0; i<classLoaders.size() ; i++ ) {
-                ClassLoader loader=(ClassLoader)classLoaders.elementAt(i);
+        Vector results = new Vector();
     
-                Enumeration enum=null;
-    
-                try {
-                    enum=jdkHooks.getResources(loader, resourceName);
-                } catch( IOException ex ) {
-                    ex.printStackTrace();
-                }
-                if( enum==null ) continue;
-    
-                while( enum.hasMoreElements() ) {
-                    URL url=(URL)enum.nextElement();
-    
-                    System.out.println("XXX URL " + url );
-                    
-                    ResourceInfo sinfo = new ResourceInfo(resourceName, loader, url);
-                    results.add(sinfo);
-                    System.out.println("XXX " + sinfo.toString());
-                }
-            }
-            resultA = new ResourceInfo[ results.size() ];
-            results.copyInto( resultA );
-        } else {
-            resultA = new ResourceInfo[0];
-        }
+        // For each loader
+        for( int i=0; i<classLoaders.size() ; i++ ) {
+            ClassLoader loader=classLoaders.get(i);
 
+            Enumeration enum=null;
+
+            try {
+                enum=jdkHooks.getResources(loader, resourceName);
+            } catch( IOException ex ) {
+                ex.printStackTrace();
+            }
+            if( enum==null ) continue;
+
+            while( enum.hasMoreElements() ) {
+                URL url=(URL)enum.nextElement();
+
+                System.out.println("XXX URL " + url );
+                
+                ResourceInfo sinfo = new ResourceInfo(resourceName, loader, url);
+                results.add(sinfo);
+                System.out.println("XXX " + sinfo.toString());
+            }
+        }
+        
+        ResourceInfo resultA[] = new ResourceInfo[ results.size() ];
+        results.copyInto( resultA );
+        
         return resultA;
     }
 }

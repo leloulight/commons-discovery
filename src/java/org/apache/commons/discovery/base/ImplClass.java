@@ -65,7 +65,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.load.Loaders;
+import org.apache.commons.discovery.tools.ClassLoaderUtils;
 
 
 /**
@@ -74,34 +74,13 @@ import org.apache.commons.discovery.load.Loaders;
 public class ImplClass {
     private final String implName;
 
+    private Class spiClass;
+    
     private Class implClass;
     
     private Class  paramClasses[] = null;
     private Object params[] = null;
 
-
-    /**
-     * Construct object representing implementation
-     * Class whose name is <code>implName</code>.
-     * 
-     * @param implName The SPI class name
-     */
-    public ImplClass(String implName) {
-        this.implName = implName;
-        this.implClass = null;
-    }
-    
-    /**
-     * Construct object representing implementation
-     * Class <code>implClass</code>.
-     * 
-     * @param implClass The SPI class
-     */
-    public ImplClass(Class implClass) {
-        this.implName = (implClass != null) ? implClass.getName() : null;
-        this.implClass = implClass;
-    }
-    
 
     /**
      * Construct object representing implementation
@@ -115,11 +94,13 @@ public class ImplClass {
      * @param constructorParams objects representing the
      *        constructor arguments.
      */
-    public ImplClass(String implName,
-                     Class constructorParamClasses[],
-                     Object constructorParams[])
+    ImplClass(Class spiClass,
+              String implName,
+              Class constructorParamClasses[],
+              Object constructorParams[])
     {
-        this(implName);
+        this.implName = implName;
+        this.implClass = null;
         this.paramClasses = constructorParamClasses;
         this.params = constructorParams;
     }
@@ -136,11 +117,13 @@ public class ImplClass {
      * @param constructorParams objects representing the
      *        constructor arguments.
      */
-    public ImplClass(Class implClass,
-                     Class constructorParamClasses[],
-                     Object constructorParams[])
+    ImplClass(Class spiClass,
+              Class implClass,
+              Class constructorParamClasses[],
+              Object constructorParams[])
     {
-        this(implClass);
+        this.implName = (implClass != null) ? implClass.getName() : null;
+        this.implClass = implClass;
         this.paramClasses = constructorParamClasses;
         this.params = constructorParams;
     }
@@ -177,9 +160,14 @@ public class ImplClass {
      *                the thread context class loader or the calling class'
      *                class loader.
      */    
-    public Class loadImplClass(Loaders loaders, boolean libOnly) {
+    public Class loadImplClass(ClassLoaders loaders) {
         if (implClass == null) {
-            implClass = loaders.loadClass(getImplName(), libOnly);
+            implClass = ClassLoaderUtils.loadClass(getImplName(), loaders);
+            
+            if (implClass != null  &&  !spiClass.isAssignableFrom(implClass)) {
+                throw new DiscoveryException("Class " + getImplName() +
+                              " does not implement " + spiClass.getName());
+            }
         }
 
         return implClass;

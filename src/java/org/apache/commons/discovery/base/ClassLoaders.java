@@ -55,7 +55,7 @@
  *
  */
 
-package org.apache.commons.discovery;
+package org.apache.commons.discovery.base;
 
 import java.util.Vector;
 
@@ -72,11 +72,19 @@ import java.util.Vector;
  */
 public class ClassLoaders
 {
-    protected Vector classLoaders=new Vector();
+    protected Vector classLoaders = new Vector();
     
     /** Construct a new class loader set
      */
     public ClassLoaders() {
+    }
+    
+    public int size() {
+        return classLoaders.size();
+    }
+    
+    public ClassLoader get(int idx) {
+        return (ClassLoader)classLoaders.elementAt(idx);
     }
 
     /**
@@ -84,11 +92,43 @@ public class ClassLoaders
      * The order of loaders determines the order of the result.
      * It is recommended to add the most specific loaders first.
      */
-    public void addClassLoader(ClassLoader loader) {
-        classLoaders.addElement(loader);
+    public void put(ClassLoader classLoader) {
+        boolean isNew = true;
+        
+        for (int idx = 0; idx < size(); idx++) {
+            if (wouldUseClassLoader(get(idx), classLoader)) {
+                isNew = false;
+                break;
+            }
+        }
+
+        if (isNew) {
+            classLoaders.addElement(classLoader);
+        }
     }
     
-    public Vector getClassLoaders() {
-        return classLoaders;
+    
+    /**
+     * Would <code>thisClassLoader</code> use <code>classLoader</code>?
+     * Return <code>true</code> if <code>classLoader</code> is the same
+     * as </code>thisClassLoader</code> or if <code>classLoader</code>
+     * is an ancestor of </code>thisClassLoader</code>.
+     */
+    private static final boolean wouldUseClassLoader(final ClassLoader thisClassLoader,
+                                                     final ClassLoader classLoader) {
+        /* bootstrap classloader, at root of all trees! */
+        if (classLoader == null)
+            return true;
+                        
+        for(ClassLoader walker = thisClassLoader;
+            walker != null;
+            walker = walker.getParent())
+        {
+            if (walker == classLoader) {
+                return true;
+            }
+        }
+        
+        return true;
     }
 }

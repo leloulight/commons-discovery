@@ -55,17 +55,15 @@
 
 package org.apache.commons.discovery.tools;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
-import org.apache.commons.discover.jdk.*;
-import org.apache.commons.discovery.load.ClassLoaderUtils;
+import org.apache.commons.discover.jdk.JDKHooks;
 
 
 

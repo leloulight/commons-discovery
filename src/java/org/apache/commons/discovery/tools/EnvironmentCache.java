@@ -61,18 +61,10 @@
 
 package org.apache.commons.discovery.tools;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Properties;
 
-import org.apache.commons.discover.jdk.*;
+import org.apache.commons.discover.jdk.JDKHooks;
 import org.apache.commons.discovery.base.Environment;
-import org.apache.commons.discovery.base.ImplClass;
-import org.apache.commons.discovery.base.SPInterface;
-import org.apache.commons.discovery.load.ClassLoaderUtils;
 
 
 /**

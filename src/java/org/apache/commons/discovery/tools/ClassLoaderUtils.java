@@ -59,7 +59,7 @@
  *
  */
 
-package org.apache.commons.discovery.load;
+package org.apache.commons.discovery.tools;
 
 import java.io.InputStream;
 
@@ -67,6 +67,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.base.ClassLoaders;
 
 
 /**
@@ -129,8 +130,7 @@ public class ClassLoaderUtils {
      * @param serviceImplName The name of the class to load.
      */
     public static Class loadClass(String serviceImplName,
-                                  ClassLoader[] loaders,
-                                  int length)
+                                  ClassLoaders loaders)
         throws DiscoveryException
     {
         Class clazz = null;
@@ -139,27 +139,15 @@ public class ClassLoaderUtils {
             if (debug)
                 System.out.println("Loading class '" + serviceImplName + "'");
 
-            for (int i = 0; i < length && clazz == null; i++)
+            for (int i = 0; i < loaders.size() && clazz == null; i++)
             {
-                if (loaders[i] != null)
-                    clazz = rawLoadClass(serviceImplName, loaders[i]);
+                ClassLoader loader = loaders.get(i);
+                if (loader != null)
+                    clazz = rawLoadClass(serviceImplName, loader);
             }
         }
         
         return clazz;
-    }
-
-    /**
-     * Load the class <code>serviceImplName</code>.
-     * Try each classloader in succession,
-     * until first succeeds, or all fail.
-     * 
-     * @param serviceImplName The name of the class to load.
-     */
-    public static Class loadClass(String serviceImplName, ClassLoader[] loaders)
-        throws DiscoveryException
-    {
-        return loadClass(serviceImplName, loaders, loaders.length);
     }
     
 
@@ -171,8 +159,7 @@ public class ClassLoaderUtils {
      * @param resourceName The name of the resource to load.
      */
     public static InputStream getResourceAsStream(String resourceName,
-                                                  ClassLoader[] loaders,
-                                                  int length)
+                                                  ClassLoaders loaders)
         throws DiscoveryException
     {
         InputStream stream = null;
@@ -181,27 +168,15 @@ public class ClassLoaderUtils {
             if (debug)
                 System.out.println("Loading resource '" + resourceName + "'");
 
-            for (int i = 0; i < length && stream == null; i++)
+            for (int i = 0; i < loaders.size() && stream == null; i++)
             {
-                if (loaders[i] != null)
-                    stream = loaders[i].getResourceAsStream(resourceName);
+                ClassLoader loader = loaders.get(i);
+                if (loader != null)
+                    stream = loader.getResourceAsStream(resourceName);
             }
         }
         
         return stream;
-    }
-
-    /**
-     * Load the resource <code>resourceName</code>.
-     * Try each classloader in succession,
-     * until first succeeds, or all fail.
-     * 
-     * @param resourceName The name of the resource to load.
-     */
-    public static InputStream getResourceAsStream(String resourceName, ClassLoader[] loaders)
-        throws DiscoveryException
-    {
-        return getResourceAsStream(resourceName, loaders, loaders.length);
     }
     
     /**
@@ -217,11 +192,10 @@ public class ClassLoaderUtils {
      */
     public static InputStream getResourceAsStream(String packageName,
                                                   String resourceName,
-                                                  ClassLoader[] loaders,
-                                                  int length)
+                                                  ClassLoaders loaders)
         throws DiscoveryException
     {
-        InputStream stream = getResourceAsStream(resourceName, loaders, length);
+        InputStream stream = getResourceAsStream(resourceName, loaders);
         
         /**
          * If we didn't find the resource, and if the resourceName
@@ -230,104 +204,10 @@ public class ClassLoaderUtils {
          */
         return (stream == null)
                ? getResourceAsStream(qualifyName(packageName, resourceName),
-                                     loaders, length)
+                                     loaders)
                : stream;
     }
-
-    /**
-     * Load the resource <code>resourceName</code>.
-     * Try each classloader in succession,
-     * until first succeeds, or all fail.
-     * If all fail and <code>resouceName</code> is not absolute
-     * (doesn't start with '/' character), then retry with
-     * <code>packageName/resourceName</code> after changing all
-     * '.' to '/'.
-     * 
-     * @param resourceName The name of the resource to load.
-     */
-    public static InputStream getResourceAsStream(String packageName,
-                                                  String resourceName,
-                                                  ClassLoader[] loaders)
-        throws DiscoveryException
-    {
-        return getResourceAsStream(packageName, resourceName, loaders, loaders.length);
-    }
     
-    
-    /**
-     * Would <code>thisClassLoader</code> use <code>classLoader</code>?
-     * Return <code>true</code> if <code>classLoader</code> is the same
-     * as </code>thisClassLoader</code> or if <code>classLoader</code>
-     * is an ancestor of </code>thisClassLoader</code>.
-     */
-    public static final boolean wouldUseClassLoader(final ClassLoader thisClassLoader,
-                                                    final ClassLoader classLoader) {
-        /* bootstrap classloader, at root of all trees! */
-        if (classLoader == null)
-            return true;
-                        
-        for(ClassLoader walker = thisClassLoader;
-            walker != null;
-            walker = walker.getParent())
-        {
-            if (walker == classLoader) {
-                return true;
-            }
-        }
-        
-        return true;
-    }
-
-    /**
-     * Return <code>true</code> if
-     * <code>wouldUseClassLoader(list[idx], classLoader)<code>
-     * is <code>true<code> for all <code>idx</code>
-     * such that <code>0 <= idx < length</code>.
-     */
-    public static final boolean wouldUseClassLoader(ClassLoader[] list,
-                                                    int length,
-                                                    ClassLoader classLoader) {
-        for (int idx = 0; idx < length; idx++) {
-            if (wouldUseClassLoader(list[idx], classLoader))
-                return true;
-        }
-        return false;
-    }
-
-    /***
-     * Remove duplicate Objects (as opposed to equivalent) from
-     * array.  Also checks previous class loader parents..
-     * 
-     * Assumes that array is short, so (n^2)*m isn't a problem...
-     * 
-     * This is exposed to allow a unique array to be computed once,
-     * and passed in for different tasks...
-     */
-    public static int uniq(ClassLoader[] array, ClassLoader[] uneek) {
-        int len = 0;
-        for (int lookForward = 0; lookForward < array.length; lookForward++) {
-            ClassLoader fore = array[lookForward];
-            
-            if (fore != null  &&  !wouldUseClassLoader(uneek, len, fore)) {
-                uneek[len++] = fore;
-            }
-        }
-        return len;
-    }
-
-    public static final ClassLoader[] copy(ClassLoader[] src, int first, int lastPlus) {
-        int length = lastPlus - first;
-        ClassLoader[] dest = new ClassLoader[length];
-        System.arraycopy(src, first, dest, 0, length);
-        return dest;
-    }
-
-    public static final ClassLoader[] compactUniq(ClassLoader[] array) {        
-        ClassLoader[] uniqLoaders = new ClassLoader[array.length];
-        int length = uniq(array, uniqLoaders);
-        
-        return copy(uniqLoaders, 0, length);
-    }
     
     /**
      * If <code>name</code> represents an absolute path name, then return null.

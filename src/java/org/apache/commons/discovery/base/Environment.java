@@ -63,7 +63,7 @@ package org.apache.commons.discovery.base;
 
 import org.apache.commons.discover.jdk.JDKHooks;
 import org.apache.commons.discovery.DiscoverClass;
-import org.apache.commons.discovery.load.ClassLoaderUtils;
+import org.apache.commons.discovery.tools.ClassLoaderUtils;
 
 
 /**

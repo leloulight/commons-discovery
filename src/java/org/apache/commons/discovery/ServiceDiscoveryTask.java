@@ -65,6 +65,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.commons.discover.jdk.JDKHooks;
+import org.apache.commons.discovery.base.*;
 
 
 /**
@@ -96,12 +97,9 @@ public class ServiceDiscoveryTask
     public void execute() throws Exception {
         System.out.println("XXX ");
         
-        ClassLoaders classLoaders = new ClassLoaders();
-        classLoaders.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
-        classLoaders.addClassLoader( this.getClass().getClassLoader() );
-
         ResourceDiscovery disc=ResourceDiscovery.newInstance();
-        disc.setClassLoaders(classLoaders);
+        disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
+        disc.addClassLoader( this.getClass().getClassLoader() );
         
         drivers=disc.findResources(name);
 

@@ -368,10 +368,11 @@ public class DiscoverClass {
     public Class find(Class spiClass, Properties properties, String defaultImpl)
         throws DiscoveryException
     {
+        SPInterface spi = new SPInterface(spiClass);
         return find(getEnvironment(),
-                    new SPInterface(spiClass),
+                    spi,
                     properties,
-                    new ImplClass(defaultImpl));
+                    spi.createImplClass(defaultImpl));
     }
     
     /**
@@ -401,10 +402,11 @@ public class DiscoverClass {
     public Class find(Class spiClass, String propertiesFileName, String defaultImpl)
         throws DiscoveryException
     {
+        SPInterface spi = new SPInterface(spiClass);
         return find(getEnvironment(),
-                    new SPInterface(spiClass),
+                    spi,
                     propertiesFileName,
-                    new ImplClass(defaultImpl));
+                    spi.createImplClass(defaultImpl));
     }
 
     /**
@@ -622,10 +624,11 @@ public class DiscoverClass {
                NoSuchMethodException,
                InvocationTargetException
     {
+        SPInterface spi = new SPInterface(spiClass);
         return newInstance(getEnvironment(),
-                           new SPInterface(spiClass),
+                           spi,
                            properties,
-                           new ImplClass(defaultImpl));
+                           spi.createImplClass(defaultImpl));
     }
     
     /**
@@ -660,10 +663,11 @@ public class DiscoverClass {
                NoSuchMethodException,
                InvocationTargetException
     {
+        SPInterface spi = new SPInterface(spiClass);
         return newInstance(getEnvironment(),
-                           new SPInterface(spiClass),
+                           spi,
                            propertiesFileName,
-                           new ImplClass(defaultImpl));
+                           spi.createImplClass(defaultImpl));
     }
 
     /**
