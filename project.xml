@@ -4,7 +4,7 @@
   <extend>../project.xml</extend>
   <name>Discovery</name>
   <id>commons-discovery</id>
-  <currentVersion>1.0-dev</currentVersion>
+  <currentVersion>0.2-dev</currentVersion>
   <inceptionYear>2002</inceptionYear>
   <gumpRepositoryId>jakarta</gumpRepositoryId>
   <shortDescription>Commons Discovery</shortDescription>
@@ -44,7 +44,7 @@
 
     <dependency>
       <id>commons-logging</id>
-      <version>1.0.1</version>
+      <version>1.0.3</version>
     </dependency>
 
     <dependency>
