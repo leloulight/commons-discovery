@@ -92,6 +92,18 @@ public class ResourceClass extends Resource
     
     /**
      * Get the value of resourceClass.
+     * Loading the class does NOT guarentee that the class can be
+     * instantiated.  Go figure.
+     * The class can be instantiated when the class is linked/resolved,
+     * and all dependencies are resolved.
+     * Various JDKs do this at different times, so beware:
+     * java.lang.NoClassDefFoundError when
+     * calling Class.getDeclaredMethod() (JDK14),
+     * java.lang.reflect.InvocationTargetException
+     * (wrapping java.lang.NoClassDefFoundError) when calling
+     * java.lang.newInstance (JDK13),
+     * and who knows what else..
+     *
      * @return value of resourceClass.
      */
     public Class loadClass() {
@@ -101,23 +113,6 @@ public class ResourceClass extends Resource
 
             try {
                 resourceClass = getClassLoader().loadClass(getName());
-                
-                /**
-                 * Loading the class does not necessarily link it...
-                 * and we need to know, at this point in the flow,
-                 * if the class is actually loadable or not!
-                 * 
-                 * Force load (for Sun JDK14?):
-                 */
-                try {
-                    resourceClass.getDeclaredMethod("anyName", new Class[0]);
-                } catch(NoClassDefFoundError e) {
-                    // some dependency couldn't be found..
-                    // class cannot be loaded.
-                    resourceClass = null;
-                } catch(NoSuchMethodException e) {
-                    // ignore
-                }
             } catch (ClassNotFoundException e) {
                 resourceClass = null;
             }
