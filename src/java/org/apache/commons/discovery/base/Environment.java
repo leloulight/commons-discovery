@@ -93,6 +93,8 @@ public class Environment {
     private final Class rootDiscoveryClass;
     private final Class callingClass;
     
+    private boolean searchLibOnly;
+    
     public Environment(Class rootDiscoveryClass) {
         this(defaultGroupContext, rootDiscoveryClass, defaultRootDiscoveryClass);
     }
@@ -122,6 +124,8 @@ public class Environment {
              rootDiscoveryClass != defaultRootDiscoveryClass)
             ? rootDiscoveryClass
             : callingClass;
+            
+        this.searchLibOnly = false;
     }
     
     public ClassLoader getThreadContextClassLoader() {
@@ -141,5 +145,13 @@ public class Environment {
      */    
     public Class getCallingClass() {
         return callingClass;
+    }
+    
+    public void setSearchLibOnly(boolean searchLibOnly) {
+        this.searchLibOnly = searchLibOnly;
+    }
+    
+    public boolean getSearchLibOnly() {
+        return searchLibOnly;
     }
 }

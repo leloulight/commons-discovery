@@ -77,16 +77,16 @@ import org.apache.commons.discovery.base.SPInterface;
  */
 public class Loaders {
     private final Environment env;
-    private final Class      spiClass;
+    private final Class       spiClass;
     
     /**
-     * System ClassLoaders only
-     * 
-     * This is NOT the same as spiContext.getClassLoaders(),
-     * which includes the thread context class loader.
+     * Library ClassLoaders only (sans App loaders)
      */
-    private final ClassLoader[] systemLoaders;
+    private final ClassLoader[] libLoaders;
     
+    /**
+     * Application + Library ClassLoaders only
+     */
     private final ClassLoader[] appLoaders;
 
 
@@ -94,12 +94,12 @@ public class Loaders {
     {
         this.env = env;
         this.spiClass = spi.getSPClass();
-        this.systemLoaders = createSystemLoaders();
+        this.libLoaders = createLibLoaders();
         this.appLoaders = createAppLoaders();
     }
     
-    public ClassLoader[] getSystemLoaders() {
-        return systemLoaders;
+    public ClassLoader[] getLibLoaders() {
+        return libLoaders;
     }
     
     public ClassLoader[] getAppLoaders() {
@@ -115,18 +115,20 @@ public class Loaders {
      *
      * @param serviceImplName Fully qualified name of the implementation class
      * 
-     * @param systemOnly Use only 'system' class loaders
-     *                  (do not try thread context class loader).
+     * @param libOnly Use library loaders, a subset of the application's
+     *                class loaders.  Library loaders do not include
+     *                the thread context class loader or the calling class'
+     *                class loader.
      *
      * @exception DiscoveryException if a suitable instance cannot be created,
      *                             or if the class created is not an instance
      *                             of <code>spi</code>
      */
-    public Class loadClass(String className, boolean systemOnly)
+    public Class loadClass(String className, boolean libOnly)
         throws DiscoveryException
     {
         Class clazz = ClassLoaderUtils.loadClass(className,
-                           systemOnly ? systemLoaders : appLoaders);
+                           libOnly ? libLoaders : appLoaders);
             
         if (clazz != null  &&  !spiClass.isAssignableFrom(clazz)) {
             throw new DiscoveryException("Class " + className +
@@ -173,11 +175,11 @@ public class Loaders {
     }
     
     /**
-     * List of 'system' class loaders to the SPI.
+     * List of 'library' class loaders to the SPI.
      * The last should always return a non-null loader, so we
      * always (?!) have a list of at least one classloader.
      */
-    private final ClassLoader[] createSystemLoaders() {
+    private final ClassLoader[] createLibLoaders() {
         return ClassLoaderUtils.compactUniq(
                 new ClassLoader[] {spiClass.getClassLoader(),
                                    env.getRootDiscoveryClass().getClassLoader(),

@@ -172,13 +172,14 @@ public class ImplClass {
      * 
      * @param loaders
      * 
-     * @param systemOnly Use system loaders, as opposed to application
-     *                   class loaders.  System loaders do not include
-     *                   the thread context class loader.
+     * @param libOnly Use library loaders, a subset of the application's
+     *                class loaders.  Library loaders do not include
+     *                the thread context class loader or the calling class'
+     *                class loader.
      */    
-    public Class loadImplClass(Loaders loaders, boolean systemOnly) {
+    public Class loadImplClass(Loaders loaders, boolean libOnly) {
         if (implClass == null) {
-            implClass = loaders.loadClass(getImplName(), systemOnly);
+            implClass = loaders.loadClass(getImplName(), libOnly);
         }
 
         return implClass;
