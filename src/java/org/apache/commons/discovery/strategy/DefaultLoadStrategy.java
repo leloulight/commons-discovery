@@ -169,7 +169,7 @@ public class DefaultLoadStrategy implements LoadStrategy {
 
         if (className != null) {
             implClass = spi.createImplClass(className);
-            implClass.loadImplClass(getLoaders(env.getSearchLibOnly()));
+            implClass.load(getLoaders(env.getSearchLibOnly()));
         } else {
             // All else fails: try the fallback implementation class,
             // but limit loaders to 'system' loaders, in an
@@ -177,7 +177,7 @@ public class DefaultLoadStrategy implements LoadStrategy {
             // the one that was intended.
             implClass = defaultImpl;
             if (implClass != null) {
-                implClass.loadImplClass(getLoaders(true));
+                implClass.load(getLoaders(true));
             }
         }
 

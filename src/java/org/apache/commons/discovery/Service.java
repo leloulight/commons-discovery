@@ -57,18 +57,36 @@
 
 package org.apache.commons.discovery;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.commons.discover.jdk.JDKHooks;
 import org.apache.commons.discovery.base.ClassLoaders;
+import org.apache.commons.discovery.base.Environment;
+import org.apache.commons.discovery.base.ImplClass;
+import org.apache.commons.discovery.base.SPInterface;
+import org.apache.commons.discovery.strategy.DefaultLoadStrategy;
 
 
 /**
+ * [this was ServiceDiscovery12... the 1.1 versus 1.2 issue
+ * has been abstracted to org.apache.commons.discover.jdk.JDKHooks]
+ * 
+ * <p>Implement the JDK1.3 'Service Provider' specification.
+ * ( http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html )
+ * </p>
+ *
  * This class supports any VM, including JDK1.1, via
  * org.apache.commons.discover.jdk.JDKHooks.
+ *
+ * The caller will first configure the discoverer by adding ( in the desired
+ * order ) all the places to look for the META-INF/services. Currently
+ * we support loaders.
  *
  * The findResources() method will check every loader.
  *
@@ -77,111 +95,60 @@ import org.apache.commons.discovery.base.ClassLoaders;
  * @author Costin Manolache
  * @author James Strachan
  */
-public class ResourceDiscovery
+public class Service
 {
-    /**
-     * this doesn't buy anything except +/- style (subjective).
+    /** Construct a new service discoverer
      */
-    protected static JDKHooks jdkHooks = JDKHooks.getJDKHooks();
-    
-    private ClassLoaders classLoaders;
-    
-    /** Construct a new resource discoverer
-     */
-    public ResourceDiscovery() {
-        setClassLoaders(new ClassLoaders());
+    protected Service() {
     }
     
-    /** Construct a new resource discoverer
-     */
-    public ResourceDiscovery(ClassLoaders classLoaders) {
-        setClassLoaders(classLoaders);
-    }
-
     /**
-     * @deprecated
-     */
-    public static ResourceDiscovery newInstance() {
-        // This is _not_ singleton.
-        return new ResourceDiscovery();
-        // XXX Check if JDK1.1 is used no longer necessary.
-    }
-
-    /**
-     * Specify set of class loaders to be used in searching.
-     */
-    public void setClassLoaders(ClassLoaders loaders) {
-        classLoaders = loaders;
-    }
-    
-    protected ClassLoaders getClassLoaders() {
-        return classLoaders;
-    }
-
-    /**
-     * Specify a new class loader to be used in searching.
-     * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
-     */
-    public void addClassLoader(ClassLoader loader) {
-        classLoaders.put(loader);
-    }
-
-    /**
-     * This gets ugly, but...
-     * a) it preserves the desired behaviour
-     * b) it defers file I/O and class loader lookup until necessary.
+     * as described in
+     * sun/jdk1.3.1/docs/guide/jar/jar.html#Service Provider,
+     * Except this uses <code>Enumeration</code>
+     * instead of <code>Interator</code>.
      * 
-     * @return Enumeration of ResourceInfo
+     * @return Enumeration of class instances (<code>Object</code>)
      */
-    public Enumeration findResources(final String resourceName) {
+    public static Enumeration providers(Class spiClass) {
+        return providers(new SPInterface(spiClass));
+    }
+    
+    /**
+     * This version lets you specify constructor arguments..
+     */
+    public static Enumeration providers(final SPInterface spi) {
+        Environment env = new Environment();
+        DefaultLoadStrategy dls = new DefaultLoadStrategy(env, spi);
+        ServiceDiscovery serviceDiscovery = new ServiceDiscovery(dls.getAppLoaders());
+
+        final Enumeration services = serviceDiscovery.findResources(spi.getSPName());
+        
         return new Enumeration() {
-            private int idx = 0;
-            private ClassLoader loader = null;
-            private Enumeration resources = null;
-            private ResourceInfo resource = null;
+            private Object object = null;
             
             public boolean hasMoreElements() {
-                if (resource == null) {
-                    resource = getNextResource();
+                if (object == null) {
+                    object = getNextClassInstance();
                 }
-                return resource != null;
+                return object != null;
             }
             
             public Object nextElement() {
-                Object element = resource;
-                resource = null;
-                return element;
+                Object obj = object;
+                object = null;
+                return obj;
             }
-            
-            private ResourceInfo getNextResource() {
-                if (resources == null || !resources.hasMoreElements()) {
-                    resources = getNextResources();
-                }
 
-                ResourceInfo resourceInfo;
-                if (resources != null) {
-                    URL url = (URL)resources.nextElement();
-                    System.out.println("XXX URL " + url );
-                    resourceInfo = new ResourceInfo(resourceName, loader, url);
-                    System.out.println("XXX " + resourceInfo.toString());
-                } else {
-                    resourceInfo = null;
-                }
-                
-                return resourceInfo;
-            }
-            
-            private Enumeration getNextResources() {
-                while (idx < getClassLoaders().size()) {
-                    loader = getClassLoaders().get(idx++);
+            private Object getNextClassInstance() {
+                while (services.hasMoreElements()) {
+                    ResourceInfo info = (ResourceInfo)services.nextElement();
+                    ImplClass implClass = spi.createImplClass(info.getResourceName());
+                    implClass.load(info.getLoader());
                     try {
-                        Enumeration enum = jdkHooks.getResources(loader, resourceName);
-                        if (enum != null && enum.hasMoreElements()) {
-                            return enum;
-                        }
-                    } catch( IOException ex ) {
-                        ex.printStackTrace();
+                        return implClass.newInstance();
+                    } catch (Exception e) {
+                        // ignore
                     }
                 }
                 return null;

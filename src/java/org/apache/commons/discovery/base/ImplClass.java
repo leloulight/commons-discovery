@@ -72,6 +72,8 @@ import org.apache.commons.discovery.tools.ClassLoaderUtils;
  * @author Richard A. Sitze
  */
 public class ImplClass {
+    private static final boolean debug = false;
+
     private final String implName;
 
     private Class spiClass;
@@ -160,17 +162,68 @@ public class ImplClass {
      *                the thread context class loader or the calling class'
      *                class loader.
      */    
-    public Class loadImplClass(ClassLoaders loaders) {
-        if (implClass == null) {
-            implClass = ClassLoaderUtils.loadClass(getImplName(), loaders);
-            
-            if (implClass != null  &&  !spiClass.isAssignableFrom(implClass)) {
-                throw new DiscoveryException("Class " + getImplName() +
-                              " does not implement " + spiClass.getName());
+    public Class load(ClassLoaders loaders) {
+        if (getImplName() != null  &&
+            getImplName().length() > 0)
+        {
+            for (int i = 0; i < loaders.size() && implClass == null; i++)
+            {
+                ClassLoader loader = loaders.get(i);
+                if(loader != null) {
+                    if (debug)
+                        System.out.println("Loading class '" + getImplName() + "' with " + loader);
+        
+                    try {
+                        implClass = loader.loadClass(getImplName());
+                    } catch (ClassNotFoundException e) {
+                        implClass = null;
+                    }
+                }
             }
+
+            verifyClass();
         }
 
         return implClass;
+    }
+
+    /**
+     * Load and return the class using the list of class loaders
+     * specified by <code>loaders</code>.
+     * 
+     * @param loaders
+     * 
+     * @param libOnly Use library loaders, a subset of the application's
+     *                class loaders.  Library loaders do not include
+     *                the thread context class loader or the calling class'
+     *                class loader.
+     */    
+    public Class load(ClassLoader loader) {
+        if (implClass == null  &&
+            getImplName() != null  &&
+            getImplName().length() > 0  &&
+            loader != null)
+        {
+            if (debug)
+                System.out.println("Loading class '" + getImplName() + "' with " + loader);
+
+            try {
+                implClass = loader.loadClass(getImplName());
+            } catch (ClassNotFoundException e) {
+                implClass = null;
+            }
+            
+            verifyClass();
+        }
+
+        return implClass;
+    }
+    
+    private void verifyClass() {
+        if (implClass != null  &&  !spiClass.isAssignableFrom(implClass)) {
+            throw new DiscoveryException("Class " + getImplName() +
+                          " does not implement " + spiClass.getName());
+        }
     }
 
     /**

@@ -62,11 +62,10 @@
 package org.apache.commons.discovery.tools;
 
 import java.io.InputStream;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.Enumeration;
 
 import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.ResourceInfo;
 import org.apache.commons.discovery.base.ClassLoaders;
 
 
@@ -102,55 +101,6 @@ public class ClassLoaderUtils {
         return packageName;
     }
     
-    /**
-     * Load the class <code>serviceImplName</code>, no safety checking
-     * 
-     * @param serviceImplName The name of the class to load.
-     */
-    private static Class rawLoadClass(String serviceImplName, ClassLoader loader)
-        throws DiscoveryException
-    {
-        Class clazz = null;
-        
-        try {
-            // first the thread class loader
-            clazz = loader.loadClass(serviceImplName);
-        } catch (ClassNotFoundException e) {
-            clazz = null;
-        }
-        
-        return clazz;
-    }
-    
-    /**
-     * Load the class <code>serviceImplName</code>.
-     * Try each classloader in succession,
-     * until first succeeds, or all fail.
-     * 
-     * @param serviceImplName The name of the class to load.
-     */
-    public static Class loadClass(String serviceImplName,
-                                  ClassLoaders loaders)
-        throws DiscoveryException
-    {
-        Class clazz = null;
-        
-        if (serviceImplName != null  &&  serviceImplName.length() > 0) {
-            if (debug)
-                System.out.println("Loading class '" + serviceImplName + "'");
-
-            for (int i = 0; i < loaders.size() && clazz == null; i++)
-            {
-                ClassLoader loader = loaders.get(i);
-                if (loader != null)
-                    clazz = rawLoadClass(serviceImplName, loader);
-            }
-        }
-        
-        return clazz;
-    }
-    
-
     /**
      * Load the resource <code>resourceName</code>.
      * Try each classloader in succession,

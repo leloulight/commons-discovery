@@ -57,9 +57,19 @@
 
 package org.apache.commons.discovery;
 
-import java.io.*;
-import java.util.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import org.apache.commons.discovery.base.ClassLoaders;
+import org.apache.commons.discovery.base.ImplClass;
+import org.apache.commons.discovery.base.SPInterface;
+
 
 /**
  * [this was ServiceDiscovery12... the 1.1 versus 1.2 issue
@@ -90,75 +100,153 @@ public class ServiceDiscovery extends ResourceDiscovery
     /** Construct a new service discoverer
      */
     protected ServiceDiscovery() {
+        super();
     }
- 
-    public ResourceInfo[] findResources(String resourceName) {
-        ResourceInfo[] services =
-            super.findResources(SERVICE_HOME + resourceName);
-            
-        // use each loader to find if META-INF/services.
-        // find all resources, etc.
     
-        Vector results = new Vector();
-        
-        // For each service resource
-        for( int i=0; i<services.length ; i++ ) {
-            ResourceInfo info = services[i];
+    /** Construct a new service discoverer
+     */
+    public ServiceDiscovery(ClassLoaders classLoaders) {
+        super(classLoaders);
+    }
+    
+    /**
+     * This gets ugly, but...
+     * a) it preserves the desired behaviour
+     * b) it defers file I/O and class loader lookup until necessary.
+     * 
+     * @return Enumeration of ResourceInfo
+     */
+    public Enumeration findResources(final String resourceName) {
+        final Enumeration files =
+            super.findResources(SERVICE_HOME + resourceName);
 
-            try {
-                URL url = info.getURL();
-
-                /**
-                 * URL will be of the form:
-                 *  baseURL/META-INF/services/resourceName
-                 */
-                URL baseURL=new URL( url, "../../.." );
-                System.out.println("XXX BaseURL " + baseURL);
+        return new Enumeration() {
+            private ClassDiscovery classDiscovery =
+                new ClassDiscovery(getClassLoaders());
                 
-                InputStream is = url.openStream();
-                
-                if( is != null ) {
-                    try {
-                        // This code is needed by EBCDIC and other strange systems.
-                        // It's a fix for bugs reported in xerces
-                        BufferedReader rd;
-                        try {
-                            rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                        } catch (java.io.UnsupportedEncodingException e) {
-                            rd = new BufferedReader(new InputStreamReader(is));
-                        }
-                        
-                        try {
-                            String serviceImplName;
-                            while( (serviceImplName = rd.readLine()) != null) {
-                                serviceImplName.trim();
-                                if( "".equals(serviceImplName) )
-                                    continue;
-                                if( serviceImplName.startsWith( "#" ))
-                                    continue;
-                                ResourceInfo sinfo =
-                                    new ResourceInfo(serviceImplName,
-                                                     info.getLoader(),
-                                                     baseURL);
-                                results.add(sinfo);
-                                System.out.println("XXX " + sinfo.toString());
-                            }
-                        } finally {
-                            rd.close();
-                        }
-                    } finally {
-                        is.close();
+            private int idx = 0;
+            private Vector classNames = null;
+            private Enumeration classResources = null;
+            private ResourceInfo resource = null;
+            
+            public boolean hasMoreElements() {
+                if (resource == null) {
+                    resource = getNextResource();
+                }
+                return resource != null;
+            }
+            
+            public Object nextElement() {
+                Object element = resource;
+                resource = null;
+                return element;
+            }
+            
+            private ResourceInfo getNextResource() {
+                if (classResources == null || !classResources.hasMoreElements()) {
+                    classResources = getNextClassResources();
+                    if (classResources == null) {
+                        return null;
                     }
                 }
-            } catch (MalformedURLException ex) {
-                ex.printStackTrace();
-            } catch (IOException ioe) {
-                ; // ignore
-            }
-        }
 
-        ResourceInfo resultA[]=new ResourceInfo[ results.size() ];
-        results.copyInto( resultA );
-        return resultA;
+                ResourceInfo resourceInfo = (ResourceInfo)classResources.nextElement();
+                System.out.println("XXX " + resourceInfo.toString());
+                return resourceInfo;
+            }
+
+            private Enumeration getNextClassResources() {
+                while (true) {
+                    if (classNames == null || idx >= classNames.size()) {
+                        classNames = getNextClassNames();
+                        if (classNames == null) {
+                            return null;
+                        }
+                        idx = 0;
+                    }
+    
+                    /**
+                     * The loader used to find the service file
+                     * is of no (limited?) use here... likewise
+                     * the URL does not refer to a class.
+                     * Go back to original set of classloaders and
+                     * find unique classes & their loaders...
+                     */
+                    Enumeration classes =
+                        classDiscovery.findResources((String)classNames.get(idx++));
+
+                    if (classes != null && classes.hasMoreElements()) {
+                        return classes;
+                    }
+                }
+            }
+
+            private Vector getNextClassNames() {
+                while (files.hasMoreElements()) {
+                    ResourceInfo info = (ResourceInfo)files.nextElement();
+                    Vector results = readServices(info.getURL());
+                    if (results != null  &&  results.size() > 0) {
+                        return results;
+                    }
+                }
+                return null;
+            }
+        };
+    }
+
+    /**
+     * Read everything, no defering here..
+     * Ensure that files are closed before we leave.
+     */
+    private Vector readServices(final URL url) {
+        Vector results = new Vector();
+        
+        try {
+            /**
+             * URL is of the form: baseURL/META-INF/services/resourceName
+             */
+            URL baseURL = new URL( url, "../../.." );
+            System.out.println("XXX BaseURL " + baseURL);
+            
+            InputStream is = url.openStream();
+            
+            if( is != null ) {
+                try {
+                    // This code is needed by EBCDIC and other
+                    // strange systems.  It's a fix for bugs
+                    // reported in xerces
+                    BufferedReader rd;
+                    try {
+                        rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                    } catch (java.io.UnsupportedEncodingException e) {
+                        rd = new BufferedReader(new InputStreamReader(is));
+                    }
+                    
+                    try {
+                        String serviceImplName;
+                        while( (serviceImplName = rd.readLine()) != null) {
+                            serviceImplName =
+                                new String(serviceImplName.getBytes(),
+                                           0,
+                                           serviceImplName.indexOf('#')).trim();
+
+                            if (serviceImplName.length() != 0) {
+                                results.add(serviceImplName);
+                            }
+                        }
+                    } finally {
+                        rd.close();
+                    }
+                } finally {
+                    is.close();
+                }
+            }
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ioe) {
+            ; // ignore
+        }
+        
+        return results;
     }
 }

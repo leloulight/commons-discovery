@@ -57,58 +57,81 @@
 
 package org.apache.commons.discovery;
 
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.commons.discover.jdk.JDKHooks;
+import org.apache.commons.discovery.base.ClassLoaders;
 
 
 /**
- * Small ant task that will use discovery to locate a particular impl.
- * and display all values.
+ * This class supports any VM, including JDK1.1, via
+ * org.apache.commons.discover.jdk.JDKHooks.
  *
- * You can execute this and save it with an id, then other classes can use it.
+ * The findResources() method will check every loader.
  *
+ * @author Richard A. Sitze
+ * @author Craig R. McClanahan
  * @author Costin Manolache
+ * @author James Strachan
  */
-public class ServiceDiscoveryTask
+public class ClassDiscovery extends ResourceDiscovery
 {
-    String name;
-    int debug=0;
-    ResourceInfo[] drivers = null;
-        
-    public void setServiceName(String name ) {
-        this.name=name;
+    protected static final String SERVICE_HOME = "META-INF/services/";
+    
+    /** Construct a new class discoverer
+     */
+    protected ClassDiscovery() {
     }
-
-    public void setDebug(int i) {
-        this.debug=debug;
+    
+    /** Construct a new class discoverer
+     */
+    public ClassDiscovery(ClassLoaders classLoaders) {
+        super(classLoaders);
     }
-
-    public ResourceInfo[] getServiceInfo() {
-        return drivers;
-    }
-
-    public void execute() throws Exception {
-        System.out.println("XXX ");
+    
+    /**
+     * This gets ugly, but...
+     * a) it preserves the desired behaviour
+     * b) it defers file I/O and class loader lookup until necessary.
+     * 
+     * Find upto one class per class loader, and don't load duplicates
+     * from different class loaders (first one wins).
+     * 
+     * @return Enumeration of ResourceInfo
+     */
+    public Enumeration findResources(final String className) {
+        final String resourceName = className.replace('.','/') + ".class";
         
-        ResourceDiscovery disc=ResourceDiscovery.newInstance();
-        disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
-        disc.addClassLoader( this.getClass().getClassLoader() );
-        
-        Enumeration enum = disc.findResources(name);
-
-        Vector vector = new Vector();
-        while (enum.hasMoreElements()) {
-            ResourceInfo resourceInfo = (ResourceInfo)enum.nextElement();
-            vector.add(resourceInfo);
-            if( debug > 0 ) {
-                System.out.println("Found " + resourceInfo);
+        return new Enumeration() {
+            private Vector history = new Vector();
+            private int idx = 0;
+            private ResourceInfo resource = null;
+            
+            public boolean hasMoreElements() {
+                if (resource != null) {
+                    resource = getNextResource();
+                }
+                return resource != null;
             }
-        }
-        
-        drivers = new ResourceInfo[vector.size()];
-        vector.copyInto(drivers);
+            
+            public Object nextElement() {
+                Object element = resource;
+                resource = null;
+                return element;
+            }
+            
+            private ResourceInfo getNextResource() {
+                while (idx < getClassLoaders().size()) {
+                    ClassLoader loader = getClassLoaders().get(idx++);
+                    URL url = loader.getResource(resourceName);
+                    if (url != null  &&  !history.contains(url)) {
+                        history.addElement(url);
+                        return new ResourceInfo(className, loader, url);
+                    }
+                }
+                return null;
+            }
+        };
     }
-        
 }
