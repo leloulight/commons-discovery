@@ -9,10 +9,10 @@
 <h1>Best Practices for using Jakarta Commons "Discovery" Component</h1>
 $Id$<br />
 <a href="#Introduction">[Introduction]</a>
-<a href="#Calling Directly">[Calling Directly]</a>
-<a href="#Integrating into Factories : Wrapping">[Integrating into Factories : Wrapping]</a>
-<a href="#Service Life Cycle Management">[Service Life Cycle Management]</a>
-<a href="#Service Groups">[Service Groups]</a>
+<a href="#Discovery Services">[Discovery Services]</a>
+<a href="#Additional Tools">[Additional Tools]</a>
+  <a href="#Calling Directly">[Calling Directly]</a>
+  <a href="#Integrating into Factories : Wrapping">[Integrating into Factories : Wrapping]</a>
 <br /><br />
 </div>
 
@@ -29,11 +29,16 @@ which classloaders are used,
 and the order in which they are used.
 
 
+<a name="Discovery Services"></a>
+<h3>2.  DISCOVERY SERVICES</h3>
+<a name="Additional Tools"></a>
+<h3>3.  ADDITIONAL TOOLS</h3>
+
 <a name="Calling Directly"></a>
-<h3>2.  CALLING DIRECTLY</h3>
+<h4>3.1.  CALLING DIRECTLY</h4>
 
 <a name="Finding Singleton Instances (Factories)"></a>
-<h4>Finding Singleton Instances (Factories)</h3>
+<h5>3.1.1.  Finding Singleton Instances (Factories)</h5>
 
 <p>DiscoverSingleton finds, loads, and manages the lifecycle of a class implementing
 a given interface.  It only supports classes with default (zero-argument) constructors.
@@ -98,7 +103,7 @@ other forms and options available.
 </p>
 
 <a name="Finding Classes"></a>
-<h4>Finding Classes</h3>
+<h5>3.1.2.  Finding Classes</h5>
 
 <p>DiscoverClass finds and loads a class implementing a given interface.
 DiscoverClass can pass a set of properties to the class if it implements
@@ -156,7 +161,7 @@ to help determine the name of the class.
 </p>
 
 <a name="Integrating into Factories : Wrapping"></a>
-<h3>3.  INTEGRATING INTO FACTORIES : WRAPPING</h3>
+<h4>3.2  INTEGRATING INTO FACTORIES : WRAPPING</h4>
 
 
 <p>In this example, a factory (such as is used in commons-logging)
@@ -217,132 +222,5 @@ In this example, they are the same class, as the LogFactory
 is providing helper methods that 'wrap' <code>Discovery</code>.
 </p>
  
-<a name="Service Life Cycle Management"></a>
-<h3>4.  SERVICE LIFE CYCLE MANAGEMENT</h3>
-
-<p>Discovery supports life-cycle management through the <code>SingletonService</code> interface.
-If a service implementation implements
-the <code>SingletonService</code> interface then an
-<code>init(String, Properties)</code>
-method is invoked when the class in created by DiscoverSingleton,
-and a <code>release()</code> method is invoked when DiscoverSingleton
-removes the service from it's internal cache.
-</p>
-
-<p>Our example LogFactory (acting as both a factory and an SPI)
-might be extended as follows:
-
-<ul>
-<pre>
-<b>import org.apache.commons.discovery.SingletonService;</b>
-
-public abstract class LogFactory <b>implements SingletonService</b>
-{
-    . . .
-    <b>public abstract void init(String groupContext, Properties properties);</b>
-    <b>public abstract void release();</b>
-
-    /**
-     * Release any internal references to previously created {@link LogFactory}
-     * instances, after calling the instance method <code>release()</code> on
-     * each of them.  This is useful environments like servlet containers,
-     * which implement application reloading by throwing away a ClassLoader.
-     * Dangling references to objects in that class loader would prevent
-     * garbage collection.
-     */
-    <b>public static void releaseAll() {</b>
-        <b>DiscoverSingleton.releaseAll(LogFactory.class);</b>
-    <b>}</b>
-}
-</pre>
-</ul>
-
-<p>An example of how the properties might be used:
-</p>
-<ul>
-<pre>
-    public abstract void setAttribute(String name, Object value); 
-    public abstract Object getAttribute(String name); 
- 
-    public void init(String groupContext, Properties properties) {
-        if (properties != null) {
-            Enumeration names = properties.propertyNames();
-            while (names.hasMoreElements()) {
-                String name = (String)names.nextElement();
-                setAttribute(name, properties.getProperty(name));
-            }
-        }
-    }
-</pre>
-</ul>
-
- 
-<a name="Service Groups"></a>
-<h3>4.  Service Groups</h3>
-
-<p>The <code>Service.init<code> method includes
-a <code>groupContext</code> parameter.
-This parameter allows services to be discovered and categorized by different
-groups.
-</p>
-
-<p>
-When a service is located and loaded,
-it is done so within the context
-of a set of <i>properties</i> and a runtime environment
-(in particular, the ClassLoader hierarchy).
-It is cached by the <code>Discovery</code>.
-What happens when a different configuration is desired?
-</p>
-
-<p>
-The service <code>groupContext</code> parameter,
-available for many forms of <code>Discovery.find</code>,
-allows services to be discovered and cached
-by common groups, independent of other groups.
-</p>
-
-<p>
-It is suggested that service components that
-<ul>
-<li>use <code>Discovery</code> services, and that</li>
-<li>provide a service (i.e. could be discovered)</li>
-</ul>
-accept the <code>groupContext</code> and propogate
-it through to services it discovers.
-The groupContext should be optional,
-so two forms of each 'discovery' wrapper method
-should be used:
-<ul>
-<pre>
-    public static LogFactory getFactory() throws ServiceException
-    ... as above ...
-
-    public static LogFactory getFactory(Properties properties)
-    ... as above ...
-
-    public static LogFactory getFactory(<b>String groupContext</b>)
-        throws ServiceException
-    {
-        return (LogFactory)DiscoverSingleton.find(LogFactory.class,
-                                                  <b>groupContext</b>,
-                                                  LogFactory.class,
-                                                  FACTORY_PROPERTIES,
-                                                  FACTORY_DEFAULT);
-    }
-
-    public static LogFactory getFactory(<b>String groupContext,</b>
-                                        Properties properties)
-        throws ServiceException
-    {
-        return (LogFactory)DiscoverSingleton.find(LogFactory.class,
-                                                  <b>groupContext</b>,
-                                                  LogFactory.class,
-                                                  properties,
-                                                  FACTORY_DEFAULT);
-    }
-</pre>
-</ul>
-
 </body>
 </html>

@@ -1,11 +1,7 @@
 1.  Jakarta Web site for commons subproject
 
-2.  Figure out magic incantation for
-    getCallerClassLoader(Class calledClass)
+2. Review/rewrite javadoc
 
-3.  Discovery::release() logic is weak.
-    Caching is by threadContextClassLoader (removed broken
-    logic...).  It's weak, and doesn't guarentee releases
-    if your app plays with classloaders...  Need to
-    go over this again someday.
-    
+3. Review/rework best-practices.html
+
+4. 
