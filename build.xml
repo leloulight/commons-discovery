@@ -2,7 +2,7 @@
 
 
 <!--
-        Simple service "Discovery" component of the Jakarta Commons Subproject
+        "Discovery" component of the Jakarta Commons Subproject
         $Id$
 -->
 
@@ -67,6 +67,7 @@
 
   <!-- Construct compile classpath -->
   <path id="compile.classpath">
+    <pathelement location="${build.home}/classes"/>
   </path>
 
   <!-- Construct unit test classpath -->
@@ -142,7 +143,7 @@
                 destdir="${dist.home}/docs/api"
            packagenames="org.apache.commons.*"
                  author="true"
-                private="true"
+                private="false"
                 version="true"
                doctitle="&lt;h1&gt;${component.title}&lt;/h1&gt;"
             windowtitle="${component.title} (Version ${component.version})"

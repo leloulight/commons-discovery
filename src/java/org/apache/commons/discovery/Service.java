@@ -69,7 +69,7 @@ import java.util.Properties;
  * 
  * <p>A service is not required to implement this interface, but if
  * it does then the service is notified when it is being initialized
- * and released by ServiceFinder.</p>
+ * and released by Discovery.</p>
  * 
  * @author Richard A. Sitze
  * @version $Revision$ $Date$

@@ -178,7 +178,7 @@ import java.io.InputStreamReader;
  *   then invoke the <code>init(Properties)</code> method, passing in the
  *   <code>Properties properties</code> parameter, if provided.
  *   </li></p>
- * <ul>
+ * </ul>
  * 
  * <p>
  * Variances for various forms of the <code>find</code>
