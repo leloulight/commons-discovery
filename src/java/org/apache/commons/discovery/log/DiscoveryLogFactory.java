@@ -63,7 +63,6 @@
 package org.apache.commons.discovery.log;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Enumeration;
 import java.util.Hashtable;
 

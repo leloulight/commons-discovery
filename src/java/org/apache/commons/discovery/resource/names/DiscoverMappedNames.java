@@ -57,9 +57,7 @@
 
 package org.apache.commons.discovery.resource.names;
 
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;

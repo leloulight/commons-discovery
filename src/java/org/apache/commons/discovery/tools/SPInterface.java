@@ -61,7 +61,6 @@
 
 package org.apache.commons.discovery.tools;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.discovery.DiscoveryException;

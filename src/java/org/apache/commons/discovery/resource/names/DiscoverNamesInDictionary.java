@@ -106,7 +106,7 @@ public class DiscoverNamesInDictionary
      * Specify set of class loaders to be used in searching.
      */
     public void setDictionary(Dictionary table) {
-        this.dictionary = dictionary;
+        this.dictionary = table;
     }
     
     public void addResource(String resourceName, String resource) {

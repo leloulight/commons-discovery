@@ -83,7 +83,7 @@ public class ServiceDiscoveryTask
     }
 
     public void setDebug(int i) {
-        this.debug=debug;
+        this.debug=i;
     }
 
     public String[] getServiceInfo() {

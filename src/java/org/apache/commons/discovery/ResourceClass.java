@@ -89,7 +89,6 @@ public class ResourceClass extends Resource
 
     public ResourceClass(String resourceName, URL resource, ClassLoader loader) {
         super(resourceName, resource, loader);
-        this.resourceClass = resourceClass;
     }
     
     /**

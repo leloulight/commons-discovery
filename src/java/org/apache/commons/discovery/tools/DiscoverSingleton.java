@@ -444,7 +444,7 @@ public class DiscoverSingleton {
      * garbage collection.
      */
     public static synchronized void release() {
-        root_cache.release();
+        EnvironmentCache.release();
     }
 
     /**
@@ -454,7 +454,7 @@ public class DiscoverSingleton {
      * <code>release()</code>.
      */
     public static synchronized void release(Class spiClass) {
-        HashMap spis = (HashMap)root_cache.get(JDKHooks.getJDKHooks().getThreadContextClassLoader());
+        HashMap spis = (HashMap)EnvironmentCache.get(JDKHooks.getJDKHooks().getThreadContextClassLoader());
         
         if (spis != null) {
             spis.remove(spiClass.getName());
@@ -493,7 +493,8 @@ public class DiscoverSingleton {
      * Implements first two levels of the cache (loader & groupContext).
      * Allows null keys, important as default groupContext is null.
      */
-    private static final EnvironmentCache root_cache = new EnvironmentCache();
+    // FIXME: Why is this here? All the methods used are static.
+    //private static final EnvironmentCache root_cache = new EnvironmentCache();
 
     /**
      * Get service keyed by spi & classLoader.
@@ -501,7 +502,7 @@ public class DiscoverSingleton {
     private static synchronized Object get(ClassLoader classLoader,
                                            String spiName)
     {
-        HashMap spis = (HashMap)root_cache.get(classLoader);
+        HashMap spis = (HashMap)EnvironmentCache.get(classLoader);
         
         return (spis != null)
                ? spis.get(spiName)
@@ -517,11 +518,11 @@ public class DiscoverSingleton {
     {
         if (service != null)
         {
-            HashMap spis = (HashMap)root_cache.get(classLoader);
+            HashMap spis = (HashMap)EnvironmentCache.get(classLoader);
             
             if (spis == null) {
-                spis = new HashMap(root_cache.smallHashSize);
-                root_cache.put(classLoader, spis);
+                spis = new HashMap(EnvironmentCache.smallHashSize);
+                EnvironmentCache.put(classLoader, spis);
             }
             
             spis.put(spiName, service);
