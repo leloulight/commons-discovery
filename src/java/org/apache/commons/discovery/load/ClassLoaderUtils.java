@@ -221,18 +221,6 @@ public class ClassLoaderUtils {
         return getResourceAsStream(resourceName, loaders, loaders.length);
     }
     
-//    /**
-//     * Load the resource resourceName using the
-//     * class loaders associated with the SPI's context.
-//     * 
-//     * @param resourceName The name of the resource to load.
-//     */
-//    public static InputStream getResourceAsStream(String resourceName, SPSpec spiContext)
-//        throws DiscoveryException
-//    {
-//        return getResourceAsStream(resourceName, spiContext.getClassLoaders());
-//    }
-
     /**
      * Load the resource <code>resourceName</code>.
      * Try each classloader in succession,
@@ -282,24 +270,6 @@ public class ClassLoaderUtils {
         return getResourceAsStream(packageName, resourceName, loaders, loaders.length);
     }
     
-    /**
-     * Load the resource resourceName using the
-     * class loaders associated with the SPI's context.
-     * If all fail and <code>resouceName</code> is not absolute
-     * (doesn't start with '/' character), then retry with
-     * <code>packageName/resourceName</code> after changing all
-     * '.' to '/'.
-     * 
-     * @param resourceName The name of the resource to load.
-     */
-//    public static InputStream getResourceAsStream(String packageName,
-//                                                  String resourceName,
-//                                                  SPSpec spiContext)
-//        throws DiscoveryException
-//    {
-//        return getResourceAsStream(packageName, resourceName, spiContext.getClassLoaders());
-//    }
-
     
     /**
      * Would <code>thisClassLoader</code> use <code>classLoader</code>?
