@@ -178,11 +178,6 @@ public class DiscoverClass {
     /**
      * Readable placeholder for a null value.
      */
-    public static final String     nullGroupContext = null;
-
-    /**
-     * Readable placeholder for a null value.
-     */
     public static final String     nullDefaultImpl = null;
 
     /**
@@ -207,7 +202,7 @@ public class DiscoverClass {
 
     
     public DiscoverClass() {
-        this(DiscoverClass.class, DiscoverClass.nullGroupContext);
+        this(DiscoverClass.class, Environment.defaultGroupContext);
     }
     
     /**
@@ -218,7 +213,7 @@ public class DiscoverClass {
      *        correct/expected implementation class.
      */
     public DiscoverClass(Class rootDiscoveryClass) {
-        this(rootDiscoveryClass, DiscoverClass.nullGroupContext);
+        this(rootDiscoveryClass, Environment.defaultGroupContext);
     }
     
     /**

@@ -272,7 +272,10 @@ public class DiscoverSingleton {
     public static Object find(Class spiClass)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class, spiClass);
+        return find(new Environment(DiscoverSingleton.class),
+                    new SPInterface(spiClass),
+                    DiscoverClass.nullProperties,
+                    null);
     }
 
     /**
@@ -294,7 +297,10 @@ public class DiscoverSingleton {
     public static Object find(Class spiClass, Properties properties)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class, spiClass, properties);
+        return find(new Environment(DiscoverSingleton.class),
+                    new SPInterface(spiClass),
+                    properties,
+                    null);
     }
 
     /**
@@ -314,7 +320,10 @@ public class DiscoverSingleton {
     public static Object find(Class spiClass, String defaultImpl)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class, spiClass, defaultImpl);
+        return find(new Environment(DiscoverSingleton.class),
+                    new SPInterface(spiClass),
+                    DiscoverClass.nullProperties,
+                    new ImplClass(defaultImpl));
     }
 
     /**
@@ -340,10 +349,10 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class,
-                    spiClass,
+        return find(new Environment(DiscoverSingleton.class),
+                    new SPInterface(spiClass),
                     properties,
-                    defaultImpl);
+                    new ImplClass(defaultImpl));
     }
     
     /**
@@ -367,10 +376,10 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class,
-                    spiClass,
+        return find(new Environment(DiscoverSingleton.class),
+                    new SPInterface(spiClass),
                     propertiesFileName,
-                    defaultImpl);
+                    new ImplClass(defaultImpl));
     }
 
     /**
@@ -402,11 +411,10 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class,
-                    groupContext,
-                    spiClass,
+        return find(new Environment(groupContext, DiscoverSingleton.class),
+                    new SPInterface(spiClass),
                     properties,
-                    defaultImpl);
+                    new ImplClass(defaultImpl));
     }
     
     /**
@@ -436,11 +444,10 @@ public class DiscoverSingleton {
                               String defaultImpl)
         throws DiscoveryException
     {
-        return find(DiscoverSingleton.class,
-                    groupContext,
-                    spiClass,
+        return find(new Environment(groupContext, DiscoverSingleton.class),
+                    new SPInterface(spiClass),
                     propertiesFileName,
-                    defaultImpl);
+                    new ImplClass(defaultImpl));
     }
 
     
@@ -454,239 +461,10 @@ public class DiscoverSingleton {
      * Thus preserving knowledge that is relevant to finding the
      * correct/expected implementation class.
      */
-    
 
     /**
-     * Find implementation of SPI.
-     * 
-     * @param rootFinderClass Wrapper class used by end-user, that ultimately
-     *        calls this finder method.
-     * 
-     * @param spiClass Service Provider Interface Class.
-     * 
-     * @return Instance of a class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, if the class cannot be loaded, or if
-     *            the resulting class does not implement the SPI.
-     */
-    public static Object find(Class rootFinderClass, Class spiClass)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass,
-                    spiClass,
-                    DiscoverClass.nullProperties,
-                    DiscoverClass.nullDefaultImpl);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * 
-     * @param rootFinderClass Wrapper class used by end-user, that ultimately
-     *        calls this finder method.
-     * 
-     * @param spiClass Service Provider Interface Class.
-     * 
-     * @param properties Used to determine name of SPI implementation,
-     *                   and passed to implementation.init() method if
-     *                   implementation implements Service interface.
-     * 
-     * @return Instance of a class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, if the class cannot be loaded and
-     *            instantiated, or if the resulting class does not implement
-     *            (or extend) the SPI.
-     */
-    public static Object find(Class rootFinderClass, Class spiClass, Properties properties)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass,
-                    spiClass,
-                    properties,
-                    DiscoverClass.nullDefaultImpl);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * 
-     * @param rootFinderClass Wrapper class used by end-user, that ultimately
-     *        calls this finder method.
-     * 
-     * @param spiClass Service Provider Interface Class.
-     * 
-     * @param defaultImpl Default implementation name.
-     * 
-     * @return Instance of a class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, if the class cannot be loaded and
-     *            instantiated, or if the resulting class does not implement
-     *            (or extend) the SPI.
-     */
-    public static Object find(Class rootFinderClass, Class spiClass, String defaultImpl)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass,
-                    spiClass,
-                    DiscoverClass.nullProperties,
-                    defaultImpl);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * 
-     * @param rootFinderClass Wrapper class used by end-user, that ultimately
-     *        calls this finder method.
-     * 
-     * @param spiClass Service Provider Interface Class.
-     * 
-     * @param properties Used to determine name of SPI implementation,
-     *                   and passed to implementation.init() method if
-     *                   implementation implements Service interface.
-     * 
-     * @param defaultImpl Default implementation.
-     * 
-     * @return Instance of a class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, if the class cannot be loaded and
-     *            instantiated, or if the resulting class does not implement
-     *            (or extend) the SPI.
-     */
-    public static Object find(Class rootFinderClass,
-                              Class spiClass,
-                              Properties properties,
-                              String defaultImpl)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass,
-                    DiscoverClass.nullGroupContext,
-                    spiClass,
-                    properties,
-                    defaultImpl);
-    }
-    
-    /**
-     * Find implementation of SPI.
-     * 
-     * @param rootFinderClass Wrapper class used by end-user, that ultimately
-     *        calls this finder method.
-     * 
-     * @param spiClass Service Provider Interface Class.
-     * 
-     * @param propertiesFileName The property file name.
-     * 
-     * @param defaultImpl Default implementation.
-     * 
-     * @return Instance of a class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, if the class cannot be loaded and
-     *            instantiated, or if the resulting class does not implement
-     *            (or extend) the SPI.
-     */    
-    public static Object find(Class rootFinderClass,
-                              Class spiClass,
-                              String propertiesFileName,
-                              String defaultImpl)
-        throws DiscoveryException
-    {
-        return find(rootFinderClass,
-                    DiscoverClass.nullGroupContext,
-                    spiClass,
-                    propertiesFileName,
-                    defaultImpl);
-    }
-
-    /**
-     * Find implementation of SPI.
-     * 
-     * @param rootFinderClass Wrapper class used by end-user, that ultimately
-     *        calls this finder method.
-     * 
-     * @param groupContext qualifier for the property file name and for
-     *        the system property name used to find the service implementation.
-     *        If not found, the unqualified names are used.
-     * 
-     * @param spiClass Service Provider Interface Class.
-     * 
-     * @param properties Used to determine name of SPI implementation,
-     *                   and passed to implementation.init() method if
-     *                   implementation implements Service interface.
-     * 
-     * @param defaultImpl Default implementation.
-     * 
-     * @return Instance of a class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, if the class cannot be loaded and
-     *            instantiated, or if the resulting class does not implement
-     *            (or extend) the SPI.
-     */    
-    public static Object find(Class rootFinderClass,
-                              String groupContext,
-                              Class spiClass,
-                              Properties properties,
-                              String defaultImpl)
-        throws DiscoveryException
-    {
-        try {
-            return find(new Environment(groupContext, rootFinderClass),
-                        new SPInterface(spiClass),
-                        properties,
-                        new ImplClass(defaultImpl));
-        } catch (DiscoveryException de) {
-            throw de;
-        } catch (Exception e) {
-            throw new DiscoveryException("Unable to create class " + spiClass.getName(), e);
-        }
-    }
-
-    /**
-     * Find implementation of SPI.
-     * 
-     * @param rootFinderClass Wrapper class used by end-user, that ultimately
-     *        calls this finder method.
-     * 
-     * @param groupContext qualifier for the property file name and for
-     *        the system property name used to find the service implementation.
-     *        If not found, the unqualified names are used.
-     * 
-     * @param spiClass Service Provider Interface Class.
-     * 
-     * @param propertiesFileName The property file name.
-     * 
-     * @param defaultImpl Default implementation.
-     * 
-     * @return Instance of a class implementing the SPI.
-     * 
-     * @exception DiscoveryException Thrown if the name of a class implementing
-     *            the SPI cannot be found, if the class cannot be loaded and
-     *            instantiated, or if the resulting class does not implement
-     *            (or extend) the SPI.
-     */    
-    public static Object find(Class  rootFinderClass,
-                              String groupContext,
-                              Class  spiClass,
-                              String propertiesFileName,
-                              String defaultImpl)
-        throws DiscoveryException
-    {
-        try {
-            return find(new Environment(groupContext, rootFinderClass),
-                        new SPInterface(spiClass),
-                        propertiesFileName,
-                        new ImplClass(defaultImpl));
-        } catch (DiscoveryException de) {
-            throw de;
-        } catch (Exception e) {
-            throw new DiscoveryException("Unable to create class " + spiClass.getName(), e);
-        }
-    }
-
-    /**
-     * Find implementation of SPI.
+     * Find implementation of SPI.  Unless you are writing a factory/helper
+     * method, you probabaly don't need to use this method.
      * 
      * @param rootFinderClass Wrapper class used by end-user, that ultimately
      *        calls this finder method.
@@ -714,11 +492,7 @@ public class DiscoverSingleton {
                               SPInterface spi,
                               Properties properties,
                               ImplClass defaultImpl)
-        throws DiscoveryException,
-               InstantiationException,
-               IllegalAccessException,
-               NoSuchMethodException,
-               InvocationTargetException
+        throws DiscoveryException
     {
         /**
          * Return previously registered service object (not class)
@@ -729,14 +503,20 @@ public class DiscoverSingleton {
                              spi.getSPName());
 
         if (service == null) {
-            service =
-                DiscoverClass.newInstance(env, spi, properties, defaultImpl);
-
-            if (service != null) {
-                put(env.getThreadContextClassLoader(),
-                    env.getGroupContext(),
-                    spi.getSPName(),
-                    service);
+            try {
+                service =
+                    DiscoverClass.newInstance(env, spi, properties, defaultImpl);
+    
+                if (service != null) {
+                    put(env.getThreadContextClassLoader(),
+                        env.getGroupContext(),
+                        spi.getSPName(),
+                        service);
+                }
+            } catch (DiscoveryException de) {
+                throw de;
+            } catch (Exception e) {
+                throw new DiscoveryException("Unable to instantiate implementation for " + spi.getSPName(), e);
             }
         }
 
@@ -744,7 +524,8 @@ public class DiscoverSingleton {
     }
 
     /**
-     * Find implementation of SPI.
+     * Find implementation of SPI.  Unless you are writing a factory/helper
+     * method, you probabaly don't need to use this method.
      * 
      * @param rootFinderClass Wrapper class used by end-user, that ultimately
      *        calls this finder method.
@@ -770,11 +551,7 @@ public class DiscoverSingleton {
                               SPInterface spi,
                               String propertiesFileName,
                               ImplClass defaultImpl)
-        throws DiscoveryException,
-               InstantiationException,
-               IllegalAccessException,
-               NoSuchMethodException,
-               InvocationTargetException
+        throws DiscoveryException
     {
         /**
          * Return previously registered service object (not class)
@@ -785,16 +562,22 @@ public class DiscoverSingleton {
                              spi.getSPName());
 
         if (service == null) {
-            service = DiscoverClass.newInstance(env,
-                                                spi,
-                                                propertiesFileName,
-                                                defaultImpl);
-
-            if (service != null) {
-                put(env.getThreadContextClassLoader(),
-                    env.getGroupContext(),
-                    spi.getSPName(),
-                    service);
+            try {
+                service = DiscoverClass.newInstance(env,
+                                                    spi,
+                                                    propertiesFileName,
+                                                    defaultImpl);
+    
+                if (service != null) {
+                    put(env.getThreadContextClassLoader(),
+                        env.getGroupContext(),
+                        spi.getSPName(),
+                        service);
+                }
+            } catch (DiscoveryException de) {
+                throw de;
+            } catch (Exception e) {
+                throw new DiscoveryException("Unable to instantiate implementation class for " + spi.getSPName(), e);
             }
         }
 
@@ -802,7 +585,7 @@ public class DiscoverSingleton {
     }
 
     
-    /************************* SPI LIFE-CYCLE SUPPORT *************************/
+    /********************** CACHE-MANAGEMENT SUPPORT **********************/
     
     /**
      * Release all internal references to previously created service
@@ -908,7 +691,7 @@ public class DiscoverSingleton {
      * <code>release()</code>.
      */
     public static void release(Class spiClass) {
-        release(DiscoverClass.nullGroupContext, spiClass);
+        release(Environment.defaultGroupContext, spiClass);
     }
     
     

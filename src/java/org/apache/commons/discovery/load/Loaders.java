@@ -173,22 +173,6 @@ public class Loaders {
     }
     
     /**
-     * MAGIC: as in, I don't have a clue how to go about this...
-     * SecurityManager.getClassContext() is out of reach at best,
-     * and getting to it in a J2EE environment is likely to be beyond
-     * hopeless....
-     * 
-     * If the caller class loader is the bootstrap classloader, then
-     * it is 'wrapped' (see BootstrapLoader).  Therefore this method
-     * only returns 'null' if a caller class loader could not
-     * be identified.
-     * 
-     */
-    private static final ClassLoader getCallerClassLoader(Class rootFinderClass) {
-        return null;
-    }
-
-    /**
      * List of 'system' class loaders to the SPI.
      * The last should always return a non-null loader, so we
      * always (?!) have a list of at least one classloader.
@@ -204,7 +188,9 @@ public class Loaders {
     private final ClassLoader[] createAppLoaders() {
         return ClassLoaderUtils.compactUniq(
                 new ClassLoader[] {env.getThreadContextClassLoader(),
-                                   getCallerClassLoader(env.getRootDiscoveryClass()),
+                                   (env.getCallingClass() == null)
+                                       ? null
+                                       : env.getCallingClass().getClassLoader(),
                                    spiClass.getClassLoader(),
                                    env.getRootDiscoveryClass().getClassLoader(),
                                    ClassLoaderUtils.getSystemClassLoader()

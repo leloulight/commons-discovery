@@ -61,6 +61,7 @@
 
 package org.apache.commons.discovery.base;
 
+import org.apache.commons.discovery.DiscoverClass;
 import org.apache.commons.discovery.load.ClassLoaderUtils;
 
 
@@ -73,6 +74,14 @@ import org.apache.commons.discovery.load.ClassLoaderUtils;
  */
 public class Environment {
     /**
+     * Readable placeholder for a null value.
+     */
+    public static final String     defaultGroupContext = null;
+    
+    public static final Class      defaultRootDiscoveryClass
+        = DiscoverClass.class;
+
+    /**
      * Thread context class loader or null if not available (JDK 1.1).
      * Wrapped bootstrap classloader if classLoader == null.
      */
@@ -82,10 +91,37 @@ public class Environment {
     private final String groupContext;
 
     private final Class rootDiscoveryClass;
+    private final Class callingClass;
+    
+    public Environment(Class rootDiscoveryClass) {
+        this(defaultGroupContext, rootDiscoveryClass, defaultRootDiscoveryClass);
+    }
     
     public Environment(String groupContext, Class rootDiscoveryClass) {
+        this(groupContext, rootDiscoveryClass, defaultRootDiscoveryClass);
+    }
+    
+    public Environment(String groupContext,
+                       Class rootDiscoveryClass,
+                       Class callingClass) {
         this.groupContext = groupContext;
-        this.rootDiscoveryClass = rootDiscoveryClass;
+
+        this.rootDiscoveryClass =
+            (rootDiscoveryClass == null)
+            ? defaultRootDiscoveryClass
+            : rootDiscoveryClass;
+
+        /**
+         * Default to rootDiscoveryClass only if
+         * rootDiscoveryClass != defaultRootDiscoveryClass
+         * (otherwise it changes classloader order, see load.Loaders).
+         * MAY BE NULL.
+         */
+        this.callingClass =
+            (callingClass == null  &&
+             rootDiscoveryClass != defaultRootDiscoveryClass)
+            ? rootDiscoveryClass
+            : callingClass;
     }
     
     public ClassLoader getThreadContextClassLoader() {
@@ -98,5 +134,12 @@ public class Environment {
     
     public Class getRootDiscoveryClass() {
         return rootDiscoveryClass;
+    }
+
+    /**
+     * May be null
+     */    
+    public Class getCallingClass() {
+        return callingClass;
     }
 }
