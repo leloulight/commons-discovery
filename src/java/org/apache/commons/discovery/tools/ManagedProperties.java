@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.discovery.jdk.JDKHooks;
+import org.apache.commons.discovery.log.DiscoveryLogFactory;
+import org.apache.commons.logging.Log;
 
 
 
@@ -76,6 +78,11 @@ import org.apache.commons.discovery.jdk.JDKHooks;
  * @author Richard A. Sitze
  */
 public class ManagedProperties {
+    private static Log log = DiscoveryLogFactory.newLog(ManagedProperties.class);
+    public static void setLog(Log _log) {
+        log = _log;
+    }
+
     /**
      * Cache of Properties, keyed by (thread-context) class loaders.
      * Use <code>HashMap</code> because it allows 'null' keys, which
@@ -120,6 +127,9 @@ public class ManagedProperties {
             if (val != null) {
                 value = val.value;
             }
+        } else if (log.isDebugEnabled()) {
+            log.debug("found System property '" + propertyName + "'" +
+                      " with value '" + value + "'.");
         }
         return value;
     }
@@ -314,8 +324,15 @@ public class ManagedProperties {
                         
                         // set value only if override exists..
                         // otherwise pass default (or null) on..
-                        if (altValue != null)
+                        if (altValue != null) {
                             value = altValue;
+
+                            if (log.isDebugEnabled()) {
+                                log.debug("found Managed property '" + propertyName + "'" +
+                                          " with value '" + value + "'" +
+                                          " bound to classloader " + classLoader + ".");
+                            }
+                        }
                     }
                 }
             }
