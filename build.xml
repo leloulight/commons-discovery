@@ -36,7 +36,7 @@
   <property name="component.title"         value="Service Discovery"/>
 
   <!-- The current version number of this component -->
-  <property name="component.version"       value="1.0-RC1"/>
+  <property name="component.version"       value="0.1"/>
 
   <!-- The base directory for compilation targets -->
   <property name="build.home"              value="target"/>
@@ -165,8 +165,7 @@
              tofile="${build.home}/classes/META-INF/LICENSE.txt"/>
     <jar    jarfile="${dist.home}/commons-${component.name}.jar"
             basedir="${build.home}/classes"
-           manifest="${build.home}/conf/MANIFEST.MF"
-           excludes="org/apache/commons/logging/**"/>
+           manifest="${build.home}/conf/MANIFEST.MF"/>
   </target>
 
 <!-- ========== Testing section ======================================== -->
