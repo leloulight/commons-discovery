@@ -1,5 +1,5 @@
 /*
- * $Header: /home/cvs/jakarta-commons/logging/src/test/org/apache/commons/logging/TestAll.java,v 1.2 2002/01/17 22:55:43 rdonkin Exp $
+ * $Header$
  * $Revision: 1.2 $
  * $Date: 2002/01/17 22:55:43 $
  *
@@ -61,25 +61,22 @@
  
  
 package org.apache.commons.discovery;
+
+
 import java.util.Properties;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.LogFactoryImpl;
 import org.apache.commons.logging.impl.SimpleLog;
 
-import junit.framework.*;
-
 
 /**
-  * <p> The build script calls just one <code>TestSuite</code> - this one!
-  * All tests should be written into separate <code>TestSuite</code>'s
-  * and added to this. Don't clutter this class with implementations. </p>
-  *
-  * <p> This class is based on <code>org.apache.commons.betwixt.TestAll</code> 
-  * coded by James Strachan. </p>
-  *
-  * @author Robert Burrell Donkin
+  * @author Richard A. Sitze
   * @version $Revision: 1.2 $
  */
 public class TestAll extends TestCase {
