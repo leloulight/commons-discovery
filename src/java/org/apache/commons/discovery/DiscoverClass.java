@@ -67,7 +67,9 @@ import java.util.Properties;
 import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.base.SPInterface;
+import org.apache.commons.discovery.strategy.DefaultDiscoverStrategy;
 import org.apache.commons.discovery.strategy.DefaultLoadStrategy;
+import org.apache.commons.discovery.strategy.DiscoverStrategy;
 import org.apache.commons.discovery.strategy.LoadStrategy;
 
 
@@ -488,8 +490,10 @@ public class DiscoverClass {
     public static Class find(Environment env, SPInterface spi, Properties properties, ImplClass defaultImpl)
         throws DiscoveryException
     {
-        LoadStrategy strategy = new DefaultLoadStrategy(env, spi);
-        return strategy.loadClass(properties, defaultImpl).getImplClass();
+        LoadStrategy loadStrategy = new DefaultLoadStrategy(env, spi);
+        DiscoverStrategy discoverStrategy = new DefaultDiscoverStrategy();
+        String className = discoverStrategy.discoverClassName(env, spi, properties);
+        return loadStrategy.loadClass(className, defaultImpl).getImplClass();
     }
     
     /**
@@ -522,9 +526,13 @@ public class DiscoverClass {
     public static Class find(Environment env, SPInterface spi, String propertiesFileName, ImplClass defaultImpl)
         throws DiscoveryException
     {
-        LoadStrategy strategy = new DefaultLoadStrategy(env, spi);
-        return strategy.loadClass(strategy.loadProperties(propertiesFileName),
-                                  defaultImpl).getImplClass();
+        LoadStrategy loadStrategy = new DefaultLoadStrategy(env, spi);
+        DiscoverStrategy discoverStrategy = new DefaultDiscoverStrategy();
+        String className =
+            discoverStrategy.discoverClassName(env, spi,
+                    loadStrategy.loadProperties(propertiesFileName));
+
+        return loadStrategy.loadClass(className, defaultImpl).getImplClass();
     }
     
     /**
@@ -768,8 +776,10 @@ public class DiscoverClass {
                NoSuchMethodException,
                InvocationTargetException
     {
-        LoadStrategy strategy = new DefaultLoadStrategy(env, spi);
-        return strategy.loadClass(properties, defaultImpl).newInstance();
+        LoadStrategy loadStrategy = new DefaultLoadStrategy(env, spi);
+        DiscoverStrategy discoverStrategy = new DefaultDiscoverStrategy();
+        String className = discoverStrategy.discoverClassName(env, spi, properties);
+        return loadStrategy.loadClass(className, defaultImpl).newInstance();
     }
     
     /**
@@ -810,8 +820,11 @@ public class DiscoverClass {
                NoSuchMethodException,
                InvocationTargetException
     {
-        LoadStrategy strategy = new DefaultLoadStrategy(env, spi);
-        Properties properties = strategy.loadProperties(propertiesFileName);
-        return strategy.loadClass(properties, defaultImpl).newInstance();
+        LoadStrategy loadStrategy = new DefaultLoadStrategy(env, spi);
+        DiscoverStrategy discoverStrategy = new DefaultDiscoverStrategy();
+        String className =
+            discoverStrategy.discoverClassName(env, spi,
+                    loadStrategy.loadProperties(propertiesFileName));
+        return loadStrategy.loadClass(className, defaultImpl).newInstance();
     }
 }

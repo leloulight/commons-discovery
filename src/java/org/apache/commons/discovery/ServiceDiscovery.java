@@ -99,7 +99,7 @@ public class ServiceDiscovery extends ResourceDiscovery
     
     /** Construct a new service discoverer
      */
-    protected ServiceDiscovery() {
+    public ServiceDiscovery() {
         super();
     }
     

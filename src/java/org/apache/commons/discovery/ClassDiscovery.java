@@ -81,7 +81,7 @@ public class ClassDiscovery extends ResourceDiscovery
     
     /** Construct a new class discoverer
      */
-    protected ClassDiscovery() {
+    public ClassDiscovery() {
     }
     
     /** Construct a new class discoverer

@@ -88,7 +88,7 @@ public interface LoadStrategy {
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, or if the class cannot be loaded.
      */
-    public ImplClass loadClass(Properties properties, ImplClass defaultImpl)
+    public ImplClass loadClass(String ClassName, ImplClass defaultImpl)
         throws DiscoveryException;
     
     /**

@@ -92,7 +92,7 @@ public class ServiceDiscoveryTask
     public void execute() throws Exception {
         System.out.println("XXX ");
         
-        ResourceDiscovery disc=ResourceDiscovery.newInstance();
+        ResourceDiscovery disc = new ResourceDiscovery();
         disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
         disc.addClassLoader( this.getClass().getClassLoader() );
         

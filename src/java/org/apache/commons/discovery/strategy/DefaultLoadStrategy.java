@@ -159,12 +159,9 @@ public class DefaultLoadStrategy implements LoadStrategy {
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, or if the class cannot be loaded.
      */
-    public ImplClass loadClass(Properties properties, ImplClass defaultImpl)
+    public ImplClass loadClass(String className, ImplClass defaultImpl)
         throws DiscoveryException
     {
-        String className =
-            discoverStrategy.discoverClassName(env, spi, properties);
-
         ImplClass implClass = null;
 
         if (className != null) {

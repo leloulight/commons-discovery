@@ -61,13 +61,12 @@
 
 package org.apache.commons.discovery.strategy;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.apache.commons.discovery.ResourceInfo;
+import org.apache.commons.discovery.ServiceDiscovery;
 import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.SPInterface;
 import org.apache.commons.discovery.tools.ManagedProperties;
@@ -90,13 +89,6 @@ import org.apache.commons.discovery.tools.ManagedProperties;
 public class DefaultDiscoverStrategy
     implements DiscoverStrategy
 {
-    /**
-     * JDK1.3+ 'Service Provider' specification 
-     * ( http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html )
-     */
-    private static final String SERVICE_HOME = "META-INF/services/";
-
-
     /**
      * <p>Discover names of SPI implementation Classes.
      * The names are the non-null values, in order, obtained from the following
@@ -154,10 +146,11 @@ public class DefaultDiscoverStrategy
 
         // Last, try to find a service by using the JDK1.3 jar
         // discovery mechanism.
-        className = getJDK13ClassName(env.getThreadContextClassLoader(), spiName);
-        if (className != null) return className;
-
-        return null;
+        Enumeration classNames = getJDK13ClassNames(env.getThreadContextClassLoader(), spiName);
+        if (classNames.hasMoreElements()) {
+            className = ((ResourceInfo)classNames.nextElement()).getResourceName();
+        }
+        return className;
     }
 
     /**
@@ -217,8 +210,11 @@ public class DefaultDiscoverStrategy
 
         // Last, try to find a service by using the JDK1.3 jar
         // discovery mechanism.
-        className = getJDK13ClassName(env.getThreadContextClassLoader(), spiName);
-        if (className != null) names.addElement(className);
+        Enumeration classNames = getJDK13ClassNames(env.getThreadContextClassLoader(), spiName);
+        while (classNames.hasMoreElements()) {
+            className = ((ResourceInfo)classNames.nextElement()).getResourceName();
+            if (className != null) names.addElement(className);
+        }
 
         String[] results = new String[names.size()];
         names.copyInto(results);        
@@ -253,42 +249,10 @@ public class DefaultDiscoverStrategy
      * placing it in the META-INF/services directory of the webapp
      * (or in CLASSPATH or equivalent).
      */
-    public static String getJDK13ClassName(ClassLoader classLoader, String spiName) {
-        String serviceImplName = null;
-
-        // Name of J2EE application file that identifies the service implementation.
-        String servicePropertyFile = SERVICE_HOME + spiName;
-
-        InputStream is = (classLoader == null
-                          ? ClassLoader.getSystemResourceAsStream(servicePropertyFile)
-                          : classLoader.getResourceAsStream(servicePropertyFile));
-
-        if( is != null ) {
-            try {
-                try {
-                    // This code is needed by EBCDIC and other strange systems.
-                    // It's a fix for bugs reported in xerces
-                    BufferedReader rd;
-                    
-                    try {
-                        rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                    } catch (java.io.UnsupportedEncodingException e) {
-                        rd = new BufferedReader(new InputStreamReader(is));
-                    }
-                        
-                    try {
-                        serviceImplName = rd.readLine();
-                    } finally {
-                        rd.close();
-                    }
-                } finally {
-                    is.close();
-                }
-            } catch (IOException ioe) {
-                ; // ignore
-            }
-        }
-        
-        return serviceImplName;
+    public static Enumeration getJDK13ClassNames(ClassLoader classLoader,
+                                                 String spiName) {
+        ServiceDiscovery serviceDiscovery = new ServiceDiscovery();
+        serviceDiscovery.addClassLoader(classLoader);
+        return serviceDiscovery.findResources(spiName);
     }
 }

@@ -99,15 +99,6 @@ public class ResourceDiscovery
     }
 
     /**
-     * @deprecated
-     */
-    public static ResourceDiscovery newInstance() {
-        // This is _not_ singleton.
-        return new ResourceDiscovery();
-        // XXX Check if JDK1.1 is used no longer necessary.
-    }
-
-    /**
      * Specify set of class loaders to be used in searching.
      */
     public void setClassLoaders(ClassLoaders loaders) {
