@@ -225,12 +225,12 @@ public class DefaultLoadStrategy implements LoadStrategy {
                         ? null
                         : ClassLoaderUtils.getResourceAsStream(packageName,
                                   env.getGroupContext() + "." + propertiesFileName,
-                                  appLoaders);
+                                  getAppLoaders());
         
                 if (stream == null)
                     stream = ClassLoaderUtils.getResourceAsStream(packageName,
                                                                   propertiesFileName,
-                                                                  appLoaders);
+                                                                  getAppLoaders());
     
                 if (stream != null) {
                     properties = new Properties();

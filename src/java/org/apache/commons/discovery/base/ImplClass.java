@@ -76,12 +76,12 @@ public class ImplClass {
 
     private final String implName;
 
-    private Class spiClass;
+    private final Class spiClass;
     
     private Class implClass;
     
-    private Class  paramClasses[] = null;
-    private Object params[] = null;
+    private final Class  paramClasses[];
+    private final Object params[];
 
 
     /**
@@ -101,6 +101,7 @@ public class ImplClass {
               Class constructorParamClasses[],
               Object constructorParams[])
     {
+        this.spiClass = spiClass;
         this.implName = implName;
         this.implClass = null;
         this.paramClasses = constructorParamClasses;
@@ -124,6 +125,7 @@ public class ImplClass {
               Class constructorParamClasses[],
               Object constructorParams[])
     {
+        this.spiClass = spiClass;
         this.implName = (implClass != null) ? implClass.getName() : null;
         this.implClass = implClass;
         this.paramClasses = constructorParamClasses;
