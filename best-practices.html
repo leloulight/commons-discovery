@@ -1,0 +1,237 @@
+<html>
+<head>
+<title>Best Practices for using Jakarta Commons "Discovery" Component</title>
+<head>
+<body bgcolor="white">
+
+
+<div align="center">
+<h1>Best Practices for using Jakarta Commons "Discovery" Component</h1>
+$Id$<br />
+<a href="#Introduction">[Introduction]</a>
+<a href="#Integrating into Factories : Wrapping">[Integrating into Factories : Wrapping]</a>
+<a href="#Calling Directly">[Calling Directly]</a>
+<a href="#Service Life Cycle Management">[Service Life Cycle Management]</a>
+<br /><br />
+</div>
+
+
+<a name="Introduction"></a>
+<h3>1.  INTRODUCTION</h3>
+
+Best-practices are discussed.
+See the javadoc for detail on the API,
+where service implementation overrides are looked for,
+the order in which those places are checked,
+which classloaders are used,
+and the order in which they are used.
+
+
+<a name="Integrating into Factories : Wrapping"></a>
+<h3>2.  INTEGRATING INTO FACTORIES : WRAPPING</h3>
+
+
+<p>In this example, a factory (such as is used in commons-logging)
+internalizes the discovery mechanism, passing appropriate defaults
+for a default properties file and a default implementation.
+In this case, the factory plays double duty as both the service
+to be discovered (abstract class), and the discovery mechanism.
+</p>
+
+<p>Note the javadoc in the example below which explains
+the parameters.</p>
+
+<ul>
+<code>
+import java.util.Properties;<br>
+import org.apache.commons.discovery.Discovery;<br>
+import org.apache.commons.discovery.DiscoveryException;<br>
+<br>
+public abstract class LogFactory<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;protected static final String FACTORY_DEFAULT =<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;org.apache.commons.logging.impl.DefaultLogFactory.class.getName();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;protected static final String FACTORY_PROPERTIES =<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"commons-logging.properties";<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;/**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Protected constructor that is not available for public use.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;protected LogFactory() { }<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;/**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Locate and construct LogFactory using discovery logic.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * The first parameter is the <code>rootFinderClass</code> which is<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * the interface/class representing the wrapper/factory, or this class.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * This allows <code>Discovery.find()</code> to identify an appropriate<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * class loader where it can expect to find an implementation (default<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * class loader at a minimum, in this case).<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * The second parameter is the <code>spi</code> or service provider<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * interface for which an implementation is desired.  In this case, both<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * the factory and spi are represented by the same (abstract) class.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * The third parameter is the name of a properties file which will be<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * loaded.  It may be used to attempt to find a property specifying the<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * service implementation (property named <code>LogFactory.class.getName()</code>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * The fourth parameter is the name of a default implementation class.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @exception DiscoveryException if the implementation class is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *            available or cannot be instantiated.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public static LogFactory getFactory() throws ServiceException<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return (LogFactory)Discovery.find(LogFactory.class,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LogFactory.class,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FACTORY_PROPERTIES,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FACTORY_DEFAULT);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;/**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Locate and construct LogFactory using discovery logic.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param properties use properties instead of FACTORY_PROPERTIES default<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *        for discovery.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @exception DiscoveryException if the implementation class is not<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *            available or cannot be instantiated.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public static LogFactory getFactory(Properties properties)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throws ServiceException<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return (LogFactory)Discovery.find(LogFactory.class,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LogFactory.class,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;properties,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FACTORY_DEFAULT);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+</code>
+</ul>
+ 
+<a name="Calling Directly"></a>
+<h3>3.  CALLING DIRECTLY</h3>
+
+
+<p>In these examples, the discovery is called directly a 'user'.
+</p>
+
+<ul>
+<code>
+&nbsp;&nbsp;&nbsp;&nbsp;/**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Locate and construct LogFactory using discovery logic.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * The first parameter is the <code>spi</code> or service provider<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * interface for which an implementation is desired.  In this case, both<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * the factory and spi are represented by the same (abstract) class.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * The second parameter is the name of a properties file which will be<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * loaded.  It may be used to attempt to find a property specifying the<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * service implementation (property named <code>LogFactory.class.getName()</code>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * The third parameter is the name of a default implementation class.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;LogFactory factory = (LogFactory)Discovery.find(LogFactory.class,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;LogFactory.FACTORY_PROPERTIES,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;LogFactory.FACTORY_DEFAULT);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;/**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Locate and construct LogFactory using discovery logic.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Use <code>properties</code> instead of FACTORY_PROPERTIES default<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * for discovery.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;LogFactory factory = (LogFactory)Discovery.find(LogFactory.class,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;properties,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LogFactory.FACTORY_DEFAULT);<br>
+</code>
+</ul>
+
+<a name="Service Life Cycle Management"></a>
+<h3>4.  SERVICE LIFE CYCLE MANAGEMENT</h3>
+
+<p>Discovery supports life-cycle management through the <code>Service</code> interface.
+If service implementation implements
+the <code>Service</code> interface then an <code>init(Properties)</code>
+method is invoked when the class in created by Discovery.
+Likewise, a <code>release()</code> method is invoked when Discovery
+removes the service from it's internal cache.
+</p>
+
+<p>Our example LogFactory (acting as both a factory and an SPI)
+might be extended as follows:
+
+<ul>
+<code>
+<b>import org.apache.commons.discovery.Service;</b><br>
+<br>
+public abstract class LogFactory <b>implements Service</b><br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;. . .<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>public abstract void init(Properties properties);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public abstract void release();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;/**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Release any internal references to previously created {@link LogFactory}<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * instances, after calling the instance method <code>release()</code> on<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * each of them.  This is useful environments like servlet containers,<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * which implement application reloading by throwing away a ClassLoader.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Dangling references to objects in that class loader would prevent<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * garbage collection.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public static void releaseAll() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Discovery.releaseAll(LogFactory.class);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</b><br>
+}<br>
+</code>
+</ul>
+
+<p>An example of how the properties might be used:
+</p>
+<ul>
+<code>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public void init(Properties properties) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (properties != null) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enumeration names = properties.propertyNames();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (names.hasMoreElements()) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String name = (String)names.nextElement();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setAttribute(name, properties.getProperty(name));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public abstract void setAttribute(String name, Object value);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public abstract Object getAttribute(String name);<br>
+</code>
+</ul>
+
+
+</body>
+</html>
