@@ -1,0 +1,19 @@
+1.  Figure out magic incantation for
+    ClassLoader ClassFinder::getCallerClassLoader(Class rootFinderClass)
+
+2.  Discovery::releaseAll() logic is broken.
+    The goal is to allow a servlet to release SPI's that it owns,
+    but NOT SPI's owned by other servlets (discovery is/could be shared
+    in an appserver environment).  Currently we release everything...
+    Perhaps change 'groupContext' from a String to an Object...
+    and let such environs pass in a class instance (any class instance)
+    which could be guarenteed to be unique..  more thoughts required.
+    
+    What we really want is release by classLoaders...
+    which classloaders??
+
+3.  ?Caching by groupContext... what happens if two apps in an
+    appServer use the same groupContext.  I think this is OK, need
+    to document analysis..
+    
+4.  Jakarta Web site for commons subproject
