@@ -63,22 +63,27 @@
 package org.apache.commons.discovery.test;
 
 
+import java.net.URL;
 import java.util.Properties;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.commons.discovery.Resource;
 import org.apache.commons.discovery.ResourceClass;
 import org.apache.commons.discovery.ResourceClassIterator;
+import org.apache.commons.discovery.ResourceIterator;
+import org.apache.commons.discovery.jdk.JDKHooks;
+import org.apache.commons.discovery.resource.ClassLoaders;
+import org.apache.commons.discovery.resource.DiscoverResources;
+import org.apache.commons.discovery.resource.classes.DiscoverClasses;
 import org.apache.commons.discovery.tools.DefaultClassHolder;
 import org.apache.commons.discovery.tools.DiscoverClass;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.discovery.tools.PropertiesHolder;
 import org.apache.commons.discovery.tools.SPInterface;
-import org.apache.commons.discovery.resource.ClassLoaders;
-import org.apache.commons.discovery.resource.classes.DiscoverClasses;
 
 
 /**
@@ -88,6 +93,7 @@ import org.apache.commons.discovery.resource.classes.DiscoverClasses;
 public class TestAll extends TestCase {
     private static final int logLevel =
         org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_INFO;
+//        org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_DEBUG;
 
     
     public TestAll(String testName) {
@@ -243,7 +249,6 @@ public class TestAll extends TestCase {
     }
 
     public void testFindServiceFileDefault() {
-//        org.apache.commons.discovery.log.SimpleLog.setLevel(org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_DEBUG);
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface2 ti = null;
@@ -262,6 +267,8 @@ public class TestAll extends TestCase {
     }
 
     public void testLowLevelFind() {
+        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
+
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
         String name = "org.apache.commons.discovery.test.TestImpl2_1";
         
@@ -280,11 +287,56 @@ public class TestAll extends TestCase {
                 fail("Could not load service: " + resource );
             }
         }
-        fail("failed to load resource: " + name);
+        fail("failed to load class resource: " + name);
+    }
+    
+    public void testFindResources() {
+        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
+
+        ClassLoaders loaders = new ClassLoaders();
+
+        /**
+         * To many class loaders when searching for multiple
+         * resources means that we can find the same (same URL)
+         * resource for each loader...
+         * let's keep this to a minimum.
+         */
+        ClassLoader cl = getClass().getClassLoader();
+        if (cl != null)
+            loaders.put(getClass().getClassLoader(), true);
+        else
+            loaders.put(JDKHooks.getJDKHooks().getSystemClassLoader(), true);
         
+
+        String name = "testResource";
+        
+        String partialPaths[] = { "/test/", "/testAlt1/", "/testAlt2/" };
+        int expected = partialPaths.length;
+        
+        DiscoverResources discovery = new DiscoverResources(loaders);
+        ResourceIterator iter = discovery.findResources(name);
+        int count = 0;
+        while (iter.hasNext()) {
+            Resource resource = iter.nextResource();
+            URL url = resource.getResource();
+            if ( url != null ) {
+                System.out.println("URL = " + url.toString());
+                
+                if (url.getFile().indexOf(partialPaths[count]) == -1) {
+                    fail("expected to locate URL containing " + partialPaths[count]);
+                }
+                count++;
+            }
+        }
+        
+        if (count != expected) {
+            fail("located " + count + " resources, failed to locate all " + expected + " resources: " + name);
+        }
     }
 
     public void testViaDiscoverClass() {
+        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
+
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
         
         DiscoverClass discover = new DiscoverClass(loaders);

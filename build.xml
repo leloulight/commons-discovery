@@ -74,7 +74,12 @@
   <!-- Construct unit test classpath -->
   <path id="test.classpath">
     <pathelement location="${build.home}/classes"/>
-    <pathelement location="${build.home}/tests"/>
+
+    <!-- test depends on the order of the following 3 lines: -->
+    <pathelement location="${build.home}/test"/>
+    <pathelement location="${build.home}/testAlt1"/>
+    <pathelement location="${build.home}/testAlt2"/>
+
     <pathelement location="${logger.jar}"/>
     <pathelement location="${junit.jar}"/>
   </path>
@@ -102,7 +107,7 @@
     <mkdir dir="${build.home}/conf"/>
     <mkdir dir="${build.home}/docs"/>
     <mkdir dir="${build.home}/docs/api"/>
-    <mkdir dir="${build.home}/tests"/>
+    <mkdir dir="${build.home}/test"/>
     <tstamp/>
     <copy todir="${build.home}/conf" filtering="on">
       <fileset dir="${conf.home}" includes="*.MF"/>
@@ -172,14 +177,20 @@
 
   <target name="compile.tests" depends="compile" description="Compile unit test cases">
     <javac  srcdir="${test.home}"
-           destdir="${build.home}/tests"
+           destdir="${build.home}/test"
              debug="${compile.debug}"
        deprecation="${compile.deprecation}"
           optimize="${compile.optimize}">
       <classpath refid="test.classpath"/>
     </javac>
-    <copy    todir="${build.home}/tests" filtering="on">
+    <copy    todir="${build.home}/test" filtering="on">
       <fileset dir="${test.home}" excludes="**/*.java"/>
+    </copy>
+    <copy    todir="${build.home}/testAlt1" filtering="on">
+      <fileset dir="${test.home}/../testAlt1" excludes="**/*.java"/>
+    </copy>
+    <copy    todir="${build.home}/testAlt2" filtering="on">
+      <fileset dir="${test.home}/../testAlt2" excludes="**/*.java"/>
     </copy>
   </target>
 
