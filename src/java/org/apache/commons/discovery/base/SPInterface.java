@@ -190,7 +190,9 @@ public class SPInterface {
      * if set, the constructor type/object arguments.
      */    
     public ImplClass createImplClass(String className) {
-        return new ImplClass(getSPClass(), className, paramClasses, params);
+        return (className == null)
+               ? null
+               : new ImplClass(getSPClass(), className, paramClasses, params);
     }
 
     /**
@@ -198,6 +200,8 @@ public class SPInterface {
      * if set, the constructor type/object arguments.
      */    
     public ImplClass createImplClass(Class clazz) {
-        return new ImplClass(getSPClass(), clazz, paramClasses, params);
+        return (clazz == null)
+               ? null
+               : new ImplClass(getSPClass(), clazz, paramClasses, params);
     }
 }
