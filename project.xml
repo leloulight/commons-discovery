@@ -99,6 +99,11 @@
       <id>matth</id>
       <email>matth@apache.org</email>
     </developer>
+    <developer>
+      <name>Davanum Srinivas</name>
+      <id>dims</id>
+      <email>dims@apache.org</email>
+    </developer>
   </developers>
 
   <dependencies>
