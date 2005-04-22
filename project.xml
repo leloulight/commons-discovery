@@ -104,6 +104,11 @@
       <id>dims</id>
       <email>dims@apache.org</email>
     </developer>
+    <developer>
+      <name>Rory Winston</name>
+      <id>rwinston</id>
+      <email>rwinston@eircom.net</email>
+    </developer>
   </developers>
 
   <dependencies>
