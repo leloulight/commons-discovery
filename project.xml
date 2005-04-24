@@ -109,6 +109,11 @@
       <id>rwinston</id>
       <email>rwinston@eircom.net</email>
     </developer>
+    <developer>
+      <name>Robert Burrell Donkin</name>
+      <id>rdonkin</id>
+      <email>rdonkin@apache.org</email>
+    </developer>
   </developers>
 
   <dependencies>
