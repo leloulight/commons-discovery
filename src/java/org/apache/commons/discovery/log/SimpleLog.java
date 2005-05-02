@@ -104,6 +104,7 @@ public class SimpleLog implements Log {
             dateFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss:SSS zzz");
         }
 
+        try {
         // set log level from properties
         String lvl = System.getProperty(PROP_LEVEL);
 
@@ -124,6 +125,13 @@ public class SimpleLog implements Log {
         } else if("off".equalsIgnoreCase(lvl)) {
             setLevel(SimpleLog.LOG_LEVEL_OFF);
         }
+      } catch (SecurityException ignored) {
+      //do nothing. We get here if running discovery
+      //under a servlet with restricted security rights, and
+      //cannot read the system property.
+     //In which case, the default is what you get to keep.	
+      }
+
     }
 
     // -------------------------------------------------------- Properties
