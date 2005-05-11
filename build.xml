@@ -42,13 +42,13 @@
 
 
   <!-- The name of this component -->
-  <property name="component.name"          value="discovery"/>
+  <property name="component.name"          value="commons-discovery"/>
 
   <!-- The primary package name of this component -->
   <property name="component.package"       value="org.apache.commons.discovery"/>
 
   <!-- The title of this component -->
-  <property name="component.title"         value="Service Discovery"/>
+  <property name="component.title"         value="Commons Discovery"/>
 
   <!-- The current version number of this component -->
   <property name="component.version"       value="0.3"/>
@@ -113,6 +113,7 @@
     <filter  token="name"                  value="${component.name}"/>
     <filter  token="package"               value="${component.package}"/>
     <filter  token="version"               value="${component.version}"/>
+    <filter  token="title"                 value="${component.title}"/>
   </target>
 
 
@@ -187,7 +188,7 @@
              tofile="${build.home}/classes/META-INF/LICENSE.txt"/>
     <copy      file="NOTICE.txt"
              tofile="${build.home}/classes/META-INF/NOTICE.txt"/>
-    <jar    jarfile="${dist.home}/commons-${component.name}.jar"
+    <jar    jarfile="${dist.home}/${component.name}.jar"
             basedir="${build.home}/classes"
            manifest="${build.home}/conf/MANIFEST.MF"/>
   </target>
