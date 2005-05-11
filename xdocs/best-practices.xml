@@ -36,6 +36,7 @@ $Id$<br />
 
 <subsection name="1.  INTRODUCTION">
 
+<p>
 Best-practices are discussed.
 See the javadoc, starting with <code>DiscoverySingleton</code> and <code>DiscoverClass</code>,
 for detail on the API:
@@ -43,6 +44,7 @@ where service implementations are looked for,
 the order in which those places are checked,
 which classloaders are used,
 and the order in which they are used.
+</p>
 
 
 <a name="Discovery Services"></a>
