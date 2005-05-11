@@ -34,29 +34,59 @@ NEW FEATURES
 
 FILES CHANGED
 =============
-* tools/ManagedProperties.java (132892+)
-* SimpleLog.java
+* tools/ManagedProperties.java
+   --> fix NullPointerException in setProperty method.
+   --> added logging facilities to the class; debug output can now be
+       enabled if desired.
+
+* log/SimpleLog.java
    --> if exception occurs on System.getProperty, use a default instead
      of throwing an exception.
-* ResourceNameIterator - javadoc improvements only
-* DiscoverNamesInManagedProperties
-* DiscoverServiceNames
-* DiscoverNamesInFile
-* ResourceDiscoverImpl
-* DiscoverResources:
+
+* ResourceNameIterator.java
+   --> javadoc improvements only
+
+* resource/names/DiscoverNamesInManagedProperties.java
+  resource/names/DiscoverNamesInFile.java
+   -->Generalize qualification of resource/file-names by prefix/suffix;
+      add new constructors that take prefix and suffix strings
+      for the resource to be located.
+
+* resource/names/DiscoverServiceNames.java
+   -->Generalize qualification of resource/file-names by prefix/suffix.
+
+* resource/ResourceDiscoverImpl.java
+   -->Defer creation of ClassLoaders until we need them, and create a
+      useful default [non-null].
+
+* resource/DiscoverResources:
    --> fix to compile under JDK1.5 (don't use reserved word "enum")
+
 * JDK12Hooks
+   --> PR: Bugzilla Bug 26875
+       Added a try/catch for RuntimeExceptions in JDK12Hooks to avoid 
+       NullPointerExceptions from JBoss' UnifiedClassLoader.  Reloading
+       the Axis webapp after a redepoy of service classes then allows
+       things to work normally.
+   --> made class public (formerly, was package-scope only)
+       In newer JVM/compilers, runtime complains when we try to invoke 
+       setLog on a non-public class.
+
 * JDK11Hooks 
    --> made class public (formerly, was package-scope only)
+       In newer JVM/compilers, runtime complains when we try to invoke 
+       setLog on a non-public class.
 
 BUGS FROM PREVIOUS RELEASE
-==========================
+=========================
 
 Bugzilla Reports Addressed
 ------------------
+* 26875
 
 Fixes without Bugzilla entries
 ------------------------------
+* see section "Files Changed" above.
 
 DEPRECATIONS
 ============
