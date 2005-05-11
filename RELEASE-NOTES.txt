@@ -1,0 +1,64 @@
+$Id$
+
+
+                          Commons Discovery Package
+                                Version 0.3
+                               Release Notes
+
+
+INTRODUCTION
+============
+
+This is a minor bugfix and maintenance release. A few small features have been added.
+New projects are encouraged to use this release of discovery.
+
+IMPORTANT NOTES
+===============
+* The jakarta commons project has migrated to the Subversion version control system
+  (previously, CVS was used). Please see the jakarta commons
+  website for details (http://jakarta.apache.org/commons).
+
+* This release is done under the Apache Public License version 2.0; the
+  previous release was under the APL 1.1. All files have been updated with
+  the new license terms (including many files formerly missing license text).
+
+Dependencies
+=============
+Commons-discovery has no dependencies.
+
+NEW FEATURES
+=============
+* maven build process improved
+* documentation moved from raw html format to xdoc format
+  (best-practices.html, adc-guidelines.html)
+
+FILES CHANGED
+=============
+* tools/ManagedProperties.java (132892+)
+* SimpleLog.java
+   --> if exception occurs on System.getProperty, use a default instead
+     of throwing an exception.
+* ResourceNameIterator - javadoc improvements only
+* DiscoverNamesInManagedProperties
+* DiscoverServiceNames
+* DiscoverNamesInFile
+* ResourceDiscoverImpl
+* DiscoverResources:
+   --> fix to compile under JDK1.5 (don't use reserved word "enum")
+* JDK12Hooks
+* JDK11Hooks 
+   --> made class public (formerly, was package-scope only)
+
+BUGS FROM PREVIOUS RELEASE
+==========================
+
+Bugzilla Reports Addressed
+------------------
+
+Fixes without Bugzilla entries
+------------------------------
+
+DEPRECATIONS
+============
+None
+
