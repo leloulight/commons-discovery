@@ -25,9 +25,9 @@
 
 <section name="Commons Discovery: Service Discovery component">
 
-<p>The Discovery Component is about discovering, or finding,
+<p>The Discovery component is about discovering, or finding,
 implementations for pluggable interfaces.
-It provides facilities intantiating classes in general,
+It provides facilities for instantiating classes in general,
 and for lifecycle management of singleton (factory) classes.
 </p>
 <p>
@@ -51,7 +51,7 @@ to the global System properties (which are scoped across an entire JVM).
 This is not indended to be a replacement to be used strictly by the user, but rather
 a replacement to be used directly by projects.  Use by the user is also reasonable,
 but limited due to 'keeping this simple'.  In particular, there is no configuration
-for this discovery service, it relies soley on usage patterns.
+for this discovery service, it relies only on usage patterns.
 </p>
 
 <p>
@@ -70,7 +70,7 @@ In all cases, verify that the discovered implementation <b>implements</b>
 </p>
 
 <p>
-The package should :
+The package aims to :
 <ul>
 <li>Have an API which should be as simple to use as possible</li>
 <li>Be based on usage patterns, not specific configuration file</li>
