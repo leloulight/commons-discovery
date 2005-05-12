@@ -34,12 +34,12 @@
       <item name="Best practices" href="/best-practices.html"/>
       <item name="Guidelines" href="/adc-guidelines.html"/>
       <!--item name="History" href="/history.html"/-->
-      <item name="Javadoc (0.2 release)" href="commons-discovery-0.2/docs/api/index.html"/>
+      <item name="Javadoc (0.3 release)" href="apidocs/index.html"/>
       <item name="Mailing lists" href="/mail-lists.html"/>
       <item name="Team" href="/team-list.html"/>
       <!--item name="Tasks" href="/tasks.html"/-->
-      <item name="CVS" href="http://cvs.apache.org/viewcvs/jakarta-commons/discovery/"/>
-      <item name="Javadoc (CVS latest)" href="apidocs/index.html"/>
+      <item name="SVN source repository" href="http://svn.apache.org/repos/asf/jakarta/commons/proper/discovery"/>
+      <!-- item name="Javadoc (SVN latest)" href="apidocs/index.html"/-->
     </menu>
     
     &common-menus;
