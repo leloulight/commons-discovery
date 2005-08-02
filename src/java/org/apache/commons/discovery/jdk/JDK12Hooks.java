@@ -210,7 +210,14 @@ public class JDK12Hooks extends JDKHooks {
         }
 
         if (classLoader == null) {
-            classLoader = new PsuedoSystemClassLoader();
+            SecurityManager security = System.getSecurityManager();
+            if (security != null) {
+                try {
+                    security.checkCreateClassLoader();
+                    classLoader = new PsuedoSystemClassLoader();
+                } catch (SecurityException se){
+                }
+            }
         }
         
         // Return the selected class loader
