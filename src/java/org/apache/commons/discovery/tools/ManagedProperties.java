@@ -121,7 +121,7 @@ public class ManagedProperties {
      * @return property value if found, otherwise default.
      */
     public static String getProperty(ClassLoader classLoader, String propertyName) {
-        String value = System.getProperty(propertyName);
+        String value = JDKHooks.getJDKHooks().getSystemProperty(propertyName);
         if (value == null) {
             Value val = getValueProperty(classLoader, propertyName);
             if (val != null) {
@@ -348,7 +348,11 @@ public class ManagedProperties {
     private static final ClassLoader getParent(final ClassLoader classLoader) {
         return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
                     public Object run() {
-                        return classLoader.getParent();
+                        try {
+                            return classLoader.getParent();
+                        } catch (SecurityException se){
+                            return null;
+                        }
                     }
                 });
     }

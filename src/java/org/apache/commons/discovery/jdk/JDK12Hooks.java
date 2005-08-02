@@ -46,6 +46,25 @@ public class JDK12Hooks extends JDKHooks {
     }
     
     /**
+     * Get the system property
+     *
+     * @param propName name of the property
+     * @return value of the property
+     */
+    public String getSystemProperty(final String propName) {
+        return (String)
+        java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
+            public Object run() {
+                try {
+                    return System.getProperty(propName);
+                } catch (SecurityException se){
+                    return null;
+                }
+            }
+        });
+    }
+
+    /**
      * The thread context class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
      * 

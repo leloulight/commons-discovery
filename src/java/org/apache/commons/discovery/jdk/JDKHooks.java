@@ -41,6 +41,14 @@ public abstract class JDKHooks {
     }
 
     /**
+     * Get the system property
+     *
+     * @param propName name of the property
+     * @return value of the property
+     */
+    public abstract String getSystemProperty(final String propName);
+
+    /**
      * The thread context class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
      * 

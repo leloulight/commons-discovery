@@ -27,6 +27,15 @@ public class JDK11Hooks extends JDKHooks {
     private static final ClassLoader systemClassLoader
         = new PsuedoSystemClassLoader();
 
+    /**
+     * Get the system property
+     *
+     * @param propName name of the property
+     * @return value of the property
+     */
+    public String getSystemProperty(final String propName) {
+        return System.getProperty(propName);
+    }
 
     /**
      * The thread context class loader is available for JDK 1.2
