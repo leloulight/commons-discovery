@@ -19,8 +19,9 @@
   <pomVersion>3</pomVersion>
   
   <name>Discovery</name>
-  <id>commons-discovery</id>
-  <currentVersion>0.3</currentVersion>
+  <groupId>commons-discovery</groupId>
+  <artifactId>commons-discovery</artifactId>
+  <currentVersion>0.4-SNAPSHOT</currentVersion>
   <inceptionYear>2002</inceptionYear>
   <shortDescription>Commons Discovery</shortDescription>
   <description>Commons Discovery</description>
@@ -119,12 +120,14 @@
   <dependencies>
 
     <dependency>
-      <id>commons-logging</id>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
       <version>1.0.3</version>
     </dependency>
 
     <dependency>
-      <id>junit</id>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <version>3.7</version>
     </dependency>
 
