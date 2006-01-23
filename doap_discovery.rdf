@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://usefulinc.com/ns/doap#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:asfext="http://projects.apache.org/ns/asfext#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:doap="http://usefulinc.com/ns/doap#" xml:lang="en">
+  <Project rdf:about="http://jakarta.apache.org/commons/discovery/">
+    <name>Apache Jakarta Commons Discovery</name>
+    <homepage rdf:resource="http://jakarta.apache.org/commons/discovery/"/>
+    <programming-language>Java</programming-language>
+    <category rdf:resource="http://projects.apache.org/category/library"/>
+    <license rdf:resource="http://usefulinc.com/doap/licenses/asl20"/>
+    <bug-database rdf:resource="http://issues.apache.org/bugzilla/buglist.cgi?product=Commons&amp;component=discovery"/>
+    <download-page rdf:resource="http://jakarta.apache.org/site/downloads/downloads_commons-discovery.cgi"/>
+    <asfext:pmc rdf:resource="Jakarta"/>
+    <shortdesc xml:lang="en">Commons Discovery</shortdesc>
+    <description xml:lang="en">Commons Discovery</description>
+    <repository>
+      <SVNRepository>
+        <browse rdf:resource="http://svn.apache.org/repos/asf/jakarta/commons/proper/discovery/trunk"/>
+        <location rdf:resource="http://svn.apache.org/repos/asf/jakarta/commons/proper/discovery"/>
+      </SVNRepository>
+    </repository>
+    <release>
+      <revision>
+        <name>commons-discovery</name>
+        <created>2003-04-15</created>
+        <version>0.2</version>
+      </revision>
+    </release>
+    <mailing-list rdf:resource="http://jakarta.apache.org/site/mail2.html#Commons"/>
+  </Project>
+</rdf:RDF>
