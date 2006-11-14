@@ -107,7 +107,6 @@ public class ResourceUtils {
      *     <li>System Class Loader</li>
      *   </ul>
      * 
-     * @param
      * @param propertiesFileName The property file name.
      * 
      * @return Instance of a class implementing the SPI.
