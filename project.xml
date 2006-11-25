@@ -19,7 +19,7 @@
   <pomVersion>3</pomVersion>
   
   <name>Discovery</name>
-  <groupId>org.apache.commons</groupId>
+  <groupId>commons-discovery</groupId>
   <artifactId>commons-discovery</artifactId>
   <currentVersion>0.4-SNAPSHOT</currentVersion>
   <inceptionYear>2002</inceptionYear>
