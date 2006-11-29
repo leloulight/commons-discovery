@@ -139,9 +139,9 @@ public class ResourceUtils {
                     }
                 }
             } catch (IOException e) {
-                ;  // ignore
+                // ignore
             } catch (SecurityException e) {
-                ;  // ignore
+                // ignore
             }
         }
         
