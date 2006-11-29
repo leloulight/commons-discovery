@@ -311,7 +311,7 @@ public class DiscoverSingleton {
      * 
      * @param spiClass Service Provider Interface Class.
      * 
-     * @param properties Used to determine name of SPI implementation,
+     * @param propertiesFileName Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
      * 
@@ -342,7 +342,7 @@ public class DiscoverSingleton {
     /**
      * Find implementation of SPI.
      * 
-     * @param spiClass Service Provider Interface Class.
+     * @param spi Service Provider Interface Class.
      * 
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if

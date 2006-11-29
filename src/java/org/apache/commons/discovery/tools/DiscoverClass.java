@@ -265,7 +265,7 @@ public class DiscoverClass {
      * 
      * @param spiClass Service Provider Interface Class.
      * 
-     * @param properties Used to determine name of SPI implementation,.
+     * @param propertiesFileName Used to determine name of SPI implementation,.
      * 
      * @param defaultImpl Default implementation class.
      * 
@@ -287,7 +287,7 @@ public class DiscoverClass {
     /**
      * Find class implementing SPI.
      * 
-     * @param spiClass Service Provider Interface Class.
+     * @param spi Service Provider Interface Class.
      * 
      * @param properties Used to determine name of SPI implementation,.
      * 
@@ -476,7 +476,7 @@ public class DiscoverClass {
      * 
      * @param spiClass Service Provider Interface Class.
      * 
-     * @param properties Used to determine name of SPI implementation,
+     * @param propertiesFileName Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
      * 
@@ -505,7 +505,7 @@ public class DiscoverClass {
     /**
      * Create new instance of class implementing SPI.
      * 
-     * @param spiClass Service Provider Interface Class.
+     * @param spi Service Provider Interface Class.
      * 
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
@@ -595,7 +595,7 @@ public class DiscoverClass {
      * 
      * @see ManagedProperties
      * 
-     * @param attribute the name of the system property whose value is
+     * @param propertName the name of the system property whose value is
      *        the name of the class to load.
      */
     public static String getManagedProperty(String propertyName) {

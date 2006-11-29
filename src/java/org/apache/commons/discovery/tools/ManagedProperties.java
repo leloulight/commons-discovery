@@ -94,7 +94,7 @@ public class ManagedProperties {
     /**
      * Get value for property bound to the current thread context class loader.
      * 
-     * @param property property name.
+     * @param propertyName property name.
      * @return property value if found, otherwise default.
      */
     public static String getProperty(String propertyName) {
@@ -105,7 +105,7 @@ public class ManagedProperties {
      * Get value for property bound to the current thread context class loader.
      * If not found, then return default.
      * 
-     * @param property property name.
+     * @param propertyName property name.
      * @param dephault default value.
      * @return property value if found, otherwise default.
      */
@@ -117,7 +117,7 @@ public class ManagedProperties {
      * Get value for property bound to the class loader.
      * 
      * @param classLoader
-     * @param property property name.
+     * @param propertyName property name.
      * @return property value if found, otherwise default.
      */
     public static String getProperty(ClassLoader classLoader, String propertyName) {
@@ -139,7 +139,7 @@ public class ManagedProperties {
      * If not found, then return default.
      * 
      * @param classLoader
-     * @param property property name.
+     * @param propertyName property name.
      * @param dephault default value.
      * @return property value if found, otherwise default.
      */
@@ -150,7 +150,7 @@ public class ManagedProperties {
 
     /**
      * Set value for property bound to the current thread context class loader.
-     * @param property property name
+     * @param propertyName property name
      * @param value property value (non-default)  If null, remove the property.
      */
     public static void setProperty(String propertyName, String value) {
@@ -159,7 +159,7 @@ public class ManagedProperties {
     
     /**
      * Set value for property bound to the current thread context class loader.
-     * @param property property name
+     * @param propertyName property name
      * @param value property value.  If null, remove the property.
      * @param isDefault determines if property is default or not.
      *        A non-default property cannot be overriden.

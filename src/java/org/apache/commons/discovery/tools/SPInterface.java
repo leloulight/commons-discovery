@@ -64,7 +64,7 @@ public class SPInterface {
     /**
      * Construct object representing Class <code>provider</code>.
      * 
-     * @param provider The SPI class
+     * @param spi The SPI class
      * 
      * @param propertyName when looking for the name of a class implementing
      *        the provider class, a discovery strategy may involve looking for
@@ -100,7 +100,7 @@ public class SPInterface {
     /**
      * Construct object representing Class <code>provider</code>.
      * 
-     * @param provider The SPI class
+     * @param spi The SPI class
      * 
      * @param propertyName when looking for the name of a class implementing
      *        the provider class, a discovery strategy may involve looking for

@@ -70,7 +70,7 @@ public class Service
      * This version lets you specify constructor arguments..
      * 
      * @param spi SPI to look for and load.
-     * @param classLoaders loaders to use in search.
+     * @param loaders loaders to use in search.
      *        If <code>null</code> then use ClassLoaders.getAppLoaders().
      */
     public static Enumeration providers(final SPInterface spi,

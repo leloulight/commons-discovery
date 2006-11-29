@@ -139,7 +139,7 @@ public class SimpleLog implements Log {
     /**
      * <p> Set logging level. </p>
      *
-     * @param level new logging level
+     * @param currentLogLevel new logging level
      */
     public static void setLevel(int currentLogLevel) {
         logLevel = currentLogLevel;
@@ -155,7 +155,7 @@ public class SimpleLog implements Log {
     /**
      * Is the given log level currently enabled?
      *
-     * @param logLevel is this level enabled?
+     * @param level is this level enabled?
      */
     protected static boolean isLevelEnabled(int level) {
         // log level are numerically ordered so can use simple numeric
