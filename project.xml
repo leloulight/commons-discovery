@@ -194,7 +194,6 @@
   </build>
 
   <reports>
-     <report>maven-changes-plugin</report>
      <!-- shutting up as we're not interested in javadoc improvements for this release -->
      <!--report>maven-checkstyle-plugin</report-->  
      <!--report>maven-clover-plugin</report-->

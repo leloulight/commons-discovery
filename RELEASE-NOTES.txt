@@ -2,7 +2,7 @@ $Id$
 
 
                           Commons Discovery Package
-                                Version 0.3
+                                Version 0.4
                                Release Notes
 
 
@@ -24,7 +24,7 @@ IMPORTANT NOTES
 
 Dependencies
 =============
-Commons-discovery has no dependencies.
+Commons Discovery depends on Commons Logging. It is built against version 1.0.4.
 
 NEW FEATURES
 =============
@@ -38,6 +38,8 @@ FILES CHANGED
    --> fix NullPointerException in setProperty method.
    --> added logging facilities to the class; debug output can now be
        enabled if desired.
+   --> Hide SecurityException in getParent(ClassLoader)
+   --> Uses new JDKTools.getSystemProperty(String)
 
 * log/SimpleLog.java
    --> if exception occurs on System.getProperty, use a default instead
@@ -62,8 +64,11 @@ FILES CHANGED
 * resource/DiscoverResources:
    --> fix to compile under JDK1.5 (don't use reserved word "enum")
 
-* JDK12Hooks
-   --> PR: Bugzilla Bug 26875
+* jdk/JDKHooks:
+   --> New getSystemProperty method added.
+
+* jdk/JDK12Hooks
+   --> AXIS-1227:
        Added a try/catch for RuntimeExceptions in JDK12Hooks to avoid 
        NullPointerExceptions from JBoss' UnifiedClassLoader.  Reloading
        the Axis webapp after a redepoy of service classes then allows
@@ -71,24 +76,26 @@ FILES CHANGED
    --> made class public (formerly, was package-scope only)
        In newer JVM/compilers, runtime complains when we try to invoke 
        setLog on a non-public class.
+   --> AXIS-2145:
+       Checks that it has the security permission to create a new 
+       classloader.
+   --> New getSystemProperty method added.
 
-* JDK11Hooks 
+* jdk/JDK11Hooks 
    --> made class public (formerly, was package-scope only)
        In newer JVM/compilers, runtime complains when we try to invoke 
        setLog on a non-public class.
+   --> New getSystemProperty method added.
 
 BUGS FROM PREVIOUS RELEASE
 =========================
 
-Bugzilla Reports Addressed
-------------------
-* 26875
+JIRA Issues Addressed
+---------------------
+* AXIS-1227 (https://issues.apache.org/jira/browse/AXIS-1227)
+* AXIS-2145 (https://issues.apache.org/jira/browse/AXIS-2145)
 
-Fixes without Bugzilla entries
-------------------------------
-* see section "Files Changed" above.
 
 DEPRECATIONS
 ============
 None
-
