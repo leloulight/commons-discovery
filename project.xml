@@ -22,7 +22,7 @@
   <name>Discovery</name>
   <groupId>commons-discovery</groupId>
   <artifactId>commons-discovery</artifactId>
-  <currentVersion>0.4</currentVersion>
+  <currentVersion>0.5-SNAPSHOT</currentVersion>
   <inceptionYear>2002</inceptionYear>
   <shortDescription>Commons Discovery</shortDescription>
   <description>Commons Discovery</description>
