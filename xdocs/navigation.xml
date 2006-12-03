@@ -33,12 +33,10 @@
     <menu name="Discovery">
       <item name="Overview" href="/index.html"/>
       <item name="Download" href="http://jakarta.apache.org/site/downloads/downloads_commons-discovery.cgi"/>
-      <!--item name="Users guide" href="/userguide.html"/-->
+      <item name="Release Notes (0.4)" href="http://www.apache.org/dist/jakarta/commons/discovery/RELEASE-NOTES.txt"/>
       <item name="Best practices" href="/best-practices.html"/>
       <item name="Guidelines" href="/adc-guidelines.html"/>
-      <!--item name="History" href="/history.html"/-->
       <item name="Javadoc (0.4 release)" href="apidocs/index.html"/>
-      <!--item name="Tasks" href="/tasks.html"/-->
     </menu>
 
     <menu name="Development">
