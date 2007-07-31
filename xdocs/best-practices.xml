@@ -16,13 +16,13 @@
 -->
 <document>
 <properties>
-<title>Best Practices for using Jakarta Commons &quot;Discovery&quot; Component</title>
+<title>Best Practices for using Apache Commons &quot;Discovery&quot; Component</title>
 </properties>
 <body>
 
 
 
-<section name="Best Practices for using Jakarta Commons &quot;Discovery&quot; Component">
+<section name="Best Practices for using Apache Commons &quot;Discovery&quot; Component">
 $Id$<br />
 <a href="#Introduction">[Introduction]</a>
 <a href="#Discovery Services">[Discovery Services]</a>

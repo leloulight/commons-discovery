@@ -16,13 +16,13 @@
 -->
 <document>
 <properties>
-<title>Architecture/Design/Coding Guidelines for Jakarta Commons &quot;Discovery&quot; Component</title>
+<title>Architecture/Design/Coding Guidelines for Apache Commons &quot;Discovery&quot; Component</title>
 </properties>
 <body>
 
 
 
-<section name="Architecture/Design/Coding Guidelines for Jakarta Commons &quot;Discovery&quot; Component">
+<section name="Architecture/Design/Coding Guidelines for Apache Commons &quot;Discovery&quot; Component">
 $Id$<br/>
 <a href="#Introduction">[Introduction]</a>
 <a href="#Security and doPrivileged()">[Security and doPrivileged()]</a>

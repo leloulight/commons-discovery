@@ -20,7 +20,7 @@ IMPORTANT NOTES
 ===============
 * The jakarta commons project has migrated to the Subversion version control system
   (previously, CVS was used). Please see the jakarta commons
-  website for details (http://jakarta.apache.org/commons).
+  website for details (http://commons.apache.org).
 
 * This release is done under the Apache Public License version 2.0; the
   previous release was under the APL 1.1. All files have been updated with
