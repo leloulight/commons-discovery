@@ -264,7 +264,7 @@ public class TestAll extends TestCase {
 
         String name = "testResource";
         
-        String partialPaths[] = { "/test/", "/testAlt1/", "/testAlt2/" };
+        String partialPaths[] = { "/test-classes/", "/testAlt1/", "/testAlt2/" };
         int expected = partialPaths.length;
         
         DiscoverResources discovery = new DiscoverResources(loaders);
