@@ -25,7 +25,7 @@
     <body>
         <menu name="Discovery">
             <item name="Overview"             href="/index.html"/>
-            <item name="Download"             href="http://commons.apache.org/downloads/download_discovery.cgi"/>
+            <item name="Download"             href="http://commons.apache.org/discovery/download_discovery.cgi"/>
             <item name="Release Notes (0.4)"  href="http://www.apache.org/dist/commons/discovery/RELEASE-NOTES.txt"/>
             <item name="Best practices"       href="/best-practices.html"/>
             <item name="Guidelines"           href="/adc-guidelines.html"/>
