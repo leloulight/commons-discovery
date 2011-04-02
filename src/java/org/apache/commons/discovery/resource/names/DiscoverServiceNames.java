@@ -23,7 +23,7 @@ import org.apache.commons.discovery.resource.ClassLoaders;
 
 /**
  * Provide JDK 1.3 style service discovery...
- * 
+ *
  * The caller will first configure the discoverer by creating a
  * root Discoverer for the files.
  *
@@ -37,40 +37,40 @@ public class DiscoverServiceNames
     implements ResourceNameDiscover
 {
     protected static final String SERVICE_HOME = "META-INF/services/";
-    
+
     /** Construct a new service discoverer
      */
     public DiscoverServiceNames() {
         super(SERVICE_HOME, null);
     }
-        
+
     /**
      *  Construct a new resource discoverer
      */
     public DiscoverServiceNames(String prefix, String suffix) {
         super((prefix == null) ? SERVICE_HOME : SERVICE_HOME + prefix, suffix);
     }
-    
+
     /**
      *  Construct a new resource discoverer
      */
     public DiscoverServiceNames(ClassLoaders loaders) {
         super(loaders, SERVICE_HOME, null);
     }
-    
+
     /**
      *  Construct a new resource discoverer
      */
     public DiscoverServiceNames(ClassLoaders loaders, String prefix, String suffix) {
         super(loaders, (prefix == null) ? SERVICE_HOME : SERVICE_HOME + prefix, suffix);
     }
-    
+
     /** Construct a new service discoverer
      */
     public DiscoverServiceNames(ResourceDiscover discoverer) {
         super(discoverer, SERVICE_HOME, null);
     }
-    
+
     /** Construct a new service discoverer
      */
     public DiscoverServiceNames(ResourceDiscover discoverer, String prefix, String suffix) {
