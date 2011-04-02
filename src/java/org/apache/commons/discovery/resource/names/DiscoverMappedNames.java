@@ -17,6 +17,7 @@
 package org.apache.commons.discovery.resource.names;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
@@ -45,7 +46,7 @@ public class DiscoverMappedNames
         log = _log;
     }
     
-    private Hashtable mapping = new Hashtable();  // String name ==> String[] newNames
+    private final Map<String, String[]> mapping = new Hashtable<String, String[]>();  // String name ==> String[] newNames
     
     /** Construct a new resource discoverer
      */
@@ -53,7 +54,7 @@ public class DiscoverMappedNames
     }
     
     public void map(String fromName, String toName) {
-        mapping.put(fromName, toName);
+        map(fromName, new String[]{ toName });
     }
     
     public void map(String fromName, String [] toNames) {
@@ -68,17 +69,8 @@ public class DiscoverMappedNames
             log.debug("find: resourceName='" + resourceName + "', mapping to constants");
         }
         
-        final Object obj = mapping.get(resourceName);
+        final String[] names = mapping.get(resourceName);
 
-        final String[] names;
-        if (obj instanceof String) {
-            names = new String[] { (String)obj };
-        } else if (obj instanceof String[]) {
-            names = (String[])obj;
-        } else {
-            names = null;
-        }
-        
         return new ResourceNameIterator() {
 
             private int idx = 0;
