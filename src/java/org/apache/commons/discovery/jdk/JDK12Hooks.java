@@ -30,13 +30,13 @@ import org.apache.commons.logging.Log;
  * @author Richard A. Sitze
  */
 public class JDK12Hooks extends JDKHooks {
-    
+
     /**
      * Logger
      */
     private static Log log = DiscoveryLogFactory.newLog(JDK12Hooks.class);
-    
-    
+
+
     private static final ClassLoader systemClassLoader
         = findSystemClassLoader();
 
@@ -46,7 +46,7 @@ public class JDK12Hooks extends JDKHooks {
     public static void setLog(Log _log) {
         log = _log;
     }
-    
+
     /**
      * Get the system property
      *
@@ -69,13 +69,13 @@ public class JDK12Hooks extends JDKHooks {
     /**
      * The thread context class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
-     * 
+     *
      * @return The thread context class loader, if available.
      *         Otherwise return null.
      */
     public ClassLoader getThreadContextClassLoader() {
         ClassLoader classLoader;
-        
+
         try {
             classLoader = Thread.currentThread().getContextClassLoader();
         } catch (SecurityException e) {
@@ -84,7 +84,7 @@ public class JDK12Hooks extends JDKHooks {
              * a) the context class loader isn't an ancestor of the
              *    calling class's class loader, or
              * b) if security permissions are restricted.
-             * 
+             *
              * For (a), ignore and keep going.  We cannot help but also
              * ignore (b) with the logic below, but other calls elsewhere
              * (to obtain a class loader) will re-trigger this exception
@@ -92,15 +92,15 @@ public class JDK12Hooks extends JDKHooks {
              */
             classLoader = null;  // ignore
         }
-        
+
         // Return the selected class loader
         return classLoader;
     }
-    
+
     /**
      * The system class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
-     * 
+     *
      * @return The system class loader, if available.
      *         Otherwise return null.
      */
@@ -118,19 +118,19 @@ public class JDK12Hooks extends JDKHooks {
         /**
          * The simple answer is/was:
          *    return loader.getResources(resourceName);
-         * 
+         *
          * However, some classloaders overload the behavior of getResource
          * (loadClass, etc) such that the order of returned results changes
          * from normally expected behavior.
-         * 
+         *
          * Example: locate classes/resources from child ClassLoaders first,
          *          parents last (in some J2EE environs).
-         * 
+         *
          * The resource returned by getResource() should be the same as the
          * first resource returned by getResources().  Unfortunately, this
          * is not, and cannot be: getResources() is 'final' in the current
          * JDK's (1.2, 1.3, 1.4).
-         * 
+         *
          * To address this, the implementation of this method will
          * return an Enumeration such that the first element is the
          * results of getResource, and all trailing elements are
@@ -138,42 +138,42 @@ public class JDK12Hooks extends JDKHooks {
          * if the resource (from getResources) matches the first resource,
          * and eliminate the redundent element.
          */
-        
+
         final URL first = loader.getResource(resourceName);
-        
+
         // XXX: Trying to avoid JBoss UnifiedClassLoader problem
-        
+
         Enumeration<URL> resources;
-        
+
         if(first == null) {
             log.debug("Could not find resource: " + resourceName);
             List<URL> emptyURL = Collections.emptyList();
             resources = Collections.enumeration(emptyURL);
-            
+
         } else {
-        
+
             try {
-                
+
                 resources = loader.getResources(resourceName);
-                
+
             } catch (RuntimeException ex) {
-                log.error("Exception occured during attept to get " + resourceName 
+                log.error("Exception occured during attept to get " + resourceName
                         + " from " + first, ex);
                 List<URL> emptyURL = Collections.emptyList();
                 resources = Collections.enumeration(emptyURL);
             }
-            
+
             resources = getResourcesFromUrl(first, resources);
         }
-        
+
         return resources;
     }
-    
+
     private static Enumeration<URL> getResourcesFromUrl(final URL first, final Enumeration<URL> rest) {
         return new Enumeration<URL>() {
             private boolean firstDone = (first == null);
             private URL next = getNext();
-            
+
             public URL nextElement() {
                 URL o = next;
                 next = getNext();
@@ -183,10 +183,10 @@ public class JDK12Hooks extends JDKHooks {
             public boolean hasMoreElements() {
                 return next != null;
             }
-            
+
             private URL getNext() {
                 URL n;
-                
+
                 if (!firstDone) {
                     /**
                      * First time through, use results of getReference()
@@ -199,7 +199,7 @@ public class JDK12Hooks extends JDKHooks {
                      * Subsequent times through,
                      * use results of getReferences()
                      * but take out anything that matches 'first'.
-                     * 
+                     *
                      * Iterate through list until we find one that
                      * doesn't match 'first'.
                      */
@@ -214,15 +214,15 @@ public class JDK12Hooks extends JDKHooks {
                         }
                     }
                 }
-                
+
                 return n;
             }
         };
     }
-    
+
     static private ClassLoader findSystemClassLoader() {
         ClassLoader classLoader;
-        
+
         try {
             classLoader = ClassLoader.getSystemClassLoader();
         } catch (SecurityException e) {
@@ -242,7 +242,7 @@ public class JDK12Hooks extends JDKHooks {
                 }
             }
         }
-        
+
         // Return the selected class loader
         return classLoader;
     }
