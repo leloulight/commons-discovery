@@ -56,7 +56,7 @@ public class TestAll {
         TestInterface1 ti = null;
         
         try {
-            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+            ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_1.class.getName());
 
             assertTrue(ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
@@ -73,7 +73,7 @@ public class TestAll {
         TestInterface1 ti = null;
 
         try {
-            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+            ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_2.class.getName());
 
             assertTrue(ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
@@ -90,7 +90,7 @@ public class TestAll {
         TestInterface1 ti = null;
         
         try {
-            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+            ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_1.class.getName());
 
             assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
@@ -98,7 +98,7 @@ public class TestAll {
             
             // no release, should get cached value..
             
-            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+            ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_2.class.getName());
 
             // factory should be cached
@@ -116,7 +116,7 @@ public class TestAll {
         TestInterface1 ti = null;
         
         try {
-            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+            ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_1.class.getName());
 
             assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
@@ -124,7 +124,7 @@ public class TestAll {
             
             DiscoverSingleton.release();
             
-            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class,
+            ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_2.class.getName());
 
             // factory should be cached
@@ -147,7 +147,7 @@ public class TestAll {
             props.setProperty(TestInterface1.class.getName(),
                               TestImpl1_2.class.getName());
             
-            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class, props);
+            ti = DiscoverSingleton.find(TestInterface1.class, props);
 
             assertTrue(ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_2.class.getName()));
@@ -166,7 +166,7 @@ public class TestAll {
             ManagedProperties.setProperty(TestInterface1.class.getName(),
                                           TestImpl1_2.class.getName());
                               
-            ti = (TestInterface1)DiscoverSingleton.find(TestInterface1.class);
+            ti = DiscoverSingleton.find(TestInterface1.class);
 
             assertTrue(ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_2.class.getName()));
