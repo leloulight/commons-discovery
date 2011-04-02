@@ -67,7 +67,7 @@ public class DiscoverResources
         return new ResourceIterator() {
             private int idx = 0;
             private ClassLoader loader = null;
-            private Enumeration resources = null;
+            private Enumeration<URL> resources = null;
             private Resource resource = null;
             
             public boolean hasNext() {
@@ -90,7 +90,7 @@ public class DiscoverResources
 
                 Resource resourceInfo;
                 if (resources != null) {
-                    URL url = (URL)resources.nextElement();
+                    URL url = resources.nextElement();
 
                     if (log.isDebugEnabled())
                         log.debug("getNextResource: next URL='" + url + "'");
@@ -103,13 +103,13 @@ public class DiscoverResources
                 return resourceInfo;
             }
             
-            private Enumeration getNextResources() {
+            private Enumeration<URL> getNextResources() {
                 while (idx < getClassLoaders().size()) {
                     loader = getClassLoaders().get(idx++);
                     if (log.isDebugEnabled())
                         log.debug("getNextResources: search using ClassLoader '" + loader + "'");
                     try {
-                        Enumeration e = JDKHooks.getJDKHooks().getResources(loader, resourceName);
+                        Enumeration<URL> e = JDKHooks.getJDKHooks().getResources(loader, resourceName);
                         if (e != null && e.hasMoreElements()) {
                             return e;
                         }
