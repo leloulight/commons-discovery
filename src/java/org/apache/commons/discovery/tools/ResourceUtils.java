@@ -45,7 +45,7 @@ public class ResourceUtils {
      * This means that calling Class.getPackage().getName()
      * is unreliable at best.
      */
-    public static String getPackageName(Class clazz) {
+    public static String getPackageName(Class<?> clazz) {
         Package clazzPackage = clazz.getPackage();
         String packageName;
         if (clazzPackage != null) {
@@ -69,7 +69,7 @@ public class ResourceUtils {
      * 
      * @param resourceName The name of the resource to load.
      */
-    public static Resource getResource(Class spi,
+    public static Resource getResource(Class<?> spi,
                                        String resourceName,
                                        ClassLoaders loaders)
         throws DiscoveryException
@@ -117,7 +117,7 @@ public class ResourceUtils {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */    
-    public static Properties loadProperties(Class spi,
+    public static Properties loadProperties(Class<?> spi,
                                             String propertiesFileName,
                                             ClassLoaders classLoaders)
         throws DiscoveryException
