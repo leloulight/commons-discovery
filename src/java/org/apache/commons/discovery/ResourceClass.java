@@ -33,15 +33,15 @@ import org.apache.commons.logging.Log;
  * 
  * @author Richard A. Sitze
  */
-public class ResourceClass extends Resource
+public class ResourceClass<T> extends Resource
 {
     private static Log log = DiscoveryLogFactory.newLog(ResourceClass.class);
     public static void setLog(Log _log) {
         log = _log;
     }
-    protected Class       resourceClass;
+    protected Class<? extends T>       resourceClass;
 
-    public ResourceClass(Class resourceClass, URL resource) {
+    public <S extends T> ResourceClass(Class<S> resourceClass, URL resource) {
         super(resourceClass.getName(), resource, resourceClass.getClassLoader());
         this.resourceClass = resourceClass;
     }
@@ -66,23 +66,28 @@ public class ResourceClass extends Resource
      *
      * @return value of resourceClass.
      */
-    public Class loadClass() {
+    public <S extends T> Class<S> loadClass() {
         if (resourceClass == null  &&  getClassLoader() != null) {
             if (log.isDebugEnabled())
                 log.debug("loadClass: Loading class '" + getName() + "' with " + getClassLoader());
 
-            resourceClass = (Class)AccessController.doPrivileged(
-                new PrivilegedAction() {
-                    public Object run() {
+            resourceClass = AccessController.doPrivileged(
+                new PrivilegedAction<Class<? extends T>>() {
+                    public Class<? extends T> run() {
                         try {
-                            return getClassLoader().loadClass(getName());
+                            @SuppressWarnings("unchecked") // this can raise a ClassCastException at runtime
+                            Class<S> returned = (Class<S>)  (Class<S>) getClassLoader().loadClass(getName());
+                            return returned;
                         } catch (ClassNotFoundException e) {
                             return null;
                         }
                     }
                 });
         }
-        return resourceClass;
+
+        @SuppressWarnings("unchecked") // this is assumed by default, see the ctor
+        Class<S> returned = (Class<S>) resourceClass;
+        return returned;
     }
     
     public String toString() {
