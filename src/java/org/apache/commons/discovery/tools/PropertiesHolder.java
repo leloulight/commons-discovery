@@ -52,7 +52,7 @@ public class PropertiesHolder {
      * 
      * @return Properties.  Load the properties if necessary.
      */
-    public Properties getProperties(SPInterface spi, ClassLoaders loaders) {
+    public Properties getProperties(SPInterface<?> spi, ClassLoaders loaders) {
         if (properties == null) {
             properties = ResourceUtils.loadProperties(spi.getSPClass(), getPropertiesFileName(), loaders);
         }
