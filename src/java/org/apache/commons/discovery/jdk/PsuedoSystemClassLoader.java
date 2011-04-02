@@ -31,11 +31,11 @@ class PsuedoSystemClassLoader extends ClassLoader {
     {
         return findSystemClass(className);
     }
-    
+
     public URL getResource(String resName) {
         return getSystemResource(resName);
     }
-    
+
     public InputStream getResourceAsStream(String resName) {
         return getSystemResourceAsStream(resName);
     }
