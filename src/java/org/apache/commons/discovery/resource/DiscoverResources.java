@@ -42,14 +42,14 @@ public class DiscoverResources
     public static void setLog(Log _log) {
         log = _log;
     }
-    
+
     /**
      * Construct a new resource discoverer
      */
     public DiscoverResources() {
         super();
     }
-    
+
     /**
      *  Construct a new resource discoverer
      */
@@ -69,20 +69,20 @@ public class DiscoverResources
             private ClassLoader loader = null;
             private Enumeration<URL> resources = null;
             private Resource resource = null;
-            
+
             public boolean hasNext() {
                 if (resource == null) {
                     resource = getNextResource();
                 }
                 return resource != null;
             }
-            
+
             public Resource nextResource() {
                 Resource element = resource;
                 resource = null;
                 return element;
             }
-            
+
             private Resource getNextResource() {
                 if (resources == null || !resources.hasMoreElements()) {
                     resources = getNextResources();
@@ -99,10 +99,10 @@ public class DiscoverResources
                 } else {
                     resourceInfo = null;
                 }
-                
+
                 return resourceInfo;
             }
-            
+
             private Enumeration<URL> getNextResources() {
                 while (idx < getClassLoaders().size()) {
                     loader = getClassLoaders().get(idx++);
