@@ -35,16 +35,16 @@ import org.apache.commons.discovery.jdk.JDKHooks;
 public class ClassLoaders
 {
     protected List<ClassLoader> classLoaders = new LinkedList<ClassLoader>();
-    
+
     /** Construct a new class loader set
      */
     public ClassLoaders() {
     }
-    
+
     public int size() {
         return classLoaders.size();
     }
-    
+
     public ClassLoader get(int idx) {
         return classLoaders.get(idx);
     }
@@ -59,13 +59,13 @@ public class ClassLoaders
             classLoaders.add(classLoader);
         }
     }
-    
+
 
     /**
      * Specify a new class loader to be used in searching.
      * The order of loaders determines the order of the result.
      * It is recommended to add the most specific loaders first.
-     * 
+     *
      * @param prune if true, verify that the class loader is
      *              not an Ancestor (@see isAncestor) before
      *              adding it to our list.
@@ -75,16 +75,16 @@ public class ClassLoaders
             classLoaders.add(classLoader);
         }
     }
-    
-    
+
+
     /**
      * Check to see if <code>classLoader</code> is an
      * ancestor of any contained class loader.
-     * 
+     *
      * This can be used to eliminate redundant class loaders
      * IF all class loaders defer to parent class loaders
      * before resolving a class.
-     * 
+     *
      * It may be that this is not always true.  Therefore,
      * this check is not done internally to eliminate
      * redundant class loaders, but left to the discretion
@@ -112,17 +112,17 @@ public class ClassLoaders
     /**
      * Utility method.  Returns a preloaded ClassLoaders instance
      * containing the following class loaders, in order:
-     * 
+     *
      * <ul>
      *   <li>spi.getClassLoader</li>
      *   <li>seeker.getClassLoader</li>
      *   <li>System Class Loader</li>
      * </ul>
-     * 
+     *
      * Note that the thread context class loader is NOT present.
      * This is a reasonable set of loaders to try if the resource to be found
      * should be restricted to a libraries containing the SPI and Factory.
-     * 
+     *
      * @param spi WHAT is being looked for (an implementation of this class,
      *            a default property file related to this class).
      * @param factory WHO is performing the lookup.
@@ -130,34 +130,34 @@ public class ClassLoaders
      */    
     public static ClassLoaders getLibLoaders(Class<?> spi, Class<?> factory, boolean prune) {
         ClassLoaders loaders = new ClassLoaders();
-        
+
         if (spi != null) loaders.put(spi.getClassLoader());
         if (factory != null) loaders.put(factory.getClassLoader(), prune);
         loaders.put(JDKHooks.getJDKHooks().getSystemClassLoader(), prune);
-        
+
         return loaders;
     }
-    
+
     /**
      * Utility method.  Returns a preloaded ClassLoaders instance
      * containing the following class loaders, in order:
-     * 
+     *
      * <ul>
      *   <li>Thread Context Class Loader</li>
      *   <li>spi.getClassLoader</li>
      *   <li>seeker.getClassLoader</li>
      *   <li>System Class Loader</li>
      * </ul>
-     * 
+     *
      * Note that the thread context class loader IS  present.
      * This is a reasonable set of loaders to try if the resource to be found
      * may be provided by an application.
-     * 
+     *
      * @param spi WHAT is being looked for (an implementation of this class,
      *            a default property file related to this class).
      * @param factory WHO is performing the lookup (factory).
      * @param prune Determines if ancestors are allowed to be loaded or not.
-     */    
+     */
     public static ClassLoaders getAppLoaders(Class<?> spi, Class<?> factory, boolean prune) {
         ClassLoaders loaders = new ClassLoaders();
 
@@ -165,7 +165,7 @@ public class ClassLoaders
         if (spi != null) loaders.put(spi.getClassLoader(), prune);
         if (factory != null) loaders.put(factory.getClassLoader(), prune);
         loaders.put(JDKHooks.getJDKHooks().getSystemClassLoader(), prune);
-        
+
         return loaders;
     }
 }
