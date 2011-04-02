@@ -34,13 +34,13 @@ public abstract class ResourceDiscoverImpl
 {
     private ClassLoaders classLoaders;
 
-    
+
     /**
      * Construct a new resource discoverer
      */
     public ResourceDiscoverImpl() {
     }
-    
+
     /**
      *  Construct a new resource discoverer
      */
@@ -73,7 +73,7 @@ public abstract class ResourceDiscoverImpl
 
     /**
      * Locate names of resources that are bound to <code>resourceName</code>.
-     * 
+     *
      * @return ResourceNameIterator
      */
     public ResourceNameIterator findResourceNames(String resourceName) {
@@ -82,7 +82,7 @@ public abstract class ResourceDiscoverImpl
 
     /**
      * Locate names of resources that are bound to <code>resourceNames</code>.
-     * 
+     *
      * @return ResourceNameIterator
      */
     public ResourceNameIterator findResourceNames(ResourceNameIterator resourceNames) {
@@ -91,40 +91,40 @@ public abstract class ResourceDiscoverImpl
 
     /**
      * Locate resources that are bound to <code>resourceName</code>.
-     * 
+     *
      * @return ResourceIterator
      */
     public abstract ResourceIterator findResources(String resourceName);
 
     /**
      * Locate resources that are bound to <code>resourceNames</code>.
-     * 
+     *
      * @return ResourceIterator
      */
     public ResourceIterator findResources(final ResourceNameIterator inputNames) {
         return new ResourceIterator() {
             private ResourceIterator resources = null;
             private Resource resource = null;
-            
+
             public boolean hasNext() {
                 if (resource == null) {
                     resource = getNextResource();
                 }
                 return resource != null;
             }
-            
+
             public Resource nextResource() {
                 Resource rsrc = resource;
                 resource = null;
                 return rsrc;
             }
-            
+
             private Resource getNextResource() {
                 while (inputNames.hasNext() &&
                        (resources == null  ||  !resources.hasNext())) {
                     resources = findResources(inputNames.nextResourceName());
                 }
-    
+
                 return (resources != null  &&  resources.hasNext())
                        ? resources.nextResource()
                        : null;
