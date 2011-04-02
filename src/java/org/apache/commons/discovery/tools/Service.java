@@ -29,7 +29,7 @@ import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
 /**
  * [this was ServiceDiscovery12... the 1.1 versus 1.2 issue
  * has been abstracted to org.apache.commons.discover.jdk.JDKHooks]
- * 
+ *
  * <p>Implement the JDK1.3 'Service Provider' specification.
  * ( http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html )
  * </p>
@@ -54,7 +54,7 @@ public class Service
      */
     protected Service() {
     }
-    
+
     /**
      * as described in
      * sun/jdk1.3.1/docs/guide/jar/jar.html#Service Provider,
@@ -66,7 +66,7 @@ public class Service
     public static <T, S extends T> Enumeration<S> providers(Class<T> spiClass) {
         return providers(new SPInterface<T>(spiClass), null);
     }
-    
+
     /**
      * This version lets you specify constructor arguments..
      * 
@@ -82,23 +82,23 @@ public class Service
                                                  Service.class,
                                                  true);
         }
-        
+
         ResourceNameIterator servicesIter =
             (new DiscoverServiceNames(loaders)).findResourceNames(spi.getSPName());
 
         final ResourceClassIterator<T> services =
             (new DiscoverClasses<T>(loaders)).findResourceClasses(servicesIter);
-        
+
         return new Enumeration<S>() {
             private S object = null;
-            
+
             public boolean hasMoreElements() {
                 if (object == null) {
                     object = getNextClassInstance();
                 }
                 return object != null;
             }
-            
+
             public S nextElement() {
                 S obj = object;
                 object = null;
