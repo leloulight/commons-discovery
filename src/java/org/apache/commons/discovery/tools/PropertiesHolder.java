@@ -23,21 +23,21 @@ import org.apache.commons.discovery.resource.ClassLoaders;
 
 /**
  * Holder for a default class.
- * 
+ *
  * Class may be specified by name (String) or class (Class).
  * Using the holder complicates the users job, but minimized # of API's.
- * 
+ *
  * @author Richard A. Sitze
  */
 public class PropertiesHolder {
     private Properties   properties;
     private final String propertiesFileName;
-    
+
     public PropertiesHolder(Properties properties) {
         this.properties = properties;
         this.propertiesFileName = null;
     }
-    
+
     public PropertiesHolder(String propertiesFileName) {
         this.properties = null;
         this.propertiesFileName = propertiesFileName;
@@ -47,7 +47,7 @@ public class PropertiesHolder {
      * @param spi Optional SPI (may be null).
      *            If provided, an attempt is made to load the
      *            property file as-per Class.getResource().
-     * 
+     *
      * @param loaders Used only if properties need to be loaded.
      * 
      * @return Properties.  Load the properties if necessary.
