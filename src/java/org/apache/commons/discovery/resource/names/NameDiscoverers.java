@@ -42,13 +42,13 @@ public class NameDiscoverers
     }
 
     private List<ResourceNameDiscover> discoverers = new ArrayList<ResourceNameDiscover>();
-    
+
     /**
      *  Construct a new resource name discoverer
      */
     public NameDiscoverers() {
     }
-    
+
     /**
      * Specify an additional class loader to be used in searching.
      * The order of loaders determines the order of the result.
@@ -70,7 +70,7 @@ public class NameDiscoverers
 
     /**
      * Set of results of all discoverers.
-     * 
+     *
      * @return ResourceIterator
      */
     public ResourceNameIterator findResourceNames(final String resourceName) {
@@ -80,7 +80,7 @@ public class NameDiscoverers
         return new ResourceNameIterator() {
             private int idx = 0;
             private ResourceNameIterator iterator = null;
-            
+
             public boolean hasNext() {
                 if (iterator == null  ||  !iterator.hasNext()) {
                     iterator = getNextIterator();
@@ -90,11 +90,11 @@ public class NameDiscoverers
                 }
                 return iterator.hasNext();
             }
-            
+
             public String nextResourceName() {
                 return iterator.nextResourceName();
             }
-            
+
             private ResourceNameIterator getNextIterator() {
                 while (idx < size()) {
                     ResourceNameIterator iter =
