@@ -27,9 +27,9 @@ import java.util.List;
  * 'Resource' located by discovery.
  * Naming of methods becomes a real pain ('getClass()')
  * so I've patterned this after ClassLoader...
- * 
+ *
  * I think it works well as it will give users a point-of-reference.
- * 
+ *
  * @author Craig R. McClanahan
  * @author Costin Manolache
  * @author Richard A. Sitze
@@ -61,7 +61,7 @@ public class Resource
 //    public void setResource(URL  resource) {
 //        this.resource = resource;
 //    }
-    
+
     /**
      * Get the value of URL.
      * @return value of URL.
@@ -69,7 +69,7 @@ public class Resource
     public URL getResource() {
         return resource;
     }
-    
+
     /**
      * Get the value of URL.
      * @return value of URL.
@@ -81,7 +81,7 @@ public class Resource
             return null;  // ignore
         }
     }
-    
+
     /**
      * Get the value of loader.
      * @return value of loader.
@@ -89,7 +89,7 @@ public class Resource
     public ClassLoader getClassLoader() {
         return loader ;
     }
-    
+
 //    /**
 //     * Set the value of loader.
 //     * @param v  Value to assign to loader.
@@ -97,11 +97,12 @@ public class Resource
 //    public void setClassLoader(ClassLoader  loader) {
 //        this.loader = loader;
 //    }
-    
+
     public String toString() {
         return "Resource[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
     }
-    
+
+
     public static Resource[] toArray(ResourceIterator iterator) {
         List<Resource> resourceList = new LinkedList<Resource>();
         while (iterator.hasNext()) {
@@ -109,7 +110,7 @@ public class Resource
         }
         Resource[] resources = new Resource[resourceList.size()];
         resourceList.toArray(resources);
-        
+
         return resources;
     }
 }
