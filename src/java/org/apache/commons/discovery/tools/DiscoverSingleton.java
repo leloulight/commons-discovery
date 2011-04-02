@@ -29,7 +29,7 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  * <p>Discover singleton service providers.
  * This 
  * </p>
- * 
+ *
  * <p>DiscoverSingleton instances are cached by the Discovery service,
  * keyed by a combination of
  * <ul>
@@ -40,18 +40,18 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  * This DOES allow multiple instances of a given <i>singleton</i> class
  * to exist for different class loaders and different group contexts.
  * </p>
- * 
+ *
  * <p>In the context of this package, a service interface is defined by a
  * Service Provider Interface (SPI).  The SPI is expressed as a Java interface,
  * abstract class, or (base) class that defines an expected programming
  * interface.
  * </p>
- * 
+ *
  * <p>DiscoverSingleton provides the <code>find</code> methods for locating and
  * instantiating a singleton instance of an implementation of a service (SPI).
  * Each form of <code>find</code> varies slightly, but they all perform the
  * same basic function.
- * 
+ *
  * The simplest <code>find</code> methods are intended for direct use by
  * components looking for a service.  If you are not sure which finder(s)
  * to use, you can narrow your search to one of these:
@@ -68,7 +68,7 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  * <li>static Object find(String groupContext, Class spi,
  *                        String propertiesFileName, String defaultImpl);</li>
  * </ul>
- * 
+ *
  * The <code>DiscoverSingleton.find</code> methods proceed as follows:
  * </p>
  * <ul>
@@ -150,7 +150,7 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  *   Create an instance of the class.
  *   </li></p>
  * </ul>
- * 
+ *
  * <p>
  * Variances for various forms of the <code>find</code>
  * methods are discussed with each such method.
@@ -191,12 +191,12 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  *   </li>
  * </ul>
  * </p>
- * 
+ *
  * <p><strong>IMPLEMENTATION NOTE</strong> - This implementation is modelled
  * after the SAXParserFactory and DocumentBuilderFactory implementations
  * (corresponding to the JAXP pluggability APIs) found in Apache Xerces.
  * </p>
- * 
+ *
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
@@ -204,19 +204,19 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  */
 public class DiscoverSingleton {
     /********************** (RELATIVELY) SIMPLE FINDERS **********************
-     * 
+     *
      * These finders are suitable for direct use in components looking for a
      * service.  If you are not sure which finder(s) to use, you can narrow
      * your search to one of these.
      */
-    
+
     /**
      * Find implementation of SPI.
-     * 
+     *
      * @param spiClass Service Provider Interface Class.
-     * 
+     *
      * @return Instance of a class implementing the SPI.
-     * 
+     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
@@ -233,15 +233,15 @@ public class DiscoverSingleton {
 
     /**
      * Find implementation of SPI.
-     * 
+     *
      * @param spiClass Service Provider Interface Class.
-     * 
+     *
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
-     * 
+     *
      * @return Instance of a class implementing the SPI.
-     * 
+     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
@@ -258,13 +258,13 @@ public class DiscoverSingleton {
 
     /**
      * Find implementation of SPI.
-     * 
+     *
      * @param spiClass Service Provider Interface Class.
-     * 
+     *
      * @param defaultImpl Default implementation.
-     * 
+     *
      * @return Instance of a class implementing the SPI.
-     * 
+     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
@@ -281,17 +281,17 @@ public class DiscoverSingleton {
 
     /**
      * Find implementation of SPI.
-     * 
+     *
      * @param spiClass Service Provider Interface Class.
-     * 
+     *
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
-     * 
+     *
      * @param defaultImpl Default implementation.
-     * 
+     *
      * @return Instance of a class implementing the SPI.
-     * 
+     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
@@ -310,17 +310,17 @@ public class DiscoverSingleton {
 
     /**
      * Find implementation of SPI.
-     * 
+     *
      * @param spiClass Service Provider Interface Class.
-     * 
+     *
      * @param propertiesFileName Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
-     * 
+     *
      * @param defaultImpl Default implementation.
-     * 
+     *
      * @return Instance of a class implementing the SPI.
-     * 
+     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
@@ -336,24 +336,24 @@ public class DiscoverSingleton {
                     new PropertiesHolder(propertiesFileName),
                     new DefaultClassHolder<T>(defaultImpl));
     }
-    
+
     /*************** FINDERS FOR USE IN FACTORY/HELPER METHODS ***************
      */
 
 
     /**
      * Find implementation of SPI.
-     * 
+     *
      * @param spi Service Provider Interface Class.
-     * 
+     *
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
-     * 
+     *
      * @param defaultImpl Default implementation.
-     * 
+     *
      * @return Instance of a class implementing the SPI.
-     * 
+     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
@@ -373,7 +373,7 @@ public class DiscoverSingleton {
         if (obj == null) {
             try {
                 obj = DiscoverClass.newInstance(loaders, spi, properties, defaultImpl);
-                
+
                 if (obj != null) {
                     put(contextLoader, spi.getSPName(), obj);
                 }
@@ -383,12 +383,12 @@ public class DiscoverSingleton {
                 throw new DiscoveryException("Unable to instantiate implementation class for " + spi.getSPName(), e);
             }
         }
-        
+
         return obj;
     }
 
     /********************** CACHE-MANAGEMENT SUPPORT **********************/
-    
+
     /**
      * Release all internal references to previously created service
      * instances associated with the current thread context class loader.
@@ -412,24 +412,24 @@ public class DiscoverSingleton {
      */
     public static synchronized void release(Class<?> spiClass) {
         Map<String, Object> spis = EnvironmentCache.get(JDKHooks.getJDKHooks().getThreadContextClassLoader());
-        
+
         if (spis != null) {
             spis.remove(spiClass.getName());
         }
     }
-    
-    
+
+
     /************************* SPI CACHE SUPPORT *************************
-     * 
+     *
      * Cache services by a 'key' unique to the requesting class/environment:
-     * 
+     *
      * When we 'release', it is expected that the caller of the 'release'
      * have the same thread context class loader... as that will be used
      * to identify all cached entries to be released.
-     * 
+     *
      * We will manage synchronization directly, so all caches are implemented
      * as HashMap (unsynchronized).
-     * 
+     *
      * - ClassLoader::groupContext::SPI::Instance Cache
      *         Cache : HashMap
      *         Key   : Thread Context Class Loader (<code>ClassLoader</code>).
@@ -460,13 +460,13 @@ public class DiscoverSingleton {
                                            String spiName)
     {
         Map<String, Object> spis = EnvironmentCache.get(classLoader);
-        
+
         if (spis != null) {
             return spis.get(spiName);
         }
         return null;
     }
-    
+
     /**
      * Put service keyed by spi & classLoader.
      */
@@ -477,12 +477,12 @@ public class DiscoverSingleton {
         if (service != null)
         {
             Map<String, Object> spis = EnvironmentCache.get(classLoader);
-            
+
             if (spis == null) {
                 spis = new HashMap<String, Object>(EnvironmentCache.smallHashSize);
                 EnvironmentCache.put(classLoader, spis);
             }
-            
+
             spis.put(spiName, service);
         }
     }
