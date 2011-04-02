@@ -32,7 +32,7 @@ import org.apache.commons.discovery.resource.DiscoverResources;
  * The load methods locate a class only.
  * The find methods locate a class and verify that the
  * class implements an given interface or extends a given class.
- * 
+ *
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
@@ -56,8 +56,8 @@ public class ResourceUtils {
         }
         return packageName;
     }
-    
-    
+
+
     /**
      * Load the resource <code>resourceName</code>.
      * Try each classloader in succession,
@@ -66,7 +66,7 @@ public class ResourceUtils {
      * (doesn't start with '/' character), then retry with
      * <code>packageName/resourceName</code> after changing all
      * '.' to '/'.
-     * 
+     *
      * @param resourceName The name of the resource to load.
      */
     public static Resource getResource(Class<?> spi,
@@ -76,7 +76,7 @@ public class ResourceUtils {
     {
         DiscoverResources explorer = new DiscoverResources(loaders);
         ResourceIterator resources = explorer.findResources(resourceName);
-        
+
         if (spi != null  &&
             !resources.hasNext()  &&
             resourceName.charAt(0) != '/')
@@ -89,16 +89,16 @@ public class ResourceUtils {
             resourceName = getPackageName(spi).replace('.','/') + "/" + resourceName;
             resources = explorer.findResources(resourceName);
         }
-        
+
         return resources.hasNext()
                ? resources.nextResource()
                : null;
     }
-    
+
     /**
      * Load named property file, optionally qualifed by spi's package name
      * as per Class.getResource.
-     * 
+     *
      * A property file is loaded using the following sequence of class loaders:
      *   <ul>
      *     <li>Thread Context Class Loader</li>
@@ -107,29 +107,29 @@ public class ResourceUtils {
      *     <li>DiscoverSingleton's (this class) Class Loader</li>
      *     <li>System Class Loader</li>
      *   </ul>
-     * 
+     *
      * @param propertiesFileName The property file name.
-     * 
+     *
      * @return Instance of a class implementing the SPI.
-     * 
+     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
-     */    
+     */
     public static Properties loadProperties(Class<?> spi,
                                             String propertiesFileName,
                                             ClassLoaders classLoaders)
         throws DiscoveryException
     {
         Properties properties = null;
-        
+
         if (propertiesFileName != null) {
             try {
                 Resource resource = getResource(spi, propertiesFileName, classLoaders);
                 if (resource != null) {
                     InputStream stream = resource.getResourceAsStream();
-        
+
                     if (stream != null) {
                         properties = new Properties();
                         try {
@@ -145,7 +145,7 @@ public class ResourceUtils {
                 // ignore
             }
         }
-        
+
         return properties;
     }
 }
