@@ -45,18 +45,18 @@ public class DiscoverMappedNames
     public static void setLog(Log _log) {
         log = _log;
     }
-    
+
     private final Map<String, String[]> mapping = new Hashtable<String, String[]>();  // String name ==> String[] newNames
-    
+
     /** Construct a new resource discoverer
      */
     public DiscoverMappedNames() {
     }
-    
+
     public void map(String fromName, String toName) {
         map(fromName, new String[]{ toName });
     }
-    
+
     public void map(String fromName, String [] toNames) {
         mapping.put(fromName, toNames);
     }
@@ -68,13 +68,13 @@ public class DiscoverMappedNames
         if (log.isDebugEnabled()) {
             log.debug("find: resourceName='" + resourceName + "', mapping to constants");
         }
-        
+
         final String[] names = mapping.get(resourceName);
 
         return new ResourceNameIterator() {
 
             private int idx = 0;
-            
+
             public boolean hasNext() {
                 if (names != null) {
                     while (idx < names.length  &&  names[idx] == null) {
@@ -84,7 +84,7 @@ public class DiscoverMappedNames
                 }
                 return false;
             }
-            
+
             public String nextResourceName() {
                 return hasNext() ? names[idx++] : null;
             }
