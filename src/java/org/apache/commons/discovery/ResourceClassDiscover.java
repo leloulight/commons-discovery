@@ -20,19 +20,19 @@ package org.apache.commons.discovery;
 /**
  * @author Richard A. Sitze
  */
-public interface ResourceClassDiscover extends ResourceDiscover
+public interface ResourceClassDiscover<T> extends ResourceDiscover
 {
     /**
      * Locate class resources that are bound to <code>className</code>.
      * 
      * @return ResourceClassIterator
      */
-    ResourceClassIterator findResourceClasses(String className);
+    ResourceClassIterator<T> findResourceClasses(String className);
 
     /**
      * Locate class resources that are bound to <code>resourceNames</code>.
      * 
      * @return ResourceIterator
      */
-    ResourceClassIterator findResourceClasses(ResourceNameIterator className);
+    ResourceClassIterator<T> findResourceClasses(ResourceNameIterator className);
 }
