@@ -29,13 +29,13 @@ import org.apache.commons.logging.Log;
 /**
  * Recover resource name from Managed Properties,
  * using OLD property names.
- * 
+ *
  * This class maintains a mapping between old names and
  * (new) the class names they represent.  The discovery
  * mechanism uses the class names as property names.
- * 
+ *
  * @see org.apache.commons.discovery.tools.ManagedProperties
- * 
+ *
  * @author Richard A. Sitze
  */
 public class DiscoverNamesInAlternateManagedProperties
@@ -48,12 +48,12 @@ public class DiscoverNamesInAlternateManagedProperties
     }
 
     private final Map<String, String> mapping = new HashMap<String, String>();
-    
+
     /** Construct a new resource discoverer
      */
     public DiscoverNamesInAlternateManagedProperties() {
     }
-    
+
     /**
      */
     public void addClassToPropertyNameMapping(String className, String propertyName) {
@@ -77,11 +77,11 @@ public class DiscoverNamesInAlternateManagedProperties
         return new ResourceNameIterator() {
             private String resource =
                 (mappedName == null) ? null : ManagedProperties.getProperty(mappedName);
-            
+
             public boolean hasNext() {
                 return resource != null;
             }
-            
+
             public String nextResourceName() {
                 String element = resource;
                 resource = null;
