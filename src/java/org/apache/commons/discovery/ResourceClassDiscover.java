@@ -27,12 +27,12 @@ public interface ResourceClassDiscover extends ResourceDiscover
      * 
      * @return ResourceClassIterator
      */
-    public ResourceClassIterator findResourceClasses(String className);
+    ResourceClassIterator findResourceClasses(String className);
 
     /**
      * Locate class resources that are bound to <code>resourceNames</code>.
      * 
      * @return ResourceIterator
      */
-    public ResourceClassIterator findResourceClasses(ResourceNameIterator className);
+    ResourceClassIterator findResourceClasses(ResourceNameIterator className);
 }
