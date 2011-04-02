@@ -34,7 +34,7 @@ import org.apache.commons.logging.Log;
 /**
  * <p>This class may disappear in the future, or be moved to another project..
  * </p>
- * 
+ *
  * <p>Extend the concept of System properties to a hierarchical scheme
  * based around class loaders.  System properties are global in nature,
  * so using them easily violates sound architectural and design principles
@@ -42,10 +42,10 @@ import org.apache.commons.logging.Log;
  * Nevertheless, there is a need for properties broader in scope than
  * class or class instance scope.
  * </p>
- * 
+ *
  * <p>This class is one solution.
  * </p>
- * 
+ *
  * <p>Manage properties according to a secure
  * scheme similar to that used by classloaders:
  * <ul>
@@ -69,14 +69,14 @@ import org.apache.commons.logging.Log;
  *   <li>System properties take precedence over all other properties</li>
  * </ul>
  * </p>
- * 
+ *
  * <p>This is not a perfect solution, as it is possible that
  * different <code>ClassLoader</code>s load different instances of
  * <code>ScopedProperties</code>.  The 'higher' this class is loaded
  * within the <code>ClassLoader</code> hierarchy, the more usefull
  * it will be.
  * </p>
- * 
+ *
  * @author Richard A. Sitze
  */
 public class ManagedProperties {
@@ -92,22 +92,22 @@ public class ManagedProperties {
      */
     private static final Map<ClassLoader, Map<String, Value>> propertiesCache =
         new HashMap<ClassLoader, Map<String, Value>>();
-    
-                                                        
+
+
     /**
      * Get value for property bound to the current thread context class loader.
-     * 
+     *
      * @param propertyName property name.
      * @return property value if found, otherwise default.
      */
     public static String getProperty(String propertyName) {
         return getProperty(getThreadContextClassLoader(), propertyName);
     }
-    
+
     /**
      * Get value for property bound to the current thread context class loader.
      * If not found, then return default.
-     * 
+     *
      * @param propertyName property name.
      * @param dephault default value.
      * @return property value if found, otherwise default.
@@ -115,10 +115,10 @@ public class ManagedProperties {
     public static String getProperty(String propertyName, String dephault) {
         return getProperty(getThreadContextClassLoader(), propertyName, dephault);
     }
-    
+
     /**
      * Get value for property bound to the class loader.
-     * 
+     *
      * @param classLoader
      * @param propertyName property name.
      * @return property value if found, otherwise default.
@@ -136,11 +136,11 @@ public class ManagedProperties {
         }
         return value;
     }
-    
+
     /**
      * Get value for property bound to the class loader.
      * If not found, then return default.
-     * 
+     *
      * @param classLoader
      * @param propertyName property name.
      * @param dephault default value.
@@ -159,7 +159,7 @@ public class ManagedProperties {
     public static void setProperty(String propertyName, String value) {
         setProperty(propertyName, value, false);
     }
-    
+
     /**
      * Set value for property bound to the current thread context class loader.
      * @param propertyName property name
@@ -175,7 +175,7 @@ public class ManagedProperties {
             synchronized (propertiesCache) {
                 ClassLoader classLoader = getThreadContextClassLoader();
                 Map<String, Value> properties = propertiesCache.get(classLoader);
-                
+
                 if (value == null) {
                     if (properties != null) {
                         properties.remove(propertyName);
@@ -191,22 +191,22 @@ public class ManagedProperties {
             }
         }
     }
-    
+
     /**
      * Set property values for <code>Properties</code> bound to the
      * current thread context class loader.
-     * 
+     *
      * @param newProperties name/value pairs to be bound
      */
     public static void setProperties(Map<?, ?> newProperties) {
         setProperties(newProperties, false);
     }
-    
-    
+
+
     /**
      * Set property values for <code>Properties</code> bound to the
      * current thread context class loader.
-     * 
+     *
      * @param newProperties name/value pairs to be bound
      * @param isDefault determines if properties are default or not.
      *        A non-default property cannot be overriden.
@@ -254,19 +254,19 @@ public class ManagedProperties {
             }
 
             if (classLoader == null) break;
-            
+
             classLoader = getParent(classLoader);
         }
-        
+
         return Collections.enumeration(allProps.keySet());
     }
-    
+
     /**
      * This is an expensive operation.
      * ON EACH CALL it walks through all property lists 
      * associated with the current context class loader upto
      * and including the bootstrap class loader.
-     * 
+     *
      * @return Returns a <code>java.util.Properties</code> instance
      * that is equivalent to the current state of the scoped
      * properties, in that getProperty() will return the same value.
@@ -275,13 +275,13 @@ public class ManagedProperties {
      */
     public static Properties getProperties() {
         Properties p = new Properties();
-        
+
         Enumeration<String> names = propertyNames();
         while (names.hasMoreElements()) {
             String name = names.nextElement();
             p.put(name, getProperty(name));
         }
-        
+
         return p;
     }
 
@@ -291,7 +291,7 @@ public class ManagedProperties {
     private static class Value {
         final String value;
         final boolean isDefault;
-        
+
         Value(String value, boolean isDefault) {
             this.value = value;
             this.isDefault = isDefault;
@@ -314,14 +314,14 @@ public class ManagedProperties {
             if (classLoader != null) {
                 value = getValueProperty(getParent(classLoader), propertyName);
             }
-            
+
             if (value == null  ||  value.isDefault) {
                 synchronized (propertiesCache) {
                     Map<String, Value> properties = propertiesCache.get(classLoader);
-                        
+
                     if (properties != null) {
                         Value altValue = properties.get(propertyName);
-                        
+
                         // set value only if override exists..
                         // otherwise pass default (or null) on..
                         if (altValue != null) {
@@ -337,10 +337,10 @@ public class ManagedProperties {
                 }
             }
         }
-        
+
         return value;
     }
-    
+
     private static final ClassLoader getThreadContextClassLoader() {
         return JDKHooks.getJDKHooks().getThreadContextClassLoader();
     }
