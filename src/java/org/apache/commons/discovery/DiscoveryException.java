@@ -30,6 +30,11 @@ public class DiscoveryException extends RuntimeException {
 
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -2518293836976054070L;
+
+    /**
      * Construct a new exception with <code>null</code> as its detail message.
      */
     public DiscoveryException() {
