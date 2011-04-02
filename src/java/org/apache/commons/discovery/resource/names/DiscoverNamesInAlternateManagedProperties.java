@@ -17,6 +17,7 @@
 package org.apache.commons.discovery.resource.names;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
@@ -46,7 +47,7 @@ public class DiscoverNamesInAlternateManagedProperties
         log = _log;
     }
 
-    HashMap mapping = new HashMap();
+    private final Map<String, String> mapping = new HashMap<String, String>();
     
     /** Construct a new resource discoverer
      */
@@ -63,7 +64,7 @@ public class DiscoverNamesInAlternateManagedProperties
      * @return Enumeration of ResourceInfo
      */
     public ResourceNameIterator findResourceNames(final String resourceName) {
-        final String mappedName = (String)mapping.get(resourceName);
+        final String mappedName = mapping.get(resourceName);
 
         if (log.isDebugEnabled()) {
             if (mappedName == null) {
