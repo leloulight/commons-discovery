@@ -43,7 +43,7 @@ public class ClassUtils {
      * This means that calling Class.getPackage().getName()
      * is unreliable at best.
      */
-    public static String getPackageName(Class clazz) {
+    public static String getPackageName(Class<?> clazz) {
         Package clazzPackage = clazz.getPackage();
         String packageName;
         if (clazzPackage != null) {
@@ -59,10 +59,10 @@ public class ClassUtils {
      * @return Method 'public static returnType methodName(paramTypes)',
      *         if found to be <strong>directly</strong> implemented by clazz.
      */
-    public static Method findPublicStaticMethod(Class clazz,
-                                                Class returnType,
+    public static Method findPublicStaticMethod(Class<?> clazz,
+                                                Class<?> returnType,
                                                 String methodName,
-                                                Class[] paramTypes) {
+                                                Class<?>[] paramTypes) {
         boolean problem = false;
         Method method = null;
 
@@ -101,7 +101,7 @@ public class ClassUtils {
     /**
      * Instantiate a new 
      */    
-    public static Object newInstance(Class impl, Class paramClasses[], Object params[])
+    public static <T> T newInstance(Class<T> impl, Class<?> paramClasses[], Object params[])
         throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
@@ -111,7 +111,7 @@ public class ClassUtils {
         if (paramClasses == null || params == null) {
             return impl.newInstance();
         } else {
-            Constructor constructor = impl.getConstructor(paramClasses);
+            Constructor<T> constructor = impl.getConstructor(paramClasses);
             return constructor.newInstance(params);
         }
     }
@@ -120,7 +120,7 @@ public class ClassUtils {
      * Throws exception if <code>impl</code> does not
      * implement or extend the SPI.
      */
-    public static void verifyAncestory(Class spi, Class impl)
+    public static void verifyAncestory(Class<?> spi, Class<?> impl)
         throws DiscoveryException
     {
         if (spi == null) {
