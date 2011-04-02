@@ -17,6 +17,7 @@
 package org.apache.commons.discovery.test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
@@ -217,6 +218,22 @@ public class TestAll {
         } finally {
             DiscoverSingleton.release();
         }
+    }
+
+    @Test
+    public void findServiceClass() {
+        DiscoverClass discoverClass = new DiscoverClass();
+        Class<? extends TestInterface2> serviceClass = discoverClass.find(TestInterface2.class);
+
+        assertNotNull(serviceClass);
+    }
+
+    @Test
+    public void findServiceClassAndInstantiate() throws Exception {
+        DiscoverClass discoverClass = new DiscoverClass();
+        TestInterface2 serviceImpl = discoverClass.newInstance(TestInterface2.class);
+
+        assertNotNull(serviceImpl);
     }
 
     @Test
