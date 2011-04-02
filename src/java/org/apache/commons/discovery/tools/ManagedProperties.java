@@ -18,6 +18,7 @@ package org.apache.commons.discovery.tools;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -89,7 +90,8 @@ public class ManagedProperties {
      * Use <code>HashMap</code> because it allows 'null' keys, which
      * allows us to account for the (null) bootstrap classloader.
      */
-    private static final HashMap propertiesCache = new HashMap();
+    private static final Map<ClassLoader, Map<String, Value>> propertiesCache =
+        new HashMap<ClassLoader, Map<String, Value>>();
     
                                                         
     /**
@@ -172,7 +174,7 @@ public class ManagedProperties {
         if (propertyName != null) {
             synchronized (propertiesCache) {
                 ClassLoader classLoader = getThreadContextClassLoader();
-                HashMap properties = (HashMap)propertiesCache.get(classLoader);
+                Map<String, Value> properties = propertiesCache.get(classLoader);
                 
                 if (value == null) {
                     if (properties != null) {
@@ -180,7 +182,7 @@ public class ManagedProperties {
                     }
                 } else {
                     if (properties == null) {
-                        properties = new HashMap();
+                        properties = new HashMap<String, Value>();
                         propertiesCache.put(classLoader, properties);
                     }
 
@@ -196,7 +198,7 @@ public class ManagedProperties {
      * 
      * @param newProperties name/value pairs to be bound
      */
-    public static void setProperties(Map newProperties) {
+    public static void setProperties(Map<?, ?> newProperties) {
         setProperties(newProperties, false);
     }
     
@@ -212,15 +214,12 @@ public class ManagedProperties {
      *        (default or non-default) of the same name bound to
      *        a decendent class loader.
      */
-    public static void setProperties(Map newProperties, boolean isDefault) {
-        java.util.Iterator it = newProperties.entrySet().iterator();
-
+    public static void setProperties(Map<?, ?> newProperties, boolean isDefault) {
         /**
          * Each entry must be mapped to a Property.
          * 'setProperty' does this for us.
          */
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry)it.next();
+        for (Map.Entry<?, ?> entry : newProperties.entrySet()) {
             setProperty( String.valueOf(entry.getKey()),
                          String.valueOf(entry.getValue()),
                          isDefault);
@@ -234,8 +233,8 @@ public class ManagedProperties {
      * associated with the current context class loader upto
      * and including the bootstrap class loader.
      */
-    public static Enumeration propertyNames() {
-        Hashtable allProps = new Hashtable();
+    public static Enumeration<String> propertyNames() {
+        Map<String, Value> allProps = new Hashtable<String, Value>();
 
         ClassLoader classLoader = getThreadContextClassLoader();
 
@@ -244,10 +243,10 @@ public class ManagedProperties {
          * the set of all keys...
          */
         while (true) {
-            HashMap properties = null;
+            Map<String, Value> properties = null;
 
             synchronized (propertiesCache) {
-                properties = (HashMap)propertiesCache.get(classLoader);
+                properties = propertiesCache.get(classLoader);
             }
 
             if (properties != null) {
@@ -259,7 +258,7 @@ public class ManagedProperties {
             classLoader = getParent(classLoader);
         }
         
-        return allProps.keys();
+        return Collections.enumeration(allProps.keySet());
     }
     
     /**
@@ -277,9 +276,9 @@ public class ManagedProperties {
     public static Properties getProperties() {
         Properties p = new Properties();
         
-        Enumeration names = propertyNames();
+        Enumeration<String> names = propertyNames();
         while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
+            String name = names.nextElement();
             p.put(name, getProperty(name));
         }
         
@@ -318,10 +317,10 @@ public class ManagedProperties {
             
             if (value == null  ||  value.isDefault) {
                 synchronized (propertiesCache) {
-                    HashMap properties = (HashMap)propertiesCache.get(classLoader);
+                    Map<String, Value> properties = propertiesCache.get(classLoader);
                         
                     if (properties != null) {
-                        Value altValue = (Value)properties.get(propertyName);
+                        Value altValue = properties.get(propertyName);
                         
                         // set value only if override exists..
                         // otherwise pass default (or null) on..
@@ -347,8 +346,8 @@ public class ManagedProperties {
     }
 
     private static final ClassLoader getParent(final ClassLoader classLoader) {
-        return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
-                    public Object run() {
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+                    public ClassLoader run() {
                         try {
                             return classLoader.getParent();
                         } catch (SecurityException se){
