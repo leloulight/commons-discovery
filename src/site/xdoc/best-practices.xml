@@ -78,12 +78,12 @@ different:
 
 <p>To call discovery directly from user-code:
 <ul>
-<pre>
+<source>
     import org.apache.commons.discovery.DiscoverSingleton;
     import org.apache.commons.logging.LogFactory;
     ...
-    LogFactory logFactory = (LogFactory)DiscoverSingleton.find(LogFactory.class);
-</pre>
+    LogFactory logFactory = DiscoverSingleton.find(LogFactory.class);
+</source>
 </ul>
 DiscoverSingleton looks for the value of the system property
 <code>org.apache.commons.logging.LogFactory</code>
@@ -95,23 +95,23 @@ DiscoverSingleton also allows a <code>java.util.Properties</code>
 parameter to be used for query for service implementation class name,
 as well as a default implementation class name:
 <ul>
-<pre>
+<source>
     LogFactory factory =
-        (LogFactory)DiscoverSingleton.find(LogFactory.class,
+        DiscoverSingleton.find(LogFactory.class,
                                            properties,
                                            LogFactory.FACTORY_DEFAULT);
-</pre>
+</source>
 </ul>
 </p>
 <p>
 The properties can also be specified as a resource name:
 <ul>
-<pre>
+<source>
     LogFactory factory =
-        (LogFactory)DiscoverSingleton.find(LogFactory.class,
+        DiscoverSingleton.find(LogFactory.class,
                                            LogFactory.FACTORY_PROPERTIES,
                                            LogFactory.FACTORY_DEFAULT);
-</pre>
+</source>
 </ul>
 This last form is equivalent in function
 to the original <code>LogFactory.getFactory()</code>
@@ -149,13 +149,13 @@ used and maintains internal state.
 <p>To find a class directly from user-code:
 [NEED BETTER EXAMPLE]
 <ul>
-<pre>
+<source>
     import org.apache.commons.discovery.DiscoverClass;
     import org.apache.commons.logging.LogFactory;
     ...
     DiscoverClass discoverClass = new DiscoverClass();
-    Class logFactoryClass = (LogFactory)discoverClass.find(LogFactory.class);
-</pre>
+    Class&lt;? extends LogFactory&gt; logFactoryClass = discoverClass.find(LogFactory.class);
+</source>
 </ul>
 In this case, DiscoverClass looks for the value of the system property
 <code>org.apache.commons.logging.LogFactory</code>
@@ -166,13 +166,13 @@ Failing that, it uses JDK1.3-style service discovery.
 <p>To instantiate a class directly from user-code:
 [NEED BETTER EXAMPLE]
 <ul>
-<pre>
+<source>
     import org.apache.commons.discovery.DiscoverClass;
     import org.apache.commons.logging.LogFactory;
     ...
     DiscoverClass discoverClass = new DiscoverClass();
-    LogFactory logFactoryClass = (LogFactory)discoverClass.newInstance(LogFactory.class);
-</pre>
+    LogFactory logFactoryClass = discoverClass.newInstance(LogFactory.class);
+</source>
 </ul>
 </p>
 <p>
@@ -192,7 +192,7 @@ In this case, the factory plays double duty as both the service
 to be discovered (abstract class), and the discovery mechanism.
 
 <ul>
-<pre>
+<source>
 import java.util.Properties;
 import org.apache.commons.discovery.DiscoverSingleton;
 import org.apache.commons.discovery.DiscoveryException;
@@ -212,7 +212,7 @@ public abstract class LogFactory
 
     public static LogFactory getFactory() throws ServiceException
     {
-        return (LogFactory)DiscoverSingleton.find(LogFactory.class,
+        return DiscoverSingleton.find(LogFactory.class,
                                                   LogFactory.class,
                                                   FACTORY_PROPERTIES,
                                                   FACTORY_DEFAULT);
@@ -221,14 +221,14 @@ public abstract class LogFactory
     public static LogFactory getFactory(Properties properties)
         throws ServiceException
     {
-        return (LogFactory)DiscoverSingleton.find(LogFactory.class,
+        return DiscoverSingleton.find(LogFactory.class,
                                                   LogFactory.class,
                                                   properties,
                                                   FACTORY_DEFAULT);
     }
     ...
 }
-</pre>
+</source>
 </ul>
 Note the addition of one extra parameter to the <code>find</code>
 method call.
@@ -242,7 +242,7 @@ for which <code>Discovery</code> will be looking for an implementation.
 In this example, they are the same class, as the LogFactory
 is providing helper methods that 'wrap' <code>Discovery</code>.
 </p>
- 
+
 </subsection>
 </section>
 </body>
