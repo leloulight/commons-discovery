@@ -26,12 +26,12 @@ import org.apache.commons.discovery.DiscoveryException;
  * - SPI's name
  * - SPI's (provider) class
  * - SPI's (alternate) override property name
- * 
+ *
  * In addition, while there are many cases where this is NOT
  * usefull, for those in which it is:
- * 
+ *
  * - expected constructor argument types and parameters values.
- * 
+ *
  * @author Richard A. Sitze
  */
 public class SPInterface<T> {
@@ -39,34 +39,34 @@ public class SPInterface<T> {
      * The service programming interface: intended to be
      * an interface or abstract class, but not limited
      * to those two.
-     */        
+     */
     private final Class<T> spi;
-    
+
     /**
      * The property name to be used for finding the name of
      * the SPI implementation class.
      */
     private final String propertyName;
-    
-    
+
+
     private Class<?>  paramClasses[] = null;
     private Object params[] = null;
 
 
     /**
      * Construct object representing Class <code>provider</code>.
-     * 
+     *
      * @param provider The SPI class
      */
     public SPInterface(Class<T> provider) {
         this(provider, provider.getName());
     }
-    
+
     /**
      * Construct object representing Class <code>provider</code>.
-     * 
+     *
      * @param spi The SPI class
-     * 
+     *
      * @param propertyName when looking for the name of a class implementing
      *        the provider class, a discovery strategy may involve looking for
      *        (system or other) properties having either the name of the class
@@ -79,12 +79,12 @@ public class SPInterface<T> {
 
     /**
      * Construct object representing Class <code>provider</code>.
-     * 
+     *
      * @param provider The SPI class
-     * 
+     *
      * @param constructorParamClasses classes representing the
      *        constructor argument types.
-     * 
+     *
      * @param constructorParams objects representing the
      *        constructor arguments.
      */
@@ -97,20 +97,20 @@ public class SPInterface<T> {
              constructorParamClasses,
              constructorParams);
     }
-    
+
     /**
      * Construct object representing Class <code>provider</code>.
-     * 
+     *
      * @param spi The SPI class
-     * 
+     *
      * @param propertyName when looking for the name of a class implementing
      *        the provider class, a discovery strategy may involve looking for
      *        (system or other) properties having either the name of the class
      *        (provider) or the <code>propertyName</code>.
-     * 
+     *
      * @param constructorParamClasses classes representing the
      *        constructor argument types.
-     * 
+     *
      * @param constructorParams objects representing the
      *        constructor arguments.
      */
@@ -132,14 +132,14 @@ public class SPInterface<T> {
     public Class<T> getSPClass() {
         return spi;
     }
-    
+
     public String getPropertyName() {
         return propertyName;
     }
 
     /**
      * Instantiate a new 
-     */    
+     */
     public <S extends T> S newInstance(Class<S> impl)
         throws DiscoveryException,
                InstantiationException,
@@ -148,10 +148,10 @@ public class SPInterface<T> {
                InvocationTargetException
     {
         verifyAncestory(impl);
-        
+
         return ClassUtils.newInstance(impl, paramClasses, params);
     }
-    
+
     public <S extends T> void verifyAncestory(Class<S> impl) {
         ClassUtils.verifyAncestory(spi, impl);
     }
