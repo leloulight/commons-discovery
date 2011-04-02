@@ -43,7 +43,7 @@ import org.apache.commons.logging.Log;
  *   <li>whitespace ignored,</li>
  *   <li>comments begin with '#'</li>
  * </ul>
- * 
+ *
  * Default discoverer is DiscoverClassLoaderResources,
  * but it can be set to any other.
  *
@@ -59,12 +59,12 @@ public class DiscoverNamesInFile
     public static void setLog(Log _log) {
         log = _log;
     }
-    
+
     private ResourceDiscover _discoverResources;
-    
+
     private final String _prefix;
     private final String _suffix;
-        
+
     /**
      *  Construct a new resource discoverer
      */
@@ -73,7 +73,7 @@ public class DiscoverNamesInFile
         _prefix = null;
         _suffix = null;
     }
-        
+
     /**
      *  Construct a new resource discoverer
      */
@@ -82,7 +82,7 @@ public class DiscoverNamesInFile
         _prefix = prefix;
         _suffix = suffix;
     }
-    
+
     /**
      *  Construct a new resource discoverer
      */
@@ -91,7 +91,7 @@ public class DiscoverNamesInFile
         _prefix = null;
         _suffix = null;
     }
-    
+
     /**
      *  Construct a new resource discoverer
      */
@@ -100,7 +100,7 @@ public class DiscoverNamesInFile
         _prefix = prefix;
         _suffix = suffix;
     }
-    
+
     /**
      *  Construct a new resource discoverer
      */
@@ -109,7 +109,7 @@ public class DiscoverNamesInFile
         _prefix = null;
         _suffix = null;
     }
-    
+
     /**
      *  Construct a new resource discoverer
      */
@@ -164,20 +164,20 @@ public class DiscoverNamesInFile
             private int idx = 0;
             private List<String> classNames = null;
             private String resource = null;
-            
+
             public boolean hasNext() {
                 if (resource == null) {
                     resource = getNextClassName();
                 }
                 return resource != null;
             }
-            
+
             public String nextResourceName() {
                 String element = resource;
                 resource = null;
                 return element;
             }
-            
+
             private String getNextClassName() {
                 if (classNames == null || idx >= classNames.size()) {
                     classNames = getNextClassNames();
@@ -213,9 +213,9 @@ public class DiscoverNamesInFile
      */
     private List<String> readServices(final Resource info) {
         List<String> results = new ArrayList<String>();
-        
+
         InputStream is = info.getResourceAsStream();
-        
+
         if( is != null ) {
             try {
                 try {
@@ -228,7 +228,7 @@ public class DiscoverNamesInFile
                     } catch (java.io.UnsupportedEncodingException e) {
                         rd = new BufferedReader(new InputStreamReader(is));
                     }
-                    
+
                     try {
                         String serviceImplName;
                         while( (serviceImplName = rd.readLine()) != null) {
@@ -237,7 +237,7 @@ public class DiscoverNamesInFile
                                 serviceImplName = serviceImplName.substring(0, idx);
                             }
                             serviceImplName = serviceImplName.trim();
-    
+
                             if (serviceImplName.length() != 0) {
                                 results.add(serviceImplName);
                             }
@@ -252,7 +252,7 @@ public class DiscoverNamesInFile
                 // ignore
             }
         }
-        
+
         return results;
     }
 }
