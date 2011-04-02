@@ -34,13 +34,13 @@ import org.apache.commons.discovery.DiscoveryException;
  * 
  * @author Richard A. Sitze
  */
-public class SPInterface {
+public class SPInterface<T> {
     /**
      * The service programming interface: intended to be
      * an interface or abstract class, but not limited
      * to those two.
      */        
-    private final Class spi;
+    private final Class<T> spi;
     
     /**
      * The property name to be used for finding the name of
@@ -49,7 +49,7 @@ public class SPInterface {
     private final String propertyName;
     
     
-    private Class  paramClasses[] = null;
+    private Class<?>  paramClasses[] = null;
     private Object params[] = null;
 
 
@@ -58,7 +58,7 @@ public class SPInterface {
      * 
      * @param provider The SPI class
      */
-    public SPInterface(Class provider) {
+    public SPInterface(Class<T> provider) {
         this(provider, provider.getName());
     }
     
@@ -72,7 +72,7 @@ public class SPInterface {
      *        (system or other) properties having either the name of the class
      *        (provider) or the <code>propertyName</code>.
      */
-    public SPInterface(Class spi, String propertyName) {
+    public SPInterface(Class<T> spi, String propertyName) {
         this.spi = spi;
         this.propertyName = propertyName;
     }
@@ -88,8 +88,8 @@ public class SPInterface {
      * @param constructorParams objects representing the
      *        constructor arguments.
      */
-    public SPInterface(Class provider,
-                       Class constructorParamClasses[],
+    public SPInterface(Class<T> provider,
+                       Class<?> constructorParamClasses[],
                        Object constructorParams[])
     {
         this(provider,
@@ -114,9 +114,9 @@ public class SPInterface {
      * @param constructorParams objects representing the
      *        constructor arguments.
      */
-    public SPInterface(Class spi,
+    public SPInterface(Class<T> spi,
                        String propertyName,
-                       Class constructorParamClasses[],
+                       Class<?> constructorParamClasses[],
                        Object constructorParams[])
     {
         this.spi = spi;
@@ -129,7 +129,7 @@ public class SPInterface {
         return spi.getName();
     }
 
-    public Class getSPClass() {
+    public Class<T> getSPClass() {
         return spi;
     }
     
@@ -140,7 +140,7 @@ public class SPInterface {
     /**
      * Instantiate a new 
      */    
-    public Object newInstance(Class impl)
+    public <S extends T> S newInstance(Class<S> impl)
         throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
@@ -152,7 +152,7 @@ public class SPInterface {
         return ClassUtils.newInstance(impl, paramClasses, params);
     }
     
-    public void verifyAncestory(Class impl) {
+    public <S extends T> void verifyAncestory(Class<S> impl) {
         ClassUtils.verifyAncestory(spi, impl);
     }
 }

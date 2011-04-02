@@ -17,6 +17,7 @@
 package org.apache.commons.discovery.tools;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.discovery.DiscoveryException;
@@ -221,13 +222,13 @@ public class DiscoverSingleton {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static Object find(Class spiClass)
+    public static <T> T find(Class<T> spiClass)
         throws DiscoveryException
     {
         return find(null,
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     DiscoverClass.nullProperties,
-                    DiscoverClass.nullDefaultImpl);
+                    (DefaultClassHolder<T>) null);
     }
 
     /**
@@ -246,13 +247,13 @@ public class DiscoverSingleton {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static Object find(Class spiClass, Properties properties)
+    public static <T> T find(Class<T> spiClass, Properties properties)
         throws DiscoveryException
     {
         return find(null,
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     new PropertiesHolder(properties),
-                    DiscoverClass.nullDefaultImpl);
+                    (DefaultClassHolder<T>) null);
     }
 
     /**
@@ -269,13 +270,13 @@ public class DiscoverSingleton {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static Object find(Class spiClass, String defaultImpl)
+    public static <T> T find(Class<T> spiClass, String defaultImpl)
         throws DiscoveryException
     {
         return find(null,
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     DiscoverClass.nullProperties,
-                    new DefaultClassHolder(defaultImpl));
+                    new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -296,15 +297,15 @@ public class DiscoverSingleton {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static Object find(Class spiClass,
+    public static <T> T find(Class<T> spiClass,
                               Properties properties,
                               String defaultImpl)
         throws DiscoveryException
     {
         return find(null,
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     new PropertiesHolder(properties),
-                    new DefaultClassHolder(defaultImpl));
+                    new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -325,15 +326,15 @@ public class DiscoverSingleton {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static Object find(Class spiClass,
+    public static <T> T find(Class<T> spiClass,
                               String propertiesFileName,
                               String defaultImpl)
         throws DiscoveryException
     {
         return find(null,
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     new PropertiesHolder(propertiesFileName),
-                    new DefaultClassHolder(defaultImpl));
+                    new DefaultClassHolder<T>(defaultImpl));
     }
     
     /*************** FINDERS FOR USE IN FACTORY/HELPER METHODS ***************
@@ -358,15 +359,15 @@ public class DiscoverSingleton {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static Object find(ClassLoaders loaders,
-                              SPInterface spi,
+    public static <T> T find(ClassLoaders loaders,
+                              SPInterface<T> spi,
                               PropertiesHolder properties,
-                              DefaultClassHolder defaultImpl)
+                              DefaultClassHolder<T> defaultImpl)
         throws DiscoveryException
     {
         ClassLoader contextLoader = JDKHooks.getJDKHooks().getThreadContextClassLoader();
 
-        Object obj = get(contextLoader, spi.getSPName());
+        T obj = get(contextLoader, spi.getSPName());
 
         if (obj == null) {
             try {
@@ -408,8 +409,8 @@ public class DiscoverSingleton {
      * If the SPI instance implements <code>Service</code>, then call
      * <code>release()</code>.
      */
-    public static synchronized void release(Class spiClass) {
-        HashMap spis = (HashMap)EnvironmentCache.get(JDKHooks.getJDKHooks().getThreadContextClassLoader());
+    public static synchronized void release(Class<?> spiClass) {
+        Map<String, Object> spis = EnvironmentCache.get(JDKHooks.getJDKHooks().getThreadContextClassLoader());
         
         if (spis != null) {
             spis.remove(spiClass.getName());
@@ -454,14 +455,17 @@ public class DiscoverSingleton {
     /**
      * Get service keyed by spi & classLoader.
      */
-    private static synchronized Object get(ClassLoader classLoader,
+    private static synchronized <T> T get(ClassLoader classLoader,
                                            String spiName)
     {
-        HashMap spis = (HashMap)EnvironmentCache.get(classLoader);
+        Map<String, Object> spis = EnvironmentCache.get(classLoader);
         
-        return (spis != null)
-               ? spis.get(spiName)
-               : null;
+        if (spis != null) {
+            @SuppressWarnings("unchecked") // spiName is assignable from stored object class
+            T t = (T) spis.get(spiName);
+            return t;
+        }
+        return null;
     }
     
     /**
@@ -473,10 +477,10 @@ public class DiscoverSingleton {
     {
         if (service != null)
         {
-            HashMap spis = (HashMap)EnvironmentCache.get(classLoader);
+            Map<String, Object> spis = EnvironmentCache.get(classLoader);
             
             if (spis == null) {
-                spis = new HashMap(EnvironmentCache.smallHashSize);
+                spis = new HashMap<String, Object>(EnvironmentCache.smallHashSize);
                 EnvironmentCache.put(classLoader, spis);
             }
             

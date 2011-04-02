@@ -63,8 +63,8 @@ public class Service
      * 
      * @return Enumeration of class instances (<code>Object</code>)
      */
-    public static Enumeration providers(Class spiClass) {
-        return providers(new SPInterface(spiClass), null);
+    public static <T, S extends T> Enumeration<S> providers(Class<T> spiClass) {
+        return providers(new SPInterface<T>(spiClass), null);
     }
     
     /**
@@ -74,7 +74,7 @@ public class Service
      * @param loaders loaders to use in search.
      *        If <code>null</code> then use ClassLoaders.getAppLoaders().
      */
-    public static Enumeration providers(final SPInterface spi,
+    public static <T, S extends T> Enumeration<S> providers(final SPInterface<T> spi,
                                         ClassLoaders loaders)
     {
         if (loaders == null) {
@@ -86,11 +86,11 @@ public class Service
         ResourceNameIterator servicesIter =
             (new DiscoverServiceNames(loaders)).findResourceNames(spi.getSPName());
 
-        final ResourceClassIterator services =
-            (new DiscoverClasses(loaders)).findResourceClasses(servicesIter);
+        final ResourceClassIterator<T> services =
+            (new DiscoverClasses<T>(loaders)).findResourceClasses(servicesIter);
         
-        return new Enumeration() {
-            private Object object = null;
+        return new Enumeration<S>() {
+            private S object = null;
             
             public boolean hasMoreElements() {
                 if (object == null) {
@@ -99,15 +99,15 @@ public class Service
                 return object != null;
             }
             
-            public Object nextElement() {
-                Object obj = object;
+            public S nextElement() {
+                S obj = object;
                 object = null;
                 return obj;
             }
 
-            private Object getNextClassInstance() {
+            private S getNextClassInstance() {
                 while (services.hasNext()) {
-                    ResourceClass info = services.nextResourceClass();
+                    ResourceClass<S> info = services.nextResourceClass();
                     try {
                         return spi.newInstance(info.loadClass());
                     } catch (Exception e) {

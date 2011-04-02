@@ -30,11 +30,11 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  * 
  * @author Richard A. Sitze
  */
-public class DefaultClassHolder {
-    private Class        defaultClass;
+public class DefaultClassHolder<T> {
+    private Class<? extends T>        defaultClass;
     private final String defaultName;
     
-    public DefaultClassHolder(Class defaultClass) {
+    public <S extends T> DefaultClassHolder(Class<S> defaultClass) {
         this.defaultClass = defaultClass;
         this.defaultName = defaultClass.getName();
     }
@@ -52,12 +52,12 @@ public class DefaultClassHolder {
      *         and verify that it implements the SPI.
      *         (this forces the check, no way out..).
      */
-    public Class getDefaultClass(SPInterface spi, ClassLoaders loaders) {
+    public <S extends T> Class<S> getDefaultClass(SPInterface<T> spi, ClassLoaders loaders) {
         if (defaultClass == null) {
-            DiscoverClasses classDiscovery = new DiscoverClasses(loaders);
-            ResourceClassIterator classes = classDiscovery.findResourceClasses(getDefaultName());
+            DiscoverClasses<T> classDiscovery = new DiscoverClasses<T>(loaders);
+            ResourceClassIterator<T> classes = classDiscovery.findResourceClasses(getDefaultName());
             if (classes.hasNext()) {
-                ResourceClass info = classes.nextResourceClass();
+                ResourceClass<T> info = classes.nextResourceClass();
                 try {
                     defaultClass = info.loadClass();
                 } catch (Exception e) {
@@ -70,7 +70,9 @@ public class DefaultClassHolder {
             spi.verifyAncestory(defaultClass);
         }
 
-        return defaultClass;
+        @SuppressWarnings("unchecked") // the SPInterface.verifyAncestory already asserted
+        Class<S> returned = (Class<S>) defaultClass;
+        return returned;
     }
 
     public String getDefaultName() {

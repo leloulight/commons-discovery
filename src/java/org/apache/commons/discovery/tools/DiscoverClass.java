@@ -17,8 +17,9 @@
 package org.apache.commons.discovery.tools;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.apache.commons.discovery.DiscoveryException;
 import org.apache.commons.discovery.ResourceClass;
@@ -136,11 +137,6 @@ public class DiscoverClass {
     /**
      * Readable placeholder for a null value.
      */
-    public static final DefaultClassHolder nullDefaultImpl = null;
-
-    /**
-     * Readable placeholder for a null value.
-     */
     public static final PropertiesHolder nullProperties = null;
     
     
@@ -168,7 +164,7 @@ public class DiscoverClass {
     }
     
     
-    public ClassLoaders getClassLoaders(Class spiClass) {
+    public ClassLoaders getClassLoaders(Class<?> spiClass) {
         return classLoaders;
     }
 
@@ -184,13 +180,13 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
-    public Class find(Class spiClass)
+    public <T, S extends T> Class<S> find(Class<T> spiClass)
         throws DiscoveryException
     {
         return find(getClassLoaders(spiClass),
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     nullProperties,
-                    nullDefaultImpl);
+                    (DefaultClassHolder<T>) null);
     }
 
     /**
@@ -206,13 +202,13 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
-    public Class find(Class spiClass, Properties properties)
+    public <T, S extends T> Class<S> find(Class<T> spiClass, Properties properties)
         throws DiscoveryException
     {
         return find(getClassLoaders(spiClass),
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     new PropertiesHolder(properties),
-                    nullDefaultImpl);
+                    (DefaultClassHolder<T>) null);
     }
 
     /**
@@ -228,13 +224,13 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
-    public Class find(Class spiClass, String defaultImpl)
+    public <T, S extends T> Class<S> find(Class<T> spiClass, String defaultImpl)
         throws DiscoveryException
     {
         return find(getClassLoaders(spiClass),
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     nullProperties,
-                    new DefaultClassHolder(defaultImpl));
+                    new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -252,13 +248,13 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
-    public Class find(Class spiClass, Properties properties, String defaultImpl)
+    public <T, S extends T> Class<S> find(Class<T> spiClass, Properties properties, String defaultImpl)
         throws DiscoveryException
     {
         return find(getClassLoaders(spiClass),
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     new PropertiesHolder(properties),
-                    new DefaultClassHolder(defaultImpl));
+                    new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -276,13 +272,13 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
-    public Class find(Class spiClass, String propertiesFileName, String defaultImpl)
+    public <T, S extends T> Class<S> find(Class<T> spiClass, String propertiesFileName, String defaultImpl)
         throws DiscoveryException
     {
         return find(getClassLoaders(spiClass),
-                    new SPInterface(spiClass),
+                    new SPInterface<T>(spiClass),
                     new PropertiesHolder(propertiesFileName),
-                    new DefaultClassHolder(defaultImpl));
+                    new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -300,10 +296,10 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
-    public static Class find(ClassLoaders loaders,
-                             SPInterface spi,
+    public static <T, S extends T> Class<S> find(ClassLoaders loaders,
+                             SPInterface<T> spi,
                              PropertiesHolder properties,
-                             DefaultClassHolder defaultImpl)
+                             DefaultClassHolder<T> defaultImpl)
         throws DiscoveryException
     {
         if (loaders == null) {
@@ -319,14 +315,14 @@ public class DiscoverClass {
         String[] classNames = discoverClassNames(spi, props);
         
         if (classNames.length > 0) {
-            DiscoverClasses classDiscovery = new DiscoverClasses(loaders);
+            DiscoverClasses<T> classDiscovery = new DiscoverClasses<T>(loaders);
             
-            ResourceClassIterator classes =
+            ResourceClassIterator<T> classes =
                 classDiscovery.findResourceClasses(classNames[0]);
             
             // If it's set as a property.. it had better be there!
             if (classes.hasNext()) {
-                ResourceClass info = classes.nextResourceClass();
+                ResourceClass<T> info = classes.nextResourceClass();
                 try {
                     return info.loadClass();
                 } catch (Exception e) {
@@ -337,8 +333,8 @@ public class DiscoverClass {
             ResourceNameIterator classIter =
                 (new DiscoverServiceNames(loaders)).findResourceNames(spi.getSPName());
 
-            ResourceClassIterator classes =
-                (new DiscoverClasses(loaders)).findResourceClasses(classIter);
+            ResourceClassIterator<T> classes =
+                (new DiscoverClasses<T>(loaders)).findResourceClasses(classIter);
                 
             
             if (!classes.hasNext()  &&  defaultImpl != null) {
@@ -347,7 +343,7 @@ public class DiscoverClass {
             
             // Services we iterate through until we find one that loads..
             while (classes.hasNext()) {
-                ResourceClass info = classes.nextResourceClass();
+                ResourceClass<T> info = classes.nextResourceClass();
                 try {
                     return info.loadClass();
                 } catch (Exception e) {
@@ -372,7 +368,7 @@ public class DiscoverClass {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public Object newInstance(Class spiClass)
+    public <T> T newInstance(Class<T> spiClass)
         throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
@@ -380,9 +376,9 @@ public class DiscoverClass {
                InvocationTargetException
     {
         return newInstance(getClassLoaders(spiClass),
-                           new SPInterface(spiClass),
+                           new SPInterface<T>(spiClass),
                            nullProperties,
-                           nullDefaultImpl);
+                           (DefaultClassHolder<T>) null);
     }
 
     /**
@@ -401,7 +397,7 @@ public class DiscoverClass {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public Object newInstance(Class spiClass, Properties properties)
+    public <T> T newInstance(Class<T> spiClass, Properties properties)
         throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
@@ -409,9 +405,9 @@ public class DiscoverClass {
                InvocationTargetException
     {
         return newInstance(getClassLoaders(spiClass),
-                           new SPInterface(spiClass),
+                           new SPInterface<T>(spiClass),
                            new PropertiesHolder(properties),
-                           nullDefaultImpl);
+                           (DefaultClassHolder<T>) null);
     }
 
     /**
@@ -428,7 +424,7 @@ public class DiscoverClass {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public Object newInstance(Class spiClass, String defaultImpl)
+    public <T> T newInstance(Class<T> spiClass, String defaultImpl)
         throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
@@ -436,9 +432,9 @@ public class DiscoverClass {
                InvocationTargetException
     {
         return newInstance(getClassLoaders(spiClass),
-                           new SPInterface(spiClass),
+                           new SPInterface<T>(spiClass),
                            nullProperties,
-                           new DefaultClassHolder(defaultImpl));
+                           new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -459,7 +455,7 @@ public class DiscoverClass {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public Object newInstance(Class spiClass, Properties properties, String defaultImpl)
+    public <T> T newInstance(Class<T> spiClass, Properties properties, String defaultImpl)
         throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
@@ -467,9 +463,9 @@ public class DiscoverClass {
                InvocationTargetException
     {
         return newInstance(getClassLoaders(spiClass),
-                           new SPInterface(spiClass),
+                           new SPInterface<T>(spiClass),
                            new PropertiesHolder(properties),
-                           new DefaultClassHolder(defaultImpl));
+                           new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -490,7 +486,7 @@ public class DiscoverClass {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public Object newInstance(Class spiClass, String propertiesFileName, String defaultImpl)
+    public <T> T newInstance(Class<T> spiClass, String propertiesFileName, String defaultImpl)
         throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
@@ -498,9 +494,9 @@ public class DiscoverClass {
                InvocationTargetException
     {
         return newInstance(getClassLoaders(spiClass),
-                           new SPInterface(spiClass),
+                           new SPInterface<T>(spiClass),
                            new PropertiesHolder(propertiesFileName),
-                           new DefaultClassHolder(defaultImpl));
+                           new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -521,10 +517,10 @@ public class DiscoverClass {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static Object newInstance(ClassLoaders loaders,
-                                     SPInterface spi,
+    public static <T> T newInstance(ClassLoaders loaders,
+                                     SPInterface<T> spi,
                                      PropertiesHolder properties,
-                                     DefaultClassHolder defaultImpl)
+                                     DefaultClassHolder<T> defaultImpl)
         throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
@@ -551,10 +547,10 @@ public class DiscoverClass {
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found.
      */
-    public static String[] discoverClassNames(SPInterface spi,
+    public static <T> String[] discoverClassNames(SPInterface<T> spi,
                                               Properties properties)
     {
-        Vector names = new Vector();
+        List<String> names = new LinkedList<String>();
         
         String spiName = spi.getSPName();
         String propertyName = spi.getPropertyName();
@@ -563,28 +559,28 @@ public class DiscoverClass {
         
         // Try the (managed) system property spiName
         String className = getManagedProperty(spiName);
-        if (className != null) names.addElement(className);
+        if (className != null) names.add(className);
         
         if (includeAltProperty) {
             // Try the (managed) system property propertyName
             className = getManagedProperty(propertyName);
-            if (className != null) names.addElement(className);
+            if (className != null) names.add(className);
         }
 
         if (properties != null) {
             // Try the properties parameter spiName
             className = properties.getProperty(spiName);
-            if (className != null) names.addElement(className);
+            if (className != null) names.add(className);
 
             if (includeAltProperty) {
                 // Try the properties parameter propertyName
                 className = properties.getProperty(propertyName);
-                if (className != null) names.addElement(className);
+                if (className != null) names.add(className);
             }
         }
 
         String[] results = new String[names.size()];
-        names.copyInto(results);        
+        names.toArray(results);
 
         return results;
     }
