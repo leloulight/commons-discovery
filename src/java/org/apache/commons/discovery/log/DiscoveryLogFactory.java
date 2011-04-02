@@ -30,16 +30,16 @@ import org.apache.commons.logging.LogFactory;
  * <p>Simple implementation of Log that sends all enabled log messages,
  * for all defined loggers, to System.err.
  * </p>
- * 
+ *
  * <p>Hacked from commons-logging SimpleLog for use in discovery.
  * This is intended to be enough of a Log implementation to bootstrap
  * Discovery.
  * </p>
- * 
+ *
  * <p>One property: <code>org.apache.commons.discovery.log.level</code>.
  * valid values: all, trace, debug, info, warn, error, fatal, off.
  * </p>
- * 
+ *
  * @author Richard A. Sitze
  * @author <a href="mailto:sanders@apache.org">Scott Sanders</a>
  * @author Rod Waldhoff
@@ -58,7 +58,7 @@ public class DiscoveryLogFactory {
     private static Log log = DiscoveryLogFactory._newLog(DiscoveryLogFactory.class);
 
     /**
-     */    
+     */
     public static Log newLog(Class<?> clazz) {
         /**
          * Required to implement 'public static void setLog(Log)'
@@ -68,7 +68,7 @@ public class DiscoveryLogFactory {
                                                               void.class,
                                                               "setLog",
                                                               setLogParamClasses);
-            
+
             if (setLog == null) {
                 String msg = "Internal Error: " + clazz.getName() + " required to implement 'public static void setLog(Log)'";
                 log.fatal(msg);
@@ -96,7 +96,7 @@ public class DiscoveryLogFactory {
                ? new SimpleLog(clazz.getName())
                : logFactory.getInstance(clazz.getName());
     }
-    
+
     public static void setLog(Log _log) {
         log = _log;
     }
@@ -108,15 +108,15 @@ public class DiscoveryLogFactory {
         if (logFactory == null) {
             // for future generations.. if any
             logFactory = factory;
-            
+
             // now, go back and reset loggers for all current classes..
             for (Class<?> clazz : classRegistry.values()) {
 
                 if (log.isDebugEnabled())
                     log.debug("Reset Log for: " + clazz.getName());
-                
+
                 Method setLog = null;
-                
+
                 // invoke 'setLog(Log)'.. we already know it's 'public static',
                 // have verified parameters, and return type..
                 try {
@@ -126,9 +126,9 @@ public class DiscoveryLogFactory {
                     log.fatal(msg, e);
                     throw new DiscoveryException(msg, e);
                 }
-    
+
                 Object[] setLogParam = new Object[] { factory.getInstance(clazz.getName()) };
-                
+
                 try {
                     setLog.invoke(null, setLogParam);
                 } catch(Exception e) {
