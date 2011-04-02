@@ -38,7 +38,7 @@ public abstract class ResourceClassDiscoverImpl<T>
     public ResourceClassDiscoverImpl() {
         super();
     }
-    
+
     /**
      *  Construct a new resource discoverer
      */
@@ -49,7 +49,7 @@ public abstract class ResourceClassDiscoverImpl<T>
 
     /**
      * Locate names of resources that are bound to <code>resourceName</code>.
-     * 
+     *
      * @return ResourceNameIterator
      */
     public ResourceNameIterator findResourceNames(String resourceName) {
@@ -58,7 +58,7 @@ public abstract class ResourceClassDiscoverImpl<T>
 
     /**
      * Locate names of resources that are bound to <code>resourceNames</code>.
-     * 
+     *
      * @return ResourceNameIterator
      */
     public ResourceNameIterator findResourceNames(ResourceNameIterator resourceNames) {
@@ -67,7 +67,7 @@ public abstract class ResourceClassDiscoverImpl<T>
 
     /**
      * Locate resources that are bound to <code>resourceName</code>.
-     * 
+     *
      * @return ResourceIterator
      */
     public ResourceIterator findResources(String resourceName) {
@@ -76,7 +76,7 @@ public abstract class ResourceClassDiscoverImpl<T>
 
     /**
      * Locate resources that are bound to <code>resourceNames</code>.
-     * 
+     *
      * @return ResourceIterator
      */
     public ResourceIterator findResources(ResourceNameIterator resourceNames) {
@@ -86,7 +86,7 @@ public abstract class ResourceClassDiscoverImpl<T>
 
     /**
      * Locate class resources that are bound to <code>className</code>.
-     * 
+     *
      * @return ResourceClassIterator
      */
     public abstract ResourceClassIterator<T> findResourceClasses(String className);
@@ -100,27 +100,27 @@ public abstract class ResourceClassDiscoverImpl<T>
         return new ResourceClassIterator<T>() {
             private ResourceClassIterator<T> classes = null;
             private ResourceClass<T> resource = null;
-            
+
             public boolean hasNext() {
                 if (resource == null) {
                     resource = getNextResource();
                 }
                 return resource != null;
             }
-            
+
             public ResourceClass<T> nextResourceClass() {
                 ResourceClass<T> rsrc = resource;
                 resource = null;
                 return rsrc;
             }
-            
+
             private ResourceClass<T> getNextResource() {
                 while (inputNames.hasNext() &&
                        (classes == null  ||  !classes.hasNext())) {
                     classes =
                         findResourceClasses(inputNames.nextResourceName());
                 }
-    
+
                 return (classes != null  &&  classes.hasNext())
                        ? classes.nextResourceClass()
                        : null;
