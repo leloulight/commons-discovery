@@ -56,17 +56,15 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  * components looking for a service.  If you are not sure which finder(s)
  * to use, you can narrow your search to one of these:
  * <ul>
- * <li>static Object find(Class spi);</li>
- * <li>static Object find(Class spi, Properties properties);</li>
- * <li>static Object find(Class spi, String defaultImpl);</li>
- * <li>static Object find(Class spi,
+ * <li>static &lt;T&gt; T find(Class&lt;T&gt; spi);</li>
+ * <li>static &lt;T&gt; T find(Class&lt;T&gt; spi, Properties properties);</li>
+ * <li>static &lt;T&gt; T find(Class&lt;T&gt; spi, String defaultImpl);</li>
+ * <li>static &lt;T&gt; T find(Class&lt;T&gt; spi,
  *                        Properties properties, String defaultImpl);</li>
- * <li>static Object find(Class spi,
+ * <li>static &lt;T&gt; T find(Class&lt;T&gt; spi,
  *                        String propertiesFileName, String defaultImpl);</li>
- * <li>static Object find(String groupContext, Class spi,
- *                        Properties properties, String defaultImpl);</li>
- * <li>static Object find(String groupContext, Class spi,
- *                        String propertiesFileName, String defaultImpl);</li>
+ * <li>static &lt;T&gt; T find(ClassLoaders loaders, SPInterface&lt;T&gt; spi,
+ *                        PropertiesHolder holder, DefaultClassHolder&lt;T&gt; holder);</li>
  * </ul>
  *
  * The <code>DiscoverSingleton.find</code> methods proceed as follows:
