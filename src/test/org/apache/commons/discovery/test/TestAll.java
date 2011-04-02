@@ -54,7 +54,7 @@ public class TestAll {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
-        
+
         try {
             ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_1.class.getName());
@@ -65,7 +65,7 @@ public class TestAll {
             DiscoverSingleton.release();
         }
     }
-    
+
     @Test
     public void testFindDefaultImpl_2() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
@@ -82,22 +82,22 @@ public class TestAll {
             DiscoverSingleton.release();
         }
     }
-    
+
     @Test
     public void testCache() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
-        
+
         try {
             ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_1.class.getName());
 
             assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_1.class.getName()));
-            
+
             // no release, should get cached value..
-            
+
             ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_2.class.getName());
 
@@ -108,22 +108,22 @@ public class TestAll {
             DiscoverSingleton.release();
         }
     }
-    
+
     @Test
     public void testRelease() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
-        
+
         try {
             ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_1.class.getName());
 
             assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_1.class.getName()));
-            
+
             DiscoverSingleton.release();
-            
+
             ti = DiscoverSingleton.find(TestInterface1.class,
                                                         TestImpl1_2.class.getName());
 
@@ -134,7 +134,7 @@ public class TestAll {
             DiscoverSingleton.release();
         }
     }
-    
+
     @Test
     public void testFindPropertyImpl_1() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
@@ -143,10 +143,10 @@ public class TestAll {
 
         try {
             Properties props = new Properties();
-            
+
             props.setProperty(TestInterface1.class.getName(),
                               TestImpl1_2.class.getName());
-            
+
             ti = DiscoverSingleton.find(TestInterface1.class, props);
 
             assertTrue(ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
@@ -155,7 +155,7 @@ public class TestAll {
             DiscoverSingleton.release();
         }
     }
-    
+
     @Test
     public void testMyFactoryManagedProperty() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
@@ -165,28 +165,28 @@ public class TestAll {
         try {
             ManagedProperties.setProperty(TestInterface1.class.getName(),
                                           TestImpl1_2.class.getName());
-                              
+
             ti = DiscoverSingleton.find(TestInterface1.class);
 
             assertTrue(ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_2.class.getName()));
         } finally {
             DiscoverSingleton.release();
-            
+
             /**
              * Cleanup, don't want to affect next test..
              */
             ManagedProperties.setProperty(TestInterface1.class.getName(), null);
         }
     }
-    
+
 
     @Test
     public void testFindPropFileDefault() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
-        
+
         try {
             ti = DiscoverSingleton.find(null,
                                    new SPInterface<TestInterface1>(TestInterface1.class),
@@ -205,7 +205,7 @@ public class TestAll {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface2 ti = null;
-        
+
         try {
             ti = DiscoverSingleton.find(null,
                                    new SPInterface<TestInterface2>(TestInterface2.class),
@@ -225,12 +225,12 @@ public class TestAll {
 
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
         String name = "org.apache.commons.discovery.test.TestImpl2_1";
-        
+
         DiscoverClasses<TestInterface2> discovery = new DiscoverClasses<TestInterface2>(loaders);
         ResourceClassIterator<TestInterface2> iter = discovery.findResourceClasses(name);
         while (iter.hasNext()) {
             ResourceClass<TestInterface2> resource = iter.nextResourceClass();
-            try {                
+            try {
                 Class<TestInterface2> implClass = resource.loadClass();
                 if ( implClass != null ) {
                     assertEquals("org.apache.commons.discovery.test.TestImpl2_1", implClass.getName());
@@ -243,7 +243,7 @@ public class TestAll {
         }
         fail("failed to load class resource: " + name);
     }
-    
+
     @Test
     public void testFindResources() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
@@ -261,17 +261,17 @@ public class TestAll {
             loaders.put(getClass().getClassLoader(), true);
         else
             loaders.put(JDKHooks.getJDKHooks().getSystemClassLoader(), true);
-        
+
 
         String name = "testResource";
-        
+
         String partialPaths[] = { "/test-classes/", "/testAlt1/", "/testAlt2/" };
         int expected = partialPaths.length;
-        
+
         DiscoverResources discovery = new DiscoverResources(loaders);
         ResourceIterator iter = discovery.findResources(name);
         int count = 0;
-        
+
         while (iter.hasNext()) {
             Resource resource = iter.nextResource();
             URL url = resource.getResource();
@@ -282,7 +282,7 @@ public class TestAll {
                 count++;
             }
         }
-        
+
         if (count != expected) {
             fail("located " + count + " resources, failed to locate all " + expected + " resources: " + name);
         }
@@ -293,15 +293,15 @@ public class TestAll {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
-        
+
         DiscoverClass discover = new DiscoverClass(loaders);
         Class<? extends TestInterface2> implClass = discover.find(TestInterface2.class);
-        
+
         assertTrue("Failed to find an implementation class", implClass != null);
         assertEquals("org.apache.commons.discovery.test.TestImpl2_1", implClass.getName());
-        
+
     }
-    
+
     /**
      * This allows the tests to run as a standalone application.
      */
