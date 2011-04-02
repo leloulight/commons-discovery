@@ -16,7 +16,8 @@
  */
 package org.apache.commons.discovery.ant;
 
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.jdk.JDKHooks;
@@ -58,17 +59,17 @@ public class ServiceDiscoveryTask
         
         ResourceNameIterator iterator = disc.findResources(name);
 
-        Vector vector = new Vector();
+        List<String> resources = new LinkedList<String>();
         while (iterator.hasNext()) {
             String resourceInfo = iterator.nextResourceName();
-            vector.add(resourceInfo);
+            resources.add(resourceInfo);
             if( debug > 0 ) {
                 System.out.println("Found " + resourceInfo);
             }
         }
         
-        drivers = new String[vector.size()];
-        vector.copyInto(drivers);
+        drivers = new String[resources.size()];
+        resources.toArray(drivers);
     }
         
 }
