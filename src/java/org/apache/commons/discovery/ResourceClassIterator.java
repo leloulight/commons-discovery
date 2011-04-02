@@ -20,11 +20,11 @@ package org.apache.commons.discovery;
 /**
  * @author Richard A. Sitze
  */
-public abstract class ResourceClassIterator extends ResourceIterator
+public abstract class ResourceClassIterator<T> extends ResourceIterator
 {
     /**
      */
-    public abstract ResourceClass nextResourceClass();
+    public abstract <S extends T> ResourceClass<S> nextResourceClass();
 
     public Resource nextResource() {
         return nextResourceClass();
