@@ -16,7 +16,8 @@
  */
 package org.apache.commons.discovery.resource;
 
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.discovery.jdk.JDKHooks;
 
@@ -33,7 +34,7 @@ import org.apache.commons.discovery.jdk.JDKHooks;
  */
 public class ClassLoaders
 {
-    protected Vector classLoaders = new Vector();
+    protected List<ClassLoader> classLoaders = new LinkedList<ClassLoader>();
     
     /** Construct a new class loader set
      */
@@ -45,7 +46,7 @@ public class ClassLoaders
     }
     
     public ClassLoader get(int idx) {
-        return (ClassLoader)classLoaders.elementAt(idx);
+        return classLoaders.get(idx);
     }
 
     /**
@@ -55,7 +56,7 @@ public class ClassLoaders
      */
     public void put(ClassLoader classLoader) {
         if (classLoader != null) {
-            classLoaders.addElement(classLoader);
+            classLoaders.add(classLoader);
         }
     }
     
@@ -71,7 +72,7 @@ public class ClassLoaders
      */
     public void put(ClassLoader classLoader, boolean prune) {
         if (classLoader != null  &&  !(prune && isAncestor(classLoader))) {
-            classLoaders.addElement(classLoader);
+            classLoaders.add(classLoader);
         }
     }
     
@@ -127,7 +128,7 @@ public class ClassLoaders
      * @param factory WHO is performing the lookup.
      * @param prune Determines if ancestors are allowed to be loaded or not.
      */    
-    public static ClassLoaders getLibLoaders(Class spi, Class factory, boolean prune) {
+    public static ClassLoaders getLibLoaders(Class<?> spi, Class<?> factory, boolean prune) {
         ClassLoaders loaders = new ClassLoaders();
         
         if (spi != null) loaders.put(spi.getClassLoader());
@@ -157,7 +158,7 @@ public class ClassLoaders
      * @param factory WHO is performing the lookup (factory).
      * @param prune Determines if ancestors are allowed to be loaded or not.
      */    
-    public static ClassLoaders getAppLoaders(Class spi, Class factory, boolean prune) {
+    public static ClassLoaders getAppLoaders(Class<?> spi, Class<?> factory, boolean prune) {
         ClassLoaders loaders = new ClassLoaders();
 
         loaders.put(JDKHooks.getJDKHooks().getThreadContextClassLoader());
