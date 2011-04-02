@@ -38,17 +38,17 @@ public class DiscoverNamesInManagedProperties
         log = _log;
     }
 
-    
+
     private final String _prefix;
     private final String _suffix;
-    
+
     /** Construct a new resource discoverer
      */
     public DiscoverNamesInManagedProperties() {
         _prefix = null;
         _suffix = null;
     }
-    
+
     /** Construct a new resource discoverer
      */
     public DiscoverNamesInManagedProperties(String prefix, String suffix) {
@@ -85,7 +85,7 @@ public class DiscoverNamesInManagedProperties
             public boolean hasNext() {
                 return resource != null;
             }
-            
+
             public String nextResourceName() {
                 String element = resource;
                 resource = null;
