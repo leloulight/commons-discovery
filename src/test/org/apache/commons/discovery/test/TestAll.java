@@ -51,7 +51,7 @@ public class TestAll {
 //        org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_DEBUG;
 
     @Test
-    public void testFindDefaultImpl_1() {
+    public void findDefaultImpl_1() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
@@ -68,7 +68,7 @@ public class TestAll {
     }
 
     @Test
-    public void testFindDefaultImpl_2() {
+    public void findDefaultImpl_2() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
@@ -85,7 +85,7 @@ public class TestAll {
     }
 
     @Test
-    public void testCache() {
+    public void cacheAssertions() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
@@ -111,7 +111,7 @@ public class TestAll {
     }
 
     @Test
-    public void testRelease() {
+    public void releaseAssertions() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
@@ -137,7 +137,7 @@ public class TestAll {
     }
 
     @Test
-    public void testFindPropertyImpl_1() {
+    public void findPropertyImpl_1() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
@@ -158,7 +158,7 @@ public class TestAll {
     }
 
     @Test
-    public void testMyFactoryManagedProperty() {
+    public void myFactoryManagedProperty() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
@@ -183,7 +183,7 @@ public class TestAll {
 
 
     @Test
-    public void testFindPropFileDefault() {
+    public void findPropFileDefault() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface1 ti = null;
@@ -202,7 +202,7 @@ public class TestAll {
     }
 
     @Test
-    public void testFindServiceFileDefault() {
+    public void findServiceFileDefault() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         TestInterface2 ti = null;
@@ -221,14 +221,6 @@ public class TestAll {
     }
 
     @Test
-    public void findServiceClass() {
-        DiscoverClass discoverClass = new DiscoverClass();
-        Class<? extends TestInterface2> serviceClass = discoverClass.find(TestInterface2.class);
-
-        assertNotNull(serviceClass);
-    }
-
-    @Test
     public void findServiceClassAndInstantiate() throws Exception {
         DiscoverClass discoverClass = new DiscoverClass();
         TestInterface2 serviceImpl = discoverClass.newInstance(TestInterface2.class);
@@ -237,7 +229,7 @@ public class TestAll {
     }
 
     @Test
-    public void testLowLevelFind() {
+    public void lowLevelFind() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
@@ -262,7 +254,7 @@ public class TestAll {
     }
 
     @Test
-    public void testFindResources() {
+    public void findResources() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         ClassLoaders loaders = new ClassLoaders();
@@ -306,7 +298,7 @@ public class TestAll {
     }
 
     @Test
-    public void testViaDiscoverClass() {
+    public void findViaDiscoverClass() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
