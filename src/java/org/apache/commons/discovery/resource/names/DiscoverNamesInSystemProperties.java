@@ -35,7 +35,7 @@ public class DiscoverNamesInSystemProperties
     public static void setLog(Log _log) {
         log = _log;
     }
-    
+
     /** Construct a new resource discoverer
      */
     public DiscoverNamesInSystemProperties() {
@@ -50,11 +50,11 @@ public class DiscoverNamesInSystemProperties
 
         return new ResourceNameIterator() {
             private String resource = System.getProperty(resourceName);
-            
+
             public boolean hasNext() {
                 return resource != null;
             }
-            
+
             public String nextResourceName() {
                 String element = resource;
                 resource = null;
