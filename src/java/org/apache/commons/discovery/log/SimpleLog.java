@@ -89,8 +89,8 @@ public class SimpleLog implements Log {
 
     /** The current log level */
     static protected int logLevel = LOG_LEVEL_INFO;
-    
-    
+
+
     /**
      * Use 'out' instead of 'err' for logging
      * to keep in-sync with test messages.
@@ -173,9 +173,9 @@ public class SimpleLog implements Log {
 
     private String prefix=null;
 
-    
+
     // ------------------------------------------------------------ Constructor
-    
+
     /**
      * Construct a simple log with given name.
      *
@@ -215,7 +215,7 @@ public class SimpleLog implements Log {
         }
 
         // append the name of the log instance if so configured
-     	if( showShortName) {
+        if( showShortName) {
             if( prefix==null ) {
                 // cut all but the last component of the name for both styles
                 prefix = logName.substring( logName.lastIndexOf(".") +1) + " - ";
@@ -238,7 +238,7 @@ public class SimpleLog implements Log {
 
         // print to System.err
         out.println(buf.toString());
-        
+
         if (t != null)
             t.printStackTrace(System.err);
     }
