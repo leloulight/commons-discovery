@@ -22,47 +22,47 @@ import org.apache.commons.discovery.ResourceNameIterator;
 
 /**
  * Helper class for methods implementing the ResourceNameDiscover interface.
- * 
+ *
  * @author Richard A. Sitze
  */
 public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover
 {
     /**
      * Locate names of resources that are bound to <code>resourceName</code>.
-     * 
+     *
      * @return ResourceNameIterator
      */
     public abstract ResourceNameIterator findResourceNames(String resourceName);
 
     /**
      * Locate names of resources that are bound to <code>resourceName</code>.
-     * 
+     *
      * @return ResourceNameIterator
      */
     public ResourceNameIterator findResourceNames(final ResourceNameIterator inputNames) {
         return new ResourceNameIterator() {
             private ResourceNameIterator resourceNames = null;
             private String resourceName = null;
-            
+
             public boolean hasNext() {
                 if (resourceName == null) {
                     resourceName = getNextResourceName();
                 }
                 return resourceName != null;
             }
-            
+
             public String nextResourceName() {
                 String name = resourceName;
                 resourceName = null;
                 return name;
             }
-            
+
             private String getNextResourceName() {
                 while (inputNames.hasNext() && (resourceNames == null  ||  !resourceNames.hasNext())) {
                     resourceNames =
                         findResourceNames(inputNames.nextResourceName());
                 }
-    
+
                 return (resourceNames != null  &&  resourceNames.hasNext())
                        ? resourceNames.nextResourceName()
                        : null;
