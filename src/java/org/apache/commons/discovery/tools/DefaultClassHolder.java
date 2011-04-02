@@ -33,12 +33,12 @@ import org.apache.commons.discovery.resource.ClassLoaders;
 public class DefaultClassHolder<T> {
     private Class<? extends T>        defaultClass;
     private final String defaultName;
-    
+
     public <S extends T> DefaultClassHolder(Class<S> defaultClass) {
         this.defaultClass = defaultClass;
         this.defaultName = defaultClass.getName();
     }
-    
+
     public DefaultClassHolder(String defaultName) {
         this.defaultClass = null;
         this.defaultName = defaultName;
@@ -47,7 +47,7 @@ public class DefaultClassHolder<T> {
     /**
      * @param spi non-null SPI
      * @param loaders Used only if class needs to be loaded.
-     * 
+     *
      * @return Default Class.  Load the class if necessary,
      *         and verify that it implements the SPI.
      *         (this forces the check, no way out..).
@@ -65,7 +65,7 @@ public class DefaultClassHolder<T> {
                 }
             }
         }
-        
+
         if (defaultClass != null) {
             spi.verifyAncestory(defaultClass);
         }
