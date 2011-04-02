@@ -82,7 +82,7 @@ public class DiscoveryException extends RuntimeException {
     public Throwable getCause() {
         return this.cause;
     }
-    
+
     public String toString() {
         String ls = System.getProperty("line.separator");
         String str = super.toString();
