@@ -17,8 +17,8 @@
 package org.apache.commons.discovery.log;
 
 import java.lang.reflect.Method;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.commons.discovery.DiscoveryException;
 import org.apache.commons.discovery.tools.ClassUtils;
@@ -49,8 +49,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DiscoveryLogFactory {
     private static LogFactory logFactory = null;
-    private static final Hashtable  classRegistry = new Hashtable();
-    private static final Class[] setLogParamClasses = new Class[] { Log.class };
+    private static final Map<Class<?>, Class<?>>  classRegistry = new Hashtable<Class<?>, Class<?>>();
+    private static final Class<?>[] setLogParamClasses = new Class<?>[] { Log.class };
 
     /**
      * Above fields must be initialied before this one..
@@ -59,7 +59,7 @@ public class DiscoveryLogFactory {
 
     /**
      */    
-    public static Log newLog(Class clazz) {
+    public static Log newLog(Class<?> clazz) {
         /**
          * Required to implement 'public static void setLog(Log)'
          */
@@ -89,7 +89,7 @@ public class DiscoveryLogFactory {
     /**
      * This method MUST not invoke any logging..
      */
-    public static Log _newLog(Class clazz) {
+    public static Log _newLog(Class<?> clazz) {
         classRegistry.put(clazz, clazz);
 
         return (logFactory == null)
@@ -110,9 +110,7 @@ public class DiscoveryLogFactory {
             logFactory = factory;
             
             // now, go back and reset loggers for all current classes..
-            Enumeration elements = classRegistry.elements();
-            while (elements.hasMoreElements()) {
-                Class clazz = (Class)elements.nextElement();
+            for (Class<?> clazz : classRegistry.values()) {
 
                 if (log.isDebugEnabled())
                     log.debug("Reset Log for: " + clazz.getName());
