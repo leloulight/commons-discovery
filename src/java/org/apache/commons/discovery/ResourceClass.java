@@ -28,9 +28,9 @@ import org.apache.commons.logging.Log;
  * 'Resource' located by discovery.
  * Naming of methods becomes a real pain ('getClass()')
  * so I've patterned this after ClassLoader...
- * 
+ *
  * I think it works well as it will give users a point-of-reference.
- * 
+ *
  * @author Richard A. Sitze
  */
 public class ResourceClass<T> extends Resource
@@ -49,7 +49,7 @@ public class ResourceClass<T> extends Resource
     public ResourceClass(String resourceName, URL resource, ClassLoader loader) {
         super(resourceName, resource, loader);
     }
-    
+
     /**
      * Get the value of resourceClass.
      * Loading the class does NOT guarentee that the class can be
@@ -89,7 +89,7 @@ public class ResourceClass<T> extends Resource
         Class<S> returned = (Class<S>) resourceClass;
         return returned;
     }
-    
+
     public String toString() {
         return "ResourceClass[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
     }

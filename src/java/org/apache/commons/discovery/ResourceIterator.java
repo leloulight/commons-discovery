@@ -25,7 +25,7 @@ public abstract class ResourceIterator implements ResourceNameIterator
     /**
      */
     public abstract Resource nextResource();
-    
+
     public String nextResourceName() {
         return nextResource().getName();
     }
