@@ -17,7 +17,8 @@
 package org.apache.commons.discovery.resource.classes;
 
 import java.net.URL;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.discovery.ResourceClass;
 import org.apache.commons.discovery.ResourceClassDiscover;
@@ -35,9 +36,9 @@ import org.apache.commons.logging.Log;
  * @author Costin Manolache
  * @author James Strachan
  */
-public class DiscoverClasses
-    extends ResourceClassDiscoverImpl
-    implements ResourceClassDiscover
+public class DiscoverClasses<T>
+    extends ResourceClassDiscoverImpl<T>
+    implements ResourceClassDiscover<T>
 {
     private static Log log = DiscoveryLogFactory.newLog(DiscoverClasses.class);
     public static void setLog(Log _log) {
@@ -56,16 +57,16 @@ public class DiscoverClasses
         super(classLoaders);
     }
     
-    public ResourceClassIterator findResourceClasses(final String className) {
+    public ResourceClassIterator<T> findResourceClasses(final String className) {
         final String resourceName = className.replace('.','/') + ".class";
         
         if (log.isDebugEnabled())
             log.debug("find: className='" + className + "'");
 
-        return new ResourceClassIterator() {
-            private Vector history = new Vector();
+        return new ResourceClassIterator<T>() {
+            private List<URL> history = new ArrayList<URL>();
             private int idx = 0;
-            private ResourceClass resource = null;
+            private ResourceClass<T> resource = null;
             
             public boolean hasNext() {
                 if (resource == null) {
@@ -74,24 +75,24 @@ public class DiscoverClasses
                 return resource != null;
             }
             
-            public ResourceClass nextResourceClass() {
-                ResourceClass element = resource;
+            public ResourceClass<T> nextResourceClass() {
+                ResourceClass<T> element = resource;
                 resource = null;
                 return element;
             }
             
-            private ResourceClass getNextClass() {
+            private ResourceClass<T> getNextClass() {
                 while (idx < getClassLoaders().size()) {
                     ClassLoader loader = getClassLoaders().get(idx++);
                     URL url = loader.getResource(resourceName);
                     if (url != null) {
                         if (!history.contains(url)) {
-                            history.addElement(url);
+                            history.add(url);
     
                             if (log.isDebugEnabled())
                                 log.debug("getNextClass: next URL='" + url + "'");
     
-                            return new ResourceClass(className, url, loader);
+                            return new ResourceClass<T>(className, url, loader);
                         }
                         if (log.isDebugEnabled())
                             log.debug("getNextClass: duplicate URL='" + url + "'");

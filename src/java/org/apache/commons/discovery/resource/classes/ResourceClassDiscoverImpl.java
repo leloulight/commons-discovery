@@ -28,9 +28,9 @@ import org.apache.commons.discovery.resource.ResourceDiscoverImpl;
 /**
  * @author Richard A. Sitze
  */
-public abstract class ResourceClassDiscoverImpl
+public abstract class ResourceClassDiscoverImpl<T>
     extends ResourceDiscoverImpl
-    implements ResourceClassDiscover
+    implements ResourceClassDiscover<T>
 {
     /**
      * Construct a new resource discoverer
@@ -89,17 +89,17 @@ public abstract class ResourceClassDiscoverImpl
      * 
      * @return ResourceClassIterator
      */
-    public abstract ResourceClassIterator findResourceClasses(String className);
+    public abstract ResourceClassIterator<T> findResourceClasses(String className);
 
     /**
      * Locate class resources that are bound to <code>resourceNames</code>.
      * 
      * @return ResourceIterator
      */
-    public ResourceClassIterator findResourceClasses(final ResourceNameIterator inputNames) {
-        return new ResourceClassIterator() {
-            private ResourceClassIterator classes = null;
-            private ResourceClass resource = null;
+    public ResourceClassIterator<T> findResourceClasses(final ResourceNameIterator inputNames) {
+        return new ResourceClassIterator<T>() {
+            private ResourceClassIterator<T> classes = null;
+            private ResourceClass<T> resource = null;
             
             public boolean hasNext() {
                 if (resource == null) {
@@ -108,13 +108,13 @@ public abstract class ResourceClassDiscoverImpl
                 return resource != null;
             }
             
-            public ResourceClass nextResourceClass() {
-                ResourceClass rsrc = resource;
+            public ResourceClass<T> nextResourceClass() {
+                ResourceClass<T> rsrc = resource;
                 resource = null;
                 return rsrc;
             }
             
-            private ResourceClass getNextResource() {
+            private ResourceClass<T> getNextResource() {
                 while (inputNames.hasNext() &&
                        (classes == null  ||  !classes.hasNext())) {
                     classes =
