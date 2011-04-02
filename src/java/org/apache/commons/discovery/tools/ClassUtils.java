@@ -54,7 +54,7 @@ public class ClassUtils {
         }
         return packageName;
     }
-    
+
     /**
      * @return Method 'public static returnType methodName(paramTypes)',
      *         if found to be <strong>directly</strong> implemented by clazz.
@@ -73,7 +73,7 @@ public class ClassUtils {
             problem = true;
             log.debug("Class " + clazz.getName() + ": missing method '" + methodName + "(...)", e);
         }
-        
+
         // verify 'public static <returnType>'
         if (!problem  &&
             !(Modifier.isPublic(method.getModifiers()) &&
@@ -94,13 +94,13 @@ public class ClassUtils {
             problem = true;
             method = null;
         }
-        
+
         return method;
     }
 
     /**
      * Instantiate a new 
-     */    
+     */
     public static <T> T newInstance(Class<T> impl, Class<?> paramClasses[], Object params[])
         throws DiscoveryException,
                InstantiationException,
@@ -115,7 +115,7 @@ public class ClassUtils {
             return constructor.newInstance(params);
         }
     }
-    
+
     /**
      * Throws exception if <code>impl</code> does not
      * implement or extend the SPI.
