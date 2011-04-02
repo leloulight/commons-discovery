@@ -133,7 +133,7 @@ public class JDK11Hooks extends JDKHooks {
                      */
                     n = null;
                     while (rest.hasMoreElements()  &&  n == null) {
-                        n = (URL)rest.nextElement();
+                        n = rest.nextElement();
                         if (first != null &&
                             n != null &&
                             n.equals(first))
