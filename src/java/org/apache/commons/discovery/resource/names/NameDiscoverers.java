@@ -16,7 +16,8 @@
  */
 package org.apache.commons.discovery.resource.names;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
@@ -40,7 +41,7 @@ public class NameDiscoverers
         log = _log;
     }
 
-    private Vector discoverers = new Vector();
+    private List<ResourceNameDiscover> discoverers = new ArrayList<ResourceNameDiscover>();
     
     /**
      *  Construct a new resource name discoverer
@@ -55,12 +56,12 @@ public class NameDiscoverers
      */
     public void addResourceNameDiscover(ResourceNameDiscover discover) {
         if (discover != null) {
-            discoverers.addElement(discover);
+            discoverers.add(discover);
         }
     }
 
     protected ResourceNameDiscover getResourceNameDiscover(int idx) {
-        return (ResourceNameDiscover)discoverers.get(idx);
+        return discoverers.get(idx);
     }
 
     protected int size() {
