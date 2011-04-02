@@ -16,13 +16,12 @@
  */
 package org.apache.commons.discovery.test;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 import java.net.URL;
 import java.util.Properties;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.apache.commons.discovery.Resource;
 import org.apache.commons.discovery.ResourceClass;
@@ -38,26 +37,19 @@ import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.discovery.tools.PropertiesHolder;
 import org.apache.commons.discovery.tools.SPInterface;
+import org.junit.Test;
 
 
 /**
   * @author Richard A. Sitze
   * @version $Revision$
  */
-public class TestAll extends TestCase {
+public class TestAll {
     private static final int logLevel =
         org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_INFO;
 //        org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_DEBUG;
 
-    
-    public TestAll(String testName) {
-        super(testName);
-    }
-    
-    public static Test suite() {
-        return new TestSuite(TestAll.class);
-    }
-
+    @Test
     public void testFindDefaultImpl_1() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -74,6 +66,7 @@ public class TestAll extends TestCase {
         }
     }
     
+    @Test
     public void testFindDefaultImpl_2() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -90,6 +83,7 @@ public class TestAll extends TestCase {
         }
     }
     
+    @Test
     public void testCache() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -115,6 +109,7 @@ public class TestAll extends TestCase {
         }
     }
     
+    @Test
     public void testRelease() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -140,6 +135,7 @@ public class TestAll extends TestCase {
         }
     }
     
+    @Test
     public void testFindPropertyImpl_1() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -160,6 +156,7 @@ public class TestAll extends TestCase {
         }
     }
     
+    @Test
     public void testMyFactoryManagedProperty() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -184,6 +181,7 @@ public class TestAll extends TestCase {
     }
     
 
+    @Test
     public void testFindPropFileDefault() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -202,6 +200,7 @@ public class TestAll extends TestCase {
         }
     }
 
+    @Test
     public void testFindServiceFileDefault() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -220,6 +219,7 @@ public class TestAll extends TestCase {
         }
     }
 
+    @Test
     public void testLowLevelFind() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -244,6 +244,7 @@ public class TestAll extends TestCase {
         fail("failed to load class resource: " + name);
     }
     
+    @Test
     public void testFindResources() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -287,6 +288,7 @@ public class TestAll extends TestCase {
         }
     }
 
+    @Test
     public void testViaDiscoverClass() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
