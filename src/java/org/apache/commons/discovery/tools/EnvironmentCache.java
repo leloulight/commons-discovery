@@ -17,6 +17,7 @@
 package org.apache.commons.discovery.tools;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.discovery.jdk.JDKHooks;
 
@@ -48,7 +49,7 @@ public class EnvironmentCache {
      * as HashMap (unsynchronized).
      * 
      */
-    private static final HashMap root_cache = new HashMap();
+    private static final Map<ClassLoader, Map<String, Object>> root_cache = new HashMap<ClassLoader, Map<String, Object>>();
 
     /**
      * Initial hash size for SPI's, default just seem TO big today..
@@ -58,7 +59,7 @@ public class EnvironmentCache {
     /**
      * Get object keyed by classLoader.
      */
-    public static synchronized Object get(ClassLoader classLoader)
+    public static synchronized Map<String, Object> get(ClassLoader classLoader)
     {
         /**
          * 'null' (bootstrap/system class loader) thread context class loader
@@ -70,14 +71,14 @@ public class EnvironmentCache {
     /**
      * Put service keyed by spi & classLoader.
      */
-    public static synchronized void put(ClassLoader classLoader, Object object)
+    public static synchronized void put(ClassLoader classLoader, Map<String, Object> spis)
     {
         /**
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
-        if (object != null) {
-            root_cache.put(classLoader, object);
+        if (spis != null) {
+            root_cache.put(classLoader, spis);
         }
     }
 
