@@ -19,7 +19,8 @@ package org.apache.commons.discovery;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -102,12 +103,12 @@ public class Resource
     }
     
     public static Resource[] toArray(ResourceIterator iterator) {
-        Vector vector = new Vector();
+        List<Resource> resourceList = new LinkedList<Resource>();
         while (iterator.hasNext()) {
-            vector.add(iterator.nextResource());
+            resourceList.add(iterator.nextResource());
         }
-        Resource[] resources = new Resource[vector.size()];
-        vector.copyInto(resources);
+        Resource[] resources = new Resource[resourceList.size()];
+        resourceList.toArray(resources);
         
         return resources;
     }
