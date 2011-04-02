@@ -48,7 +48,7 @@ public class JDK11Hooks extends JDKHooks {
     public ClassLoader getThreadContextClassLoader() {
         return null;
     }
-    
+
     /**
      * The system class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
@@ -94,14 +94,14 @@ public class JDK11Hooks extends JDKHooks {
          * if the resource (from getResources) matches the first resource,
          * and eliminate the redundent element.
          */
-        
+
         final URL first = (URL)loader.getResource(resourceName);
         final Enumeration<URL> rest = loader.getResources(resourceName);
-        
+
         return new Enumeration<URL>() {
             private boolean firstDone = (first == null);
             private URL next = getNext();
-            
+
             public URL nextElement() {
                 URL o = next;
                 next = getNext();
@@ -111,10 +111,10 @@ public class JDK11Hooks extends JDKHooks {
             public boolean hasMoreElements() {
                 return next != null;
             }
-            
+
             private URL getNext() {
                 URL n;
-                
+
                 if (!firstDone) {
                     /**
                      * First time through, use results of getReference()
@@ -142,7 +142,7 @@ public class JDK11Hooks extends JDKHooks {
                         }
                     }
                 }
-                
+
                 return n;
             }
         };
