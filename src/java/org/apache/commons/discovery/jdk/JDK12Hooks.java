@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
@@ -53,9 +54,9 @@ public class JDK12Hooks extends JDKHooks {
      * @return value of the property
      */
     public String getSystemProperty(final String propName) {
-        return (String)
-        java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-            public Object run() {
+        return
+        java.security.AccessController.doPrivileged(new java.security.PrivilegedAction<String>() {
+            public String run() {
                 try {
                     return System.getProperty(propName);
                 } catch (SecurityException se){
@@ -110,7 +111,7 @@ public class JDK12Hooks extends JDKHooks {
     /**
      * Implement ClassLoader.getResources for JDK 1.2
      */
-    public Enumeration getResources(ClassLoader loader,
+    public Enumeration<URL> getResources(ClassLoader loader,
                                     String resourceName)
         throws IOException
     {
@@ -142,11 +143,12 @@ public class JDK12Hooks extends JDKHooks {
         
         // XXX: Trying to avoid JBoss UnifiedClassLoader problem
         
-        Enumeration resources;
+        Enumeration<URL> resources;
         
         if(first == null) {
             log.debug("Could not find resource: " + resourceName);
-            resources = Collections.enumeration(Collections.EMPTY_LIST);
+            List<URL> emptyURL = Collections.emptyList();
+            resources = Collections.enumeration(emptyURL);
             
         } else {
         
@@ -157,7 +159,8 @@ public class JDK12Hooks extends JDKHooks {
             } catch (RuntimeException ex) {
                 log.error("Exception occured during attept to get " + resourceName 
                         + " from " + first, ex);
-                resources = Collections.enumeration(Collections.EMPTY_LIST);
+                List<URL> emptyURL = Collections.emptyList();
+                resources = Collections.enumeration(emptyURL);
             }
             
             resources = getResourcesFromUrl(first, resources);
@@ -166,12 +169,12 @@ public class JDK12Hooks extends JDKHooks {
         return resources;
     }
     
-    private static Enumeration getResourcesFromUrl(final URL first, final Enumeration rest) {
-        return new Enumeration() {
+    private static Enumeration<URL> getResourcesFromUrl(final URL first, final Enumeration<URL> rest) {
+        return new Enumeration<URL>() {
             private boolean firstDone = (first == null);
             private URL next = getNext();
             
-            public Object nextElement() {
+            public URL nextElement() {
                 URL o = next;
                 next = getNext();
                 return o;

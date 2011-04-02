@@ -67,7 +67,7 @@ public class JDK11Hooks extends JDKHooks {
      * using introspection and doing the lookup ourself, using the list
      * of URLs, via getURLs().
      */
-    public Enumeration getResources(ClassLoader loader,
+    public Enumeration<URL> getResources(ClassLoader loader,
                                     String resourceName)
         throws IOException
     {
@@ -96,13 +96,13 @@ public class JDK11Hooks extends JDKHooks {
          */
         
         final URL first = (URL)loader.getResource(resourceName);
-        final Enumeration rest = loader.getResources(resourceName);
+        final Enumeration<URL> rest = loader.getResources(resourceName);
         
-        return new Enumeration() {
+        return new Enumeration<URL>() {
             private boolean firstDone = (first == null);
             private URL next = getNext();
             
-            public Object nextElement() {
+            public URL nextElement() {
                 URL o = next;
                 next = getNext();
                 return o;

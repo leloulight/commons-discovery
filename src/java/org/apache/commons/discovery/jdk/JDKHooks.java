@@ -16,8 +16,9 @@
  */
 package org.apache.commons.discovery.jdk;
 
-import java.util.Enumeration;
 import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
 
 
 /**
@@ -67,7 +68,7 @@ public abstract class JDKHooks {
      */
     public abstract ClassLoader getSystemClassLoader();
     
-    public abstract Enumeration getResources(ClassLoader loader,
+    public abstract Enumeration<URL> getResources(ClassLoader loader,
                                              String resourceName)
         throws IOException;
 }

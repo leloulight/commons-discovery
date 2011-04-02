@@ -26,7 +26,7 @@ import java.net.URL;
  * in 1.1.x, but this should be a good work around...
  */
 class PsuedoSystemClassLoader extends ClassLoader {
-    protected Class loadClass(String className, boolean resolve)
+    protected Class<?> loadClass(String className, boolean resolve)
         throws ClassNotFoundException
     {
         return findSystemClass(className);
