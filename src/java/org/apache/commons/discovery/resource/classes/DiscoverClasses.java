@@ -50,16 +50,16 @@ public class DiscoverClasses<T>
     public DiscoverClasses() {
         super();
     }
-    
+
     /** Construct a new resource discoverer
      */
     public DiscoverClasses(ClassLoaders classLoaders) {
         super(classLoaders);
     }
-    
+
     public ResourceClassIterator<T> findResourceClasses(final String className) {
         final String resourceName = className.replace('.','/') + ".class";
-        
+
         if (log.isDebugEnabled())
             log.debug("find: className='" + className + "'");
 
@@ -67,20 +67,20 @@ public class DiscoverClasses<T>
             private List<URL> history = new ArrayList<URL>();
             private int idx = 0;
             private ResourceClass<T> resource = null;
-            
+
             public boolean hasNext() {
                 if (resource == null) {
                     resource = getNextClass();
                 }
                 return resource != null;
             }
-            
+
             public ResourceClass<T> nextResourceClass() {
                 ResourceClass<T> element = resource;
                 resource = null;
                 return element;
             }
-            
+
             private ResourceClass<T> getNextClass() {
                 while (idx < getClassLoaders().size()) {
                     ClassLoader loader = getClassLoaders().get(idx++);
@@ -88,10 +88,10 @@ public class DiscoverClasses<T>
                     if (url != null) {
                         if (!history.contains(url)) {
                             history.add(url);
-    
+
                             if (log.isDebugEnabled())
                                 log.debug("getNextClass: next URL='" + url + "'");
-    
+
                             return new ResourceClass<T>(className, url, loader);
                         }
                         if (log.isDebugEnabled())
