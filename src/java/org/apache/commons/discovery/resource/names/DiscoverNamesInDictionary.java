@@ -43,33 +43,33 @@ public class DiscoverNamesInDictionary
         log = _log;
     }
 
-    private Dictionary<String, Object> dictionary;
+    private Dictionary<String, String[]> dictionary;
     
     /** Construct a new resource discoverer
      */
     public DiscoverNamesInDictionary() {
-        setDictionary(new Hashtable<String, Object>());
+        setDictionary(new Hashtable<String, String[]>());
     }
     
     /** Construct a new resource discoverer
      */
-    public DiscoverNamesInDictionary(Dictionary<String, Object> dictionary) {
+    public DiscoverNamesInDictionary(Dictionary<String, String[]> dictionary) {
         setDictionary(dictionary);
     }
 
-    protected Dictionary<String, Object> getDictionary() {
+    protected Dictionary<String, String[]> getDictionary() {
         return dictionary;
     }
 
     /**
      * Specify set of class loaders to be used in searching.
      */
-    public void setDictionary(Dictionary<String, Object> table) {
+    public void setDictionary(Dictionary<String, String[]> table) {
         this.dictionary = table;
     }
     
     public void addResource(String resourceName, String resource) {
-        dictionary.put(resourceName, resource);
+        addResource(resourceName, new String[]{ resource });
     }
     
     public void addResource(String resourceName, String[] resources) {
@@ -83,16 +83,7 @@ public class DiscoverNamesInDictionary
         if (log.isDebugEnabled())
             log.debug("find: resourceName='" + resourceName + "'");
 
-        Object baseResource = dictionary.get(resourceName);
-
-        final String[] resources;
-        if (baseResource instanceof String) {
-            resources = new String[] { (String)baseResource };
-        } else if (baseResource instanceof String[]) {
-            resources = (String[])baseResource;
-        } else {
-            resources = null;
-        }
+        final String[] resources = dictionary.get(resourceName);
 
         return new ResourceNameIterator() {
             private int idx = 0;
