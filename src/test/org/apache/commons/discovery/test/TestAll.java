@@ -221,14 +221,6 @@ public class TestAll {
     }
 
     @Test
-    public void findServiceClassAndInstantiate() throws Exception {
-        DiscoverClass discoverClass = new DiscoverClass();
-        TestInterface2 serviceImpl = discoverClass.newInstance(TestInterface2.class);
-
-        assertNotNull(serviceImpl);
-    }
-
-    @Test
     public void lowLevelFind() {
         org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
 
@@ -309,6 +301,17 @@ public class TestAll {
         assertTrue("Failed to find an implementation class", implClass != null);
         assertEquals("org.apache.commons.discovery.test.TestImpl2_1", implClass.getName());
 
+    }
+
+    @Test
+    public void instantiateViaDiscoverClass() throws Exception {
+        ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
+
+        DiscoverClass discoverClass = new DiscoverClass(loaders);
+        TestInterface2 serviceImpl = discoverClass.newInstance(TestInterface2.class);
+
+        assertNotNull(serviceImpl);
+        assertEquals(TestImpl2_1.class, serviceImpl.getClass());
     }
 
     /**
