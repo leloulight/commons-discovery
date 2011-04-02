@@ -37,7 +37,7 @@ public class ServiceDiscoveryTask
     String name;
     int debug=0;
     String[] drivers = null;
-        
+
     public void setServiceName(String name ) {
         this.name=name;
     }
@@ -52,11 +52,11 @@ public class ServiceDiscoveryTask
 
     public void execute() throws Exception {
         System.out.printf("Discovering service '%s'...%n", name);
-        
+
         DiscoverResources disc = new DiscoverResources();
         disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
         disc.addClassLoader( this.getClass().getClassLoader() );
-        
+
         ResourceNameIterator iterator = disc.findResources(name);
 
         List<String> resources = new LinkedList<String>();
@@ -67,9 +67,9 @@ public class ServiceDiscoveryTask
                 System.out.printf("Found '%s'%n", resourceInfo);
             }
         }
-        
+
         drivers = new String[resources.size()];
         resources.toArray(drivers);
     }
-        
+
 }
