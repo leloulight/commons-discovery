@@ -51,7 +51,7 @@ public class ServiceDiscoveryTask
     }
 
     public void execute() throws Exception {
-        System.out.println("XXX ");
+        System.out.printf("Discovering service '%s'...%n", name);
         
         DiscoverResources disc = new DiscoverResources();
         disc.addClassLoader( JDKHooks.getJDKHooks().getThreadContextClassLoader() );
@@ -64,7 +64,7 @@ public class ServiceDiscoveryTask
             String resourceInfo = iterator.nextResourceName();
             resources.add(resourceInfo);
             if( debug > 0 ) {
-                System.out.println("Found " + resourceInfo);
+                System.out.printf("Found '%s'%n", resourceInfo);
             }
         }
         
