@@ -20,7 +20,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.discovery.Resource;
 import org.apache.commons.discovery.ResourceDiscover;
@@ -161,7 +162,7 @@ public class DiscoverNamesInFile
 
         return new ResourceNameIterator() {
             private int idx = 0;
-            private Vector classNames = null;
+            private List<String> classNames = null;
             private String resource = null;
             
             public boolean hasNext() {
@@ -194,9 +195,9 @@ public class DiscoverNamesInFile
                 return className;
             }
 
-            private Vector getNextClassNames() {
+            private List<String> getNextClassNames() {
                 while (files.hasNext()) {
-                    Vector results = readServices(files.nextResource());
+                    List<String> results = readServices(files.nextResource());
                     if (results != null  &&  results.size() > 0) {
                         return results;
                     }
@@ -210,8 +211,8 @@ public class DiscoverNamesInFile
      * Read everything, no defering here..
      * Ensure that files are closed before we leave.
      */
-    private Vector readServices(final Resource info) {
-        Vector results = new Vector();
+    private List<String> readServices(final Resource info) {
+        List<String> results = new ArrayList<String>();
         
         InputStream is = info.getResourceAsStream();
         
