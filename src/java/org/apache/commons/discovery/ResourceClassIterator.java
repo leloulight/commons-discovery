@@ -29,7 +29,7 @@ public abstract class ResourceClassIterator<T> extends ResourceIterator
     public Resource nextResource() {
         return nextResourceClass();
     }
-    
+
     public String nextResourceName() {
         return nextResourceClass().getName();
     }
