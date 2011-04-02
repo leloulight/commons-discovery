@@ -27,12 +27,12 @@ public interface ResourceDiscover extends ResourceNameDiscover
      * 
      * @return ResourceIterator
      */
-    public ResourceIterator findResources(String resourceName);
+    ResourceIterator findResources(String resourceName);
 
     /**
      * Locate resources that are bound to <code>resourceNames</code>.
      * 
      * @return ResourceIterator
      */
-    public ResourceIterator findResources(ResourceNameIterator resourceNames);
+    ResourceIterator findResources(ResourceNameIterator resourceNames);
 }
