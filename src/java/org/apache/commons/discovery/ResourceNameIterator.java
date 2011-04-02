@@ -34,11 +34,11 @@ public interface ResourceNameIterator
     /**
      * hasNext()
      */
-    public boolean hasNext();
+    boolean hasNext();
 
     /**
      * nextResourceName() returns the name of the next resource,
-     * and MUST be non-destructive.  Repeated calls 
+     * and MUST be non-destructive.  Repeated calls
      */
-    public String nextResourceName();
+    String nextResourceName();
 }

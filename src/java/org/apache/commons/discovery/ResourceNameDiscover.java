@@ -32,12 +32,12 @@ public interface ResourceNameDiscover
      * 
      * @return ResourceNameIterator
      */
-    public ResourceNameIterator findResourceNames(String resourceName);
+    ResourceNameIterator findResourceNames(String resourceName);
 
     /**
      * Locate names of resources that are bound to <code>resourceNames</code>.
      * 
      * @return ResourceNameIterator
      */
-    public ResourceNameIterator findResourceNames(ResourceNameIterator resourceNames);
+    ResourceNameIterator findResourceNames(ResourceNameIterator resourceNames);
 }
