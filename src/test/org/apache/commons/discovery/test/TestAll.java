@@ -295,7 +295,7 @@ public class TestAll {
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
         
         DiscoverClass discover = new DiscoverClass(loaders);
-        Class<?> implClass = discover.find(TestInterface2.class);
+        Class<? extends TestInterface2> implClass = discover.find(TestInterface2.class);
         
         assertTrue("Failed to find an implementation class", implClass != null);
         assertEquals("org.apache.commons.discovery.test.TestImpl2_1", implClass.getName());
