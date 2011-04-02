@@ -367,7 +367,8 @@ public class DiscoverSingleton {
     {
         ClassLoader contextLoader = JDKHooks.getJDKHooks().getThreadContextClassLoader();
 
-        T obj = get(contextLoader, spi.getSPName());
+        @SuppressWarnings("unchecked") // spiName is assignable from stored object class
+        T obj = (T) get(contextLoader, spi.getSPName());
 
         if (obj == null) {
             try {
@@ -455,15 +456,13 @@ public class DiscoverSingleton {
     /**
      * Get service keyed by spi & classLoader.
      */
-    private static synchronized <T> T get(ClassLoader classLoader,
+    private static synchronized Object get(ClassLoader classLoader,
                                            String spiName)
     {
         Map<String, Object> spis = EnvironmentCache.get(classLoader);
         
         if (spis != null) {
-            @SuppressWarnings("unchecked") // spiName is assignable from stored object class
-            T t = (T) spis.get(spiName);
-            return t;
+            return spis.get(spiName);
         }
         return null;
     }
