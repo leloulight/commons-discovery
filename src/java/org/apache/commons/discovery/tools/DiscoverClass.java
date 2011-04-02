@@ -313,20 +313,23 @@ public class DiscoverClass {
                            : properties.getProperties(spi, loaders);
 
         String[] classNames = discoverClassNames(spi, props);
+        Exception error = null;
 
         if (classNames.length > 0) {
             DiscoverClasses<T> classDiscovery = new DiscoverClasses<T>(loaders);
 
-            ResourceClassIterator<T> classes =
-                classDiscovery.findResourceClasses(classNames[0]);
+            for (int i = 0; i < classNames.length; i++) {
+                 ResourceClassIterator<T> classes =
+                     classDiscovery.findResourceClasses(classNames[i]);
 
-            // If it's set as a property.. it had better be there!
-            if (classes.hasNext()) {
-                ResourceClass<T> info = classes.nextResourceClass();
-                try {
-                    return info.loadClass();
-                } catch (Exception e) {
-                    // ignore
+                 // If it's set as a property.. it had better be there!
+                 if (classes.hasNext()) {
+                     ResourceClass<T> info = classes.nextResourceClass();
+                     try {
+                         return info.loadClass();
+                     } catch (Exception e) {
+                         error = e;
+                     }
                 }
             }
         } else {
@@ -347,12 +350,12 @@ public class DiscoverClass {
                 try {
                     return info.loadClass();
                 } catch (Exception e) {
-                    // ignore
+                    error = e;
                 }
             }
         }
 
-        throw new DiscoveryException("No implementation defined for " + spi.getSPName());
+        throw new DiscoveryException("No implementation defined for " + spi.getSPName(), error);
         // return null;
     }
 
