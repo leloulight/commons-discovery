@@ -26,16 +26,16 @@ import java.util.Enumeration;
  */
 public abstract class JDKHooks {
     private static final JDKHooks jdkHooks;
-    
+
     static {
         jdkHooks = new JDK12Hooks();
     }
-    
+
     protected JDKHooks() { }
-    
+
     /**
      * Return singleton object representing JVM hooks/tools.
-     * 
+     *
      * TODO: add logic to detect JDK level.
      */
     public static final JDKHooks getJDKHooks() {
@@ -53,7 +53,7 @@ public abstract class JDKHooks {
     /**
      * The thread context class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
-     * 
+     *
      * @return The thread context class loader, if available.
      *         Otherwise return null.
      */
@@ -62,12 +62,12 @@ public abstract class JDKHooks {
     /**
      * The system class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
-     * 
+     *
      * @return The system class loader, if available.
      *         Otherwise return null.
      */
     public abstract ClassLoader getSystemClassLoader();
-    
+
     public abstract Enumeration<URL> getResources(ClassLoader loader,
                                              String resourceName)
         throws IOException;
