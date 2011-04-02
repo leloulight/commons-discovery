@@ -43,28 +43,28 @@ public class DiscoverNamesInDictionary
         log = _log;
     }
 
-    private Dictionary dictionary;
+    private Dictionary<String, Object> dictionary;
     
     /** Construct a new resource discoverer
      */
     public DiscoverNamesInDictionary() {
-        setDictionary(new Hashtable());
+        setDictionary(new Hashtable<String, Object>());
     }
     
     /** Construct a new resource discoverer
      */
-    public DiscoverNamesInDictionary(Dictionary dictionary) {
+    public DiscoverNamesInDictionary(Dictionary<String, Object> dictionary) {
         setDictionary(dictionary);
     }
 
-    protected Dictionary getDictionary() {
+    protected Dictionary<String, Object> getDictionary() {
         return dictionary;
     }
 
     /**
      * Specify set of class loaders to be used in searching.
      */
-    public void setDictionary(Dictionary table) {
+    public void setDictionary(Dictionary<String, Object> table) {
         this.dictionary = table;
     }
     
