@@ -27,7 +27,7 @@ import java.net.URL;
  */
 class PsuedoSystemClassLoader extends ClassLoader {
     @Override
-    protected Class<?> loadClass(String className, boolean resolve)
+    protected Class<?> loadClass(String className, @SuppressWarnings("unused") boolean resolve)
         throws ClassNotFoundException
     {
         return findSystemClass(className);
