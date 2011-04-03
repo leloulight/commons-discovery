@@ -76,7 +76,7 @@ public class ResourceClass<T> extends Resource
                     public Class<? extends T> run() {
                         try {
                             @SuppressWarnings("unchecked") // this can raise a ClassCastException at runtime
-                            Class<S> returned = (Class<S>)  (Class<S>) getClassLoader().loadClass(getName());
+                            Class<S> returned = (Class<S>) getClassLoader().loadClass(getName());
                             return returned;
                         } catch (ClassNotFoundException e) {
                             return null;
