@@ -312,12 +312,4 @@ public class TestAll {
         assertNotNull(serviceImpl);
         assertEquals(TestImpl2_1.class, serviceImpl.getClass());
     }
-
-    /**
-     * This allows the tests to run as a standalone application.
-     */
-    public static void main(String args[]) {
-        String[] testCaseName = { TestAll.class.getName() };
-        junit.textui.TestRunner.main(testCaseName);
-    }
 }
