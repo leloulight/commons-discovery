@@ -595,7 +595,7 @@ public class DiscoverClass {
      *
      * @see ManagedProperties
      *
-     * @param propertName the name of the system property whose value is
+     * @param propertyName the name of the system property whose value is
      *        the name of the class to load.
      */
     public static String getManagedProperty(String propertyName) {
