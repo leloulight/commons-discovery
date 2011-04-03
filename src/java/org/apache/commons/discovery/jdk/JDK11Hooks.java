@@ -99,7 +99,7 @@ public class JDK11Hooks extends JDKHooks {
          * and eliminate the redundent element.
          */
 
-        final URL first = (URL)loader.getResource(resourceName);
+        final URL first = loader.getResource(resourceName);
         final Enumeration<URL> rest = loader.getResources(resourceName);
 
         return new Enumeration<URL>() {
