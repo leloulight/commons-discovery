@@ -34,6 +34,7 @@ public class JDK11Hooks extends JDKHooks {
      * @param propName name of the property
      * @return value of the property
      */
+    @Override
     public String getSystemProperty(final String propName) {
         return System.getProperty(propName);
     }
@@ -45,6 +46,7 @@ public class JDK11Hooks extends JDKHooks {
      * @return The thread context class loader, if available.
      *         Otherwise return null.
      */
+    @Override
     public ClassLoader getThreadContextClassLoader() {
         return null;
     }
@@ -56,6 +58,7 @@ public class JDK11Hooks extends JDKHooks {
      * @return The system class loader, if available.
      *         Otherwise return null.
      */
+    @Override
     public ClassLoader getSystemClassLoader() {
         return systemClassLoader;
     }
@@ -67,6 +70,7 @@ public class JDK11Hooks extends JDKHooks {
      * using introspection and doing the lookup ourself, using the list
      * of URLs, via getURLs().
      */
+    @Override
     public Enumeration<URL> getResources(ClassLoader loader,
                                     String resourceName)
         throws IOException

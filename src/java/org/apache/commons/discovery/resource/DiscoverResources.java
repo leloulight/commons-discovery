@@ -60,6 +60,7 @@ public class DiscoverResources
     /**
      * @return ResourceIterator
      */
+    @Override
     public ResourceIterator findResources(final String resourceName) {
         if (log.isDebugEnabled())
             log.debug("find: resourceName='" + resourceName + "'");
@@ -77,6 +78,7 @@ public class DiscoverResources
                 return resource != null;
             }
 
+            @Override
             public Resource nextResource() {
                 Resource element = resource;
                 resource = null;

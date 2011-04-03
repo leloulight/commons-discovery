@@ -90,6 +90,7 @@ public class ResourceClass<T> extends Resource
         return returned;
     }
 
+    @Override
     public String toString() {
         return "ResourceClass[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
     }

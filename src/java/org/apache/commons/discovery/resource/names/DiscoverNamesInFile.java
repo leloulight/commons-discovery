@@ -136,6 +136,7 @@ public class DiscoverNamesInFile
     /**
      * @return Enumeration of ServiceInfo
      */
+    @Override
     public ResourceNameIterator findResourceNames(final String serviceName) {
         String fileName;
         if (_prefix != null && _prefix.length() > 0) {

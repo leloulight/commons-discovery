@@ -53,6 +53,7 @@ public class JDK12Hooks extends JDKHooks {
      * @param propName name of the property
      * @return value of the property
      */
+    @Override
     public String getSystemProperty(final String propName) {
         return
         java.security.AccessController.doPrivileged(new java.security.PrivilegedAction<String>() {
@@ -73,6 +74,7 @@ public class JDK12Hooks extends JDKHooks {
      * @return The thread context class loader, if available.
      *         Otherwise return null.
      */
+    @Override
     public ClassLoader getThreadContextClassLoader() {
         ClassLoader classLoader;
 
@@ -104,6 +106,7 @@ public class JDK12Hooks extends JDKHooks {
      * @return The system class loader, if available.
      *         Otherwise return null.
      */
+    @Override
     public ClassLoader getSystemClassLoader() {
         return systemClassLoader;
     }
@@ -111,6 +114,7 @@ public class JDK12Hooks extends JDKHooks {
     /**
      * Implement ClassLoader.getResources for JDK 1.2
      */
+    @Override
     public Enumeration<URL> getResources(ClassLoader loader,
                                     String resourceName)
         throws IOException

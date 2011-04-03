@@ -59,6 +59,7 @@ public class DiscoverNamesInManagedProperties
     /**
      * @return Enumeration of ResourceInfo
      */
+    @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
         String name;
         if (_prefix != null && _prefix.length() > 0) {

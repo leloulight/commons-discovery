@@ -63,6 +63,7 @@ public class DiscoverNamesInAlternateManagedProperties
     /**
      * @return Enumeration of ResourceInfo
      */
+    @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
         final String mappedName = mapping.get(resourceName);
 

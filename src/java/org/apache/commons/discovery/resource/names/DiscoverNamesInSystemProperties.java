@@ -44,6 +44,7 @@ public class DiscoverNamesInSystemProperties
     /**
      * @return Enumeration of ResourceInfo
      */
+    @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
         if (log.isDebugEnabled())
             log.debug("find: resourceName='" + resourceName + "'");
