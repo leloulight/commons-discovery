@@ -1,0 +1,42 @@
+$Id$
+
+
+                          Commons Discovery Package
+                                Version 0.5
+                               Release Notes
+
+
+INTRODUCTION
+============
+
+This is an APIs update and maintenance release.
+New projects are encouraged to use this release of discovery.
+
+IMPORTANT NOTES
+===============
+
+BREAKING CHANGES:
+
+ * The minimum JDK requirement is now JDK 1.5. The provided binaries will not
+   work on lower JDKs. The source has been updated to leverage Generics and
+   other JDK 1.5 features where possible, and requires JDK 1.5 to compile.
+
+Dependencies
+=============
+Commons Discovery depends on Commons Logging. It is built against version 1.1.1.
+
+NEW FEATURES
+=============
+* Discovery APIs use Java5 Generics.
+
+BUGS FROM PREVIOUS RELEASE
+=========================
+
+JIRA Issues Addressed
+---------------------
+* DISCOVERY-12 (https://issues.apache.org/jira/browse/DISCOVERY-12)
+
+
+DEPRECATIONS
+============
+None
