@@ -116,6 +116,7 @@
   <properties>
     <commons.componentid>discovery</commons.componentid>
     <commons.release.version>0.5</commons.release.version>
+    <commons.release.desc>(minium JDK 1.5)</commons.release.desc>
     <commons.rc.version>RC1</commons.rc.version>
     <commons.binary.suffix></commons.binary.suffix>
     <commons.jira.id>DISCOVERY</commons.jira.id>
