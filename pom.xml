@@ -15,10 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-parent</artifactId>
@@ -27,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>commons-discovery</groupId>
   <artifactId>commons-discovery</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.5</version>
   <name>Commons Discovery</name>
 
   <inceptionYear>2002</inceptionYear>
@@ -42,29 +39,29 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/commons/proper/discovery/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/commons/proper/discovery/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/commons/proper/discovery/trunk</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/commons/proper/discovery/tags/DISCOVERY_0_5_RC1</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/commons/proper/discovery/tags/DISCOVERY_0_5_RC1</developerConnection>
+    <url>http://svn.apache.org/viewvc/commons/proper/discovery/tags/DISCOVERY_0_5_RC1</url>
   </scm>
 
   <developers>
     <developer>
       <name>Richard Sitze</name>
       <id>rsitze</id>
-      <email></email>
-      <organization></organization>
+      <email />
+      <organization />
     </developer>
     <developer>
       <name>Craig R. McClanahan</name>
       <id>craigmcc</id>
-      <email></email>
-      <organization></organization>
+      <email />
+      <organization />
     </developer>
     <developer>
       <name>Costin Manolache</name>
       <id>costin</id>
-      <email></email>
-      <organization></organization>
+      <email />
+      <organization />
     </developer>
     <developer>
       <name>James Strachan</name>
@@ -118,7 +115,7 @@
     <commons.release.version>0.5</commons.release.version>
     <commons.release.desc>(minium JDK 1.5)</commons.release.desc>
     <commons.rc.version>RC2</commons.rc.version>
-    <commons.binary.suffix></commons.binary.suffix>
+    <commons.binary.suffix />
     <commons.jira.id>DISCOVERY</commons.jira.id>
     <commons.jira.pid>12310472</commons.jira.pid>
     <maven.compile.source>1.5</maven.compile.source>
