@@ -245,7 +245,7 @@ is providing helper methods that 'wrap' <code>Discovery</code>.
 </p>
 
 <a name="Integrating into DI framework: Google Guice"></a>
-<h4>3.2  INTEGRATING INTO DI FRAMEWORKS : GOOGLE GUICE</h4>
+<h4>3.3  INTEGRATING INTO DI FRAMEWORKS : GOOGLE GUICE</h4>
 
 <p>Sometimes, a <code>DiscoverSingleton</code>/<code>Factory</code> approach like the one exposed above,
 is not enough, because you may require injecting dependencies in your discovered SPI.</p>
