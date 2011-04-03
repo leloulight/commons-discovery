@@ -31,7 +31,7 @@
   <name>Commons Discovery</name>
 
   <inceptionYear>2002</inceptionYear>
-  <description>The Discovery component is about discovering, or finding,
+  <description>The Apache Commons Discovery component is about discovering, or finding,
   implementations for pluggable interfaces.</description>
 
   <url>http://commons.apache.org/discovery/</url>
