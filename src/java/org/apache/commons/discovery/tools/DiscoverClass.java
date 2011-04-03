@@ -318,9 +318,9 @@ public class DiscoverClass {
         if (classNames.length > 0) {
             DiscoverClasses<T> classDiscovery = new DiscoverClasses<T>(loaders);
 
-            for (int i = 0; i < classNames.length; i++) {
+            for (String className : classNames) {
                  ResourceClassIterator<T> classes =
-                     classDiscovery.findResourceClasses(classNames[i]);
+                     classDiscovery.findResourceClasses(className);
 
                  // If it's set as a property.. it had better be there!
                  if (classes.hasNext()) {
