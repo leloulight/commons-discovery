@@ -122,7 +122,16 @@
     <commons.jira.pid>12310472</commons.jira.pid>
     <maven.compile.source>1.5</maven.compile.source>
     <maven.compile.target>1.5</maven.compile.target>
-  </properties> 
+  </properties>
+
+  <distributionManagement>
+    <!-- Cannot define in parent ATM, see COMMONSSITE-26 -->
+    <site>
+      <id>apache.website</id>
+      <name>Apache Commons Site</name>
+      <url>${commons.deployment.protocol}://people.apache.org/www/commons.apache.org/discovery</url>
+    </site>
+  </distributionManagement>
 
   <build>
     <sourceDirectory>src/java</sourceDirectory>
