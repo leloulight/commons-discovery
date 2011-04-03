@@ -32,17 +32,17 @@
 <section name="Maven Goals">
   <p>
     To build a jar file, change into Discovery's root directory and run 
-    <strong><code>maven jar</code></strong>.
+    <strong><code>mvn package</code></strong>.
     The result will be in the "target" subdirectory.
   </p>
   <p>
-    To build the Javadocs, run <strong><code>maven javadoc</code></strong>.
-    The result will be in "target/docs/apidocs".
+    To build the Javadocs, run <strong><code>mvn javadoc:javadoc</code></strong>.
+    The result will be in "target/site/apidocs".
   </p>
   <p>
-    To build the full website, run <strong><code>maven site</code></strong>.
+    To build the full website, run <strong><code>mvn site</code></strong>.
 
-    The result will be in "target/docs".
+    The result will be in "target/site".
   </p>
   <p>
 	Further details can be found in the
