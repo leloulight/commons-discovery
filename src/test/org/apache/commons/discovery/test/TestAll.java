@@ -48,7 +48,6 @@ import org.junit.Test;
 public class TestAll {
     private static final int logLevel =
         org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_INFO;
-//        org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_DEBUG;
 
     @Test
     public void findDefaultImpl_1() {
