@@ -29,6 +29,7 @@ $Id$<br />
 <a href="#Additional Tools">[Additional Tools]</a>
   <a href="#Calling Directly">[Calling Directly]</a>
   <a href="#Integrating into Factories : Wrapping">[Integrating into Factories : Wrapping]</a>
+  <a href="#Integrating into DI framework: Google Guice">[Integrating into DI framework: Google Guice]</a>
 <br /><br />
 
 
@@ -242,6 +243,32 @@ for which <code>Discovery</code> will be looking for an implementation.
 In this example, they are the same class, as the LogFactory
 is providing helper methods that 'wrap' <code>Discovery</code>.
 </p>
+
+<a name="Integrating into DI framework: Google Guice"></a>
+<h4>3.2  INTEGRATING INTO DI FRAMEWORKS : GOOGLE GUICE</h4>
+
+<p>Sometimes, a <code>DiscoverSingleton</code>/<code>Factory</code> approach like the one exposed above,
+is not enough, because you may require injecting dependencies in your discovered SPI.</p>
+
+<p>In this example is shown how <code>DiscoverClass</code> can be useful inside DI framework such
+<i>Google Guice</i>:</p>
+
+<source>
+Injector injector = Guice.createInjector(new AbstractModule() {
+
+    @Override
+    protected void configure() {
+        ...
+        DiscoverClass discoverClass = new DiscoverClass();
+        bind(ServiceInterface.class).to(discoverClass.find(ServiceInterface.class));
+        ...
+    }
+
+});
+</source>
+
+<p>In this way, <code>ServiceInterface</code> discovery is delegated to <i>Commons Discovery</i>,
+but concrete class implementation creation and dependencies injection, to <i>Google Guice</i>.</p>
 
 </subsection>
 </section>
