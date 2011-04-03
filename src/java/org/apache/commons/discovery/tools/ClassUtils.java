@@ -110,10 +110,10 @@ public class ClassUtils {
     {
         if (paramClasses == null || params == null) {
             return impl.newInstance();
-        } else {
-            Constructor<T> constructor = impl.getConstructor(paramClasses);
-            return constructor.newInstance(params);
         }
+
+        Constructor<T> constructor = impl.getConstructor(paramClasses);
+        return constructor.newInstance(params);
     }
 
     /**
