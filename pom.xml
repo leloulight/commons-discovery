@@ -115,6 +115,7 @@
   <properties>
     <commons.componentid>discovery</commons.componentid>
     <commons.release.version>0.5</commons.release.version>
+    <commons.rc.version>RC1</commons.rc.version>
     <commons.binary.suffix></commons.binary.suffix>
     <commons.jira.id>DISCOVERY</commons.jira.id>
     <commons.jira.pid>12310472</commons.jira.pid>
