@@ -188,7 +188,7 @@ public class DiscoverNamesInFile
                     }
                 }
 
-                String className = (String)classNames.get(idx++);
+                String className = classNames.get(idx++);
 
                 if (log.isDebugEnabled())
                     log.debug("getNextClassResource: next class='" + className + "'");
