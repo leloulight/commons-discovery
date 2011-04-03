@@ -91,6 +91,11 @@
       <id>rdonkin</id>
       <email>rdonkin@apache.org</email>
     </developer>
+    <developer>
+      <name>Simone Tripodi</name>
+      <id>simonetripodi</id>
+      <email>simonetripodi@apache.org</email>
+    </developer>
   </developers>
 
   <dependencies>
