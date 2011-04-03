@@ -48,7 +48,6 @@ import org.junit.Test;
 public class TestAll {
     private static final int logLevel =
         org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_INFO;
-//        org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_DEBUG;
 
     @Test
     public void findDefaultImpl_1() {
@@ -312,13 +311,5 @@ public class TestAll {
 
         assertNotNull(serviceImpl);
         assertEquals(TestImpl2_1.class, serviceImpl.getClass());
-    }
-
-    /**
-     * This allows the tests to run as a standalone application.
-     */
-    public static void main(String args[]) {
-        String[] testCaseName = { TestAll.class.getName() };
-        junit.textui.TestRunner.main(testCaseName);
     }
 }

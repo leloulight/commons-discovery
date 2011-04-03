@@ -136,6 +136,7 @@ public class DiscoverNamesInFile
     /**
      * @return Enumeration of ServiceInfo
      */
+    @Override
     public ResourceNameIterator findResourceNames(final String serviceName) {
         String fileName;
         if (_prefix != null && _prefix.length() > 0) {
@@ -187,7 +188,7 @@ public class DiscoverNamesInFile
                     }
                 }
 
-                String className = (String)classNames.get(idx++);
+                String className = classNames.get(idx++);
 
                 if (log.isDebugEnabled())
                     log.debug("getNextClassResource: next class='" + className + "'");

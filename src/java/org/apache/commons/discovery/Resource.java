@@ -98,6 +98,7 @@ public class Resource
 //        this.loader = loader;
 //    }
 
+    @Override
     public String toString() {
         return "Resource[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
     }

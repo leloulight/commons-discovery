@@ -130,7 +130,7 @@ public class SimpleLog implements Log {
       //do nothing. We get here if running discovery
       //under a servlet with restricted security rights, and
       //cannot read the system property.
-     //In which case, the default is what you get to keep.	
+     //In which case, the default is what you get to keep.
       }
 
     }

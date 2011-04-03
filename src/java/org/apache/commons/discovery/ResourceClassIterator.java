@@ -26,10 +26,12 @@ public abstract class ResourceClassIterator<T> extends ResourceIterator
      */
     public abstract <S extends T> ResourceClass<S> nextResourceClass();
 
+    @Override
     public Resource nextResource() {
         return nextResourceClass();
     }
 
+    @Override
     public String nextResourceName() {
         return nextResourceClass().getName();
     }

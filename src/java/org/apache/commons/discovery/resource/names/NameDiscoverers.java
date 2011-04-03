@@ -73,6 +73,7 @@ public class NameDiscoverers
      *
      * @return ResourceIterator
      */
+    @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
         if (log.isDebugEnabled())
             log.debug("find: resourceName='" + resourceName + "'");

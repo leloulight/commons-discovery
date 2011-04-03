@@ -57,6 +57,7 @@ public class DiscoverClasses<T>
         super(classLoaders);
     }
 
+    @Override
     public ResourceClassIterator<T> findResourceClasses(final String className) {
         final String resourceName = className.replace('.','/') + ".class";
 
@@ -75,6 +76,7 @@ public class DiscoverClasses<T>
                 return resource != null;
             }
 
+            @Override
             public ResourceClass<T> nextResourceClass() {
                 ResourceClass<T> element = resource;
                 resource = null;

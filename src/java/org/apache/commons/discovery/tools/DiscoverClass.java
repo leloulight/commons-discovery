@@ -164,7 +164,7 @@ public class DiscoverClass {
     }
 
 
-    public ClassLoaders getClassLoaders(Class<?> spiClass) {
+    public ClassLoaders getClassLoaders(@SuppressWarnings("unused") Class<?> spiClass) {
         return classLoaders;
     }
 

@@ -76,6 +76,7 @@ public abstract class ResourceDiscoverImpl
      *
      * @return ResourceNameIterator
      */
+    @Override
     public ResourceNameIterator findResourceNames(String resourceName) {
         return findResources(resourceName);
     }
@@ -85,6 +86,7 @@ public abstract class ResourceDiscoverImpl
      *
      * @return ResourceNameIterator
      */
+    @Override
     public ResourceNameIterator findResourceNames(ResourceNameIterator resourceNames) {
         return findResources(resourceNames);
     }
@@ -113,6 +115,7 @@ public abstract class ResourceDiscoverImpl
                 return resource != null;
             }
 
+            @Override
             public Resource nextResource() {
                 Resource rsrc = resource;
                 resource = null;

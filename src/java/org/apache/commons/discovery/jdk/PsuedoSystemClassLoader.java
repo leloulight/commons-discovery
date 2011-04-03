@@ -26,16 +26,19 @@ import java.net.URL;
  * in 1.1.x, but this should be a good work around...
  */
 class PsuedoSystemClassLoader extends ClassLoader {
-    protected Class<?> loadClass(String className, boolean resolve)
+    @Override
+    protected Class<?> loadClass(String className, @SuppressWarnings("unused") boolean resolve)
         throws ClassNotFoundException
     {
         return findSystemClass(className);
     }
 
+    @Override
     public URL getResource(String resName) {
         return getSystemResource(resName);
     }
 
+    @Override
     public InputStream getResourceAsStream(String resName) {
         return getSystemResourceAsStream(resName);
     }

@@ -57,7 +57,7 @@ public class DiscoveryException extends RuntimeException {
      * @param cause The underlying cause
      */
     public DiscoveryException(Throwable cause) {
-        this((cause == null) ? null : cause.toString(), cause);
+        super(cause);
     }
 
     /**
@@ -67,38 +67,6 @@ public class DiscoveryException extends RuntimeException {
      * @param cause The underlying cause
      */
     public DiscoveryException(String message, Throwable cause) {
-        super(message);
-        this.cause = cause; // Two-argument version requires JDK 1.4 or later
-    }
-
-    /**
-     * The underlying cause of this exception.
-     */
-    protected Throwable cause = null;
-
-    /**
-     * Return the underlying cause of this exception (if any).
-     */
-    public Throwable getCause() {
-        return this.cause;
-    }
-
-    public String toString() {
-        String ls = System.getProperty("line.separator");
-        String str = super.toString();
-        if (cause != null) {
-            str = str + ls +
-                  "*****" + ls +
-                  stackToString(cause);
-        }
-        return str;
-    }
-
-    private static String stackToString(Throwable e){
-      java.io.StringWriter sw= new java.io.StringWriter(1024); 
-      java.io.PrintWriter pw= new java.io.PrintWriter(sw); 
-      e.printStackTrace(pw);
-      pw.close();
-      return sw.toString();
+        super(message, cause);
     }
 }

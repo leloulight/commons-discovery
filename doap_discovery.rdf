@@ -36,11 +36,6 @@
     <release>
       <Version>
         <name>commons-discovery</name>
-        <created>2011-04-06</created>
-        <revision>0.5</revision>
-      </Version>
-      <Version>
-        <name>commons-discovery</name>
         <created>2003-04-15</created>
         <revision>0.2</revision>
       </Version>
