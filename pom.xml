@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>commons-discovery</groupId>
   <artifactId>commons-discovery</artifactId>
-  <version>0.5</version>
+  <version>0.6-SNAPSHOT</version>
   <name>Commons Discovery</name>
 
   <inceptionYear>2002</inceptionYear>
@@ -39,9 +39,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/commons/proper/discovery/tags/DISCOVERY_0_5_RC1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/commons/proper/discovery/tags/DISCOVERY_0_5_RC1</developerConnection>
-    <url>http://svn.apache.org/viewvc/commons/proper/discovery/tags/DISCOVERY_0_5_RC1</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/commons/proper/discovery/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/commons/proper/discovery/trunk</developerConnection>
+    <url>http://svn.apache.org/viewvc/commons/proper/discovery/trunk</url>
   </scm>
 
   <developers>
