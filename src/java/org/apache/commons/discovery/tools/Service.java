@@ -60,8 +60,11 @@ public class Service
      * sun/jdk1.3.1/docs/guide/jar/jar.html#Service Provider,
      * Except this uses <code>Enumeration</code>
      * instead of <code>Interator</code>.
-     * 
-     * @return Enumeration of class instances (<code>Object</code>)
+     *
+     * @param <T> Service Provider Interface type
+     * @param <S> Any type extends the SPI type
+     * @param spiClass Service Provider Interface Class
+     * @return Enumeration of class instances ({@code S})
      */
     public static <T, S extends T> Enumeration<S> providers(Class<T> spiClass) {
         return providers(new SPInterface<T>(spiClass), null);
@@ -69,10 +72,13 @@ public class Service
 
     /**
      * This version lets you specify constructor arguments..
-     * 
+     *
+     * @param <T> Service Provider Interface type
+     * @param <S> Any type extends the SPI type
      * @param spi SPI to look for and load.
      * @param loaders loaders to use in search.
      *        If <code>null</code> then use ClassLoaders.getAppLoaders().
+     * @return Enumeration of class instances ({@code S})
      */
     public static <T, S extends T> Enumeration<S> providers(final SPInterface<T> spi,
                                         ClassLoaders loaders)
