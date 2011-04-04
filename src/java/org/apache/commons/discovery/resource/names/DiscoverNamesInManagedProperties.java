@@ -49,14 +49,14 @@ public class DiscoverNamesInManagedProperties
     private final String _suffix;
 
     /**
-     * Construct a new resource discoverer
+     * Construct a new resource discoverer.
      */
     public DiscoverNamesInManagedProperties() {
         this(null, null);
     }
 
     /**
-     * Construct a new resource discoverer
+     * Construct a new resource discoverer.
      *
      * @param prefix The resource name prefix
      * @param suffix The resource name suffix
