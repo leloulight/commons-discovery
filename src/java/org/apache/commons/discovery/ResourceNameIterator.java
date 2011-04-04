@@ -32,13 +32,18 @@ package org.apache.commons.discovery;
 public interface ResourceNameIterator
 {
     /**
-     * hasNext()
+     * Returns true if the iteration has more elements.
+     *
+     * @return true if the iterator has more elements, false otherwise
      */
     boolean hasNext();
 
     /**
      * nextResourceName() returns the name of the next resource,
      * and MUST be non-destructive.  Repeated calls
+     *
+     * @return The next resource name in the iteration
      */
     String nextResourceName();
+
 }
