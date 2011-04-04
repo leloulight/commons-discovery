@@ -18,14 +18,24 @@ package org.apache.commons.discovery;
 
 
 /**
+ * Iterator over discovered {@link Resource}.
+ *
  * @author Richard A. Sitze
  */
 public abstract class ResourceIterator implements ResourceNameIterator
 {
     /**
+     * Returns the next {@link Resource} in the iteration.
+     *
+     * @return The next resource in the iteration
      */
     public abstract Resource nextResource();
 
+    /**
+     * Returns the next resource name in the iteration.
+     *
+     * @return The next resource name in the iteration
+     */
     public String nextResourceName() {
         return nextResource().getName();
     }
