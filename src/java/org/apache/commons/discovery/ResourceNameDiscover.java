@@ -21,23 +21,25 @@ package org.apache.commons.discovery;
  * Interface representing a mapping
  * from a set of source resource names
  * to a resultant set of resource names.
- * 
+ *
  * @author Richard A. Sitze
  * @author Costin Manolache
  */
 public interface ResourceNameDiscover
 {
     /**
-     * Locate names of resources that are bound to <code>resourceName</code>.
-     * 
-     * @return ResourceNameIterator
+     * Locate names of resources that are bound to {@code resourceName}.
+     *
+     * @param resourceName The resource has to be located
+     * @return The bound resources name iterator
      */
     ResourceNameIterator findResourceNames(String resourceName);
 
     /**
-     * Locate names of resources that are bound to <code>resourceNames</code>.
-     * 
-     * @return ResourceNameIterator
+     * Locate names of resources that are bound to {@code resourceNames}.
+     *
+     * @param resourceNames The resources has to be located
+     * @return The bound resources name iterator
      */
     ResourceNameIterator findResourceNames(ResourceNameIterator resourceNames);
 }
