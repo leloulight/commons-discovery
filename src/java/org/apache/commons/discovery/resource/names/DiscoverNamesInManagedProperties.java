@@ -48,11 +48,11 @@ public class DiscoverNamesInManagedProperties
     private final String _prefix;
     private final String _suffix;
 
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer
      */
     public DiscoverNamesInManagedProperties() {
-        _prefix = null;
-        _suffix = null;
+        this(null, null);
     }
 
     /**
