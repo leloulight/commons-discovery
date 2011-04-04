@@ -39,26 +39,32 @@ public class DiscoverResources
     implements ResourceDiscover
 {
     private static Log log = DiscoveryLogFactory.newLog(DiscoverResources.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
 
     /**
-     * Construct a new resource discoverer
+     * Construct a new resource discoverer.
      */
     public DiscoverResources() {
         super();
     }
 
     /**
-     *  Construct a new resource discoverer
+     *  Construct a new resource discoverer.
      */
     public DiscoverResources(ClassLoaders classLoaders) {
         super(classLoaders);
     }
 
     /**
-     * @return ResourceIterator
+     * {@inheritDoc}
      */
     @Override
     public ResourceIterator findResources(final String resourceName) {
