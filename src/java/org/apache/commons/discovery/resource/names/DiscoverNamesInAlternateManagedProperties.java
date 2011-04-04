@@ -43,25 +43,36 @@ public class DiscoverNamesInAlternateManagedProperties
     implements ResourceNameDiscover
 {
     private static Log log = DiscoveryLogFactory.newLog(DiscoverNamesInAlternateManagedProperties.class);
-    public static void setLog(Log _log) {
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
+        public static void setLog(Log _log) {
         log = _log;
     }
 
     private final Map<String, String> mapping = new HashMap<String, String>();
 
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer.
      */
     public DiscoverNamesInAlternateManagedProperties() {
     }
 
     /**
+     * Add a class name/property name mapping.
+     *
+     * @param className The class name
+     * @param propertyName The property name
      */
     public void addClassToPropertyNameMapping(String className, String propertyName) {
         mapping.put(className, propertyName);
     }
 
     /**
-     * @return Enumeration of ResourceInfo
+     * {@inheritDoc}
      */
     @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
