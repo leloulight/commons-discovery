@@ -34,6 +34,12 @@ public class DiscoverNamesInManagedProperties
     implements ResourceNameDiscover
 {
     private static Log log = DiscoveryLogFactory.newLog(DiscoverNamesInManagedProperties.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
@@ -49,7 +55,11 @@ public class DiscoverNamesInManagedProperties
         _suffix = null;
     }
 
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer
+     *
+     * @param prefix The resource name prefix
+     * @param suffix The resource name suffix
      */
     public DiscoverNamesInManagedProperties(String prefix, String suffix) {
         _prefix = prefix;
@@ -57,7 +67,7 @@ public class DiscoverNamesInManagedProperties
     }
 
     /**
-     * @return Enumeration of ResourceInfo
+     * {@inheritDoc}
      */
     @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
