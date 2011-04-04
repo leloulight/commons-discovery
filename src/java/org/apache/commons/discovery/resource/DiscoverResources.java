@@ -68,8 +68,9 @@ public class DiscoverResources
      */
     @Override
     public ResourceIterator findResources(final String resourceName) {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("find: resourceName='" + resourceName + "'");
+        }
 
         return new ResourceIterator() {
             private int idx = 0;
@@ -100,8 +101,9 @@ public class DiscoverResources
                 if (resources != null) {
                     URL url = resources.nextElement();
 
-                    if (log.isDebugEnabled())
+                    if (log.isDebugEnabled()) {
                         log.debug("getNextResource: next URL='" + url + "'");
+                    }
 
                     resourceInfo = new Resource(resourceName, url, loader);
                 } else {
@@ -114,8 +116,9 @@ public class DiscoverResources
             private Enumeration<URL> getNextResources() {
                 while (idx < getClassLoaders().size()) {
                     loader = getClassLoaders().get(idx++);
-                    if (log.isDebugEnabled())
+                    if (log.isDebugEnabled()) {
                         log.debug("getNextResources: search using ClassLoader '" + loader + "'");
+                    }
                     try {
                         Enumeration<URL> e = JDKHooks.getJDKHooks().getResources(loader, resourceName);
                         if (e != null && e.hasMoreElements()) {
