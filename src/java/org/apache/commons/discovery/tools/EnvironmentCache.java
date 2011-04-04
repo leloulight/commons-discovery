@@ -44,12 +44,12 @@ import org.apache.commons.discovery.jdk.JDKHooks;
 public class EnvironmentCache {
     /**
      * Allows null key, important as default groupContext is null.
-     * 
+     *
      * We will manage synchronization directly, so all caches are implemented
      * as HashMap (unsynchronized).
-     * 
      */
-    private static final Map<ClassLoader, Map<String, Object>> root_cache = new HashMap<ClassLoader, Map<String, Object>>();
+    private static final Map<ClassLoader, Map<String, Object>> root_cache =
+        new HashMap<ClassLoader, Map<String, Object>>();
 
     /**
      * Initial hash size for SPI's, default just seem TO big today..
@@ -58,6 +58,9 @@ public class EnvironmentCache {
 
     /**
      * Get object keyed by classLoader.
+     *
+     * @param classLoader The class loader key
+     * @return The SPI name/instance cache
      */
     public static synchronized Map<String, Object> get(ClassLoader classLoader)
     {
@@ -70,6 +73,9 @@ public class EnvironmentCache {
 
     /**
      * Put service keyed by spi & classLoader.
+     *
+     * @param classLoader The class loader key
+     * @param spis The SPI name/instance cache
      */
     public static synchronized void put(ClassLoader classLoader, Map<String, Object> spis)
     {
@@ -110,6 +116,8 @@ public class EnvironmentCache {
      * instance associated with the current thread context class loader.
      * If the SPI instance implements <code>Service</code>, then call
      * <code>release()</code>.
+     *
+     * @param classLoader The class loader key
      */
     public static synchronized void release(ClassLoader classLoader) {
         /**
