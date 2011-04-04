@@ -26,6 +26,10 @@ import org.apache.commons.discovery.resource.ResourceDiscoverImpl;
 
 
 /**
+ * Default {@link ResourceClassDiscover} implementation.
+ *
+ * @param <T> The SPI type
+ *
  * @author Richard A. Sitze
  */
 public abstract class ResourceClassDiscoverImpl<T>
