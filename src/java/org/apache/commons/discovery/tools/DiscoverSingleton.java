@@ -211,6 +211,7 @@ public class DiscoverSingleton {
     /**
      * Find implementation of SPI.
      *
+     * @param <T>  Service Provider Interface type.
      * @param spiClass Service Provider Interface Class.
      *
      * @return Instance of a class implementing the SPI.
@@ -231,6 +232,8 @@ public class DiscoverSingleton {
 
     /**
      * Find implementation of SPI.
+     *
+     * @param <T> Service Provider Interface type
      *
      * @param spiClass Service Provider Interface Class.
      *
@@ -257,6 +260,8 @@ public class DiscoverSingleton {
     /**
      * Find implementation of SPI.
      *
+     * @param <T> Service Provider Interface type
+     *
      * @param spiClass Service Provider Interface Class.
      *
      * @param defaultImpl Default implementation.
@@ -279,6 +284,8 @@ public class DiscoverSingleton {
 
     /**
      * Find implementation of SPI.
+     *
+     * @param <T> Service Provider Interface type
      *
      * @param spiClass Service Provider Interface Class.
      *
@@ -308,6 +315,8 @@ public class DiscoverSingleton {
 
     /**
      * Find implementation of SPI.
+     *
+     * @param <T> Service Provider Interface type
      *
      * @param spiClass Service Provider Interface Class.
      *
@@ -341,6 +350,10 @@ public class DiscoverSingleton {
 
     /**
      * Find implementation of SPI.
+     *
+     * @param <T> Service Provider Interface type
+     *
+     * @param loaders The {@code ClassLoader} holder
      *
      * @param spi Service Provider Interface Class.
      *
@@ -407,6 +420,8 @@ public class DiscoverSingleton {
      * instance associated with the current thread context class loader.
      * If the SPI instance implements <code>Service</code>, then call
      * <code>release()</code>.
+     *
+     * @param spiClass The previously created service
      */
     public static synchronized void release(Class<?> spiClass) {
         Map<String, Object> spis = EnvironmentCache.get(JDKHooks.getJDKHooks().getThreadContextClassLoader());
@@ -467,6 +482,10 @@ public class DiscoverSingleton {
 
     /**
      * Put service keyed by spi & classLoader.
+     *
+     * @param classLoader The {@link EnvironmentCache} key
+     * @param spiName The SPI class name
+     * @param service The SPI object reference
      */
     private static synchronized void put(ClassLoader classLoader,
                                          String spiName,
