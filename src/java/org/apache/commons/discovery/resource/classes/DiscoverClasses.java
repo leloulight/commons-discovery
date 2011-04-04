@@ -31,6 +31,8 @@ import org.apache.commons.logging.Log;
 /**
  * The findResources() method will check every loader.
  *
+ * @param <T> The SPI type
+ *
  * @author Richard A. Sitze
  * @author Craig R. McClanahan
  * @author Costin Manolache
@@ -41,28 +43,42 @@ public class DiscoverClasses<T>
     implements ResourceClassDiscover<T>
 {
     private static Log log = DiscoveryLogFactory.newLog(DiscoverClasses.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
 
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer
      */
     public DiscoverClasses() {
         super();
     }
 
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer.
+     *
+     * @param classLoaders The class loaders holder
      */
     public DiscoverClasses(ClassLoaders classLoaders) {
         super(classLoaders);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResourceClassIterator<T> findResourceClasses(final String className) {
         final String resourceName = className.replace('.','/') + ".class";
 
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("find: className='" + className + "'");
+        }
 
         return new ResourceClassIterator<T>() {
             private List<URL> history = new ArrayList<URL>();
@@ -96,11 +112,13 @@ public class DiscoverClasses<T>
 
                             return new ResourceClass<T>(className, url, loader);
                         }
-                        if (log.isDebugEnabled())
+                        if (log.isDebugEnabled()) {
                             log.debug("getNextClass: duplicate URL='" + url + "'");
+                        }
                     } else {
-                        if (log.isDebugEnabled())
+                        if (log.isDebugEnabled()) {
                             log.debug("getNextClass: loader " + loader + ": '" + resourceName + "' not found");
+                        }
                     }
                 }
                 return null;
