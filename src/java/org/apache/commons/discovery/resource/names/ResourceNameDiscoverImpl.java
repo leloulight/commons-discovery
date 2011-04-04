@@ -28,16 +28,18 @@ import org.apache.commons.discovery.ResourceNameIterator;
 public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover
 {
     /**
-     * Locate names of resources that are bound to <code>resourceName</code>.
+     * Locate names of resources that are bound to {@code resourceName}.
      *
-     * @return ResourceNameIterator
+     * @param resourceName The resource name to locate
+     * @return A new {@link ResourceNameIterator}
      */
     public abstract ResourceNameIterator findResourceNames(String resourceName);
 
     /**
-     * Locate names of resources that are bound to <code>resourceName</code>.
+     * Locate names of resources that are bound to {@code inputNames}.
      *
-     * @return ResourceNameIterator
+     * @param inputNames The resource names to locate
+     * @return A new {@link ResourceNameIterator}
      */
     public ResourceNameIterator findResourceNames(final ResourceNameIterator inputNames) {
         return new ResourceNameIterator() {
