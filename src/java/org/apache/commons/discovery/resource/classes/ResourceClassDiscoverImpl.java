@@ -33,14 +33,16 @@ public abstract class ResourceClassDiscoverImpl<T>
     implements ResourceClassDiscover<T>
 {
     /**
-     * Construct a new resource discoverer
+     * Construct a new resource discoverer.
      */
     public ResourceClassDiscoverImpl() {
         super();
     }
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
+     *
+     * @param classLoaders The class loaders holder
      */
     public ResourceClassDiscoverImpl(ClassLoaders classLoaders) {
         super(classLoaders);
@@ -48,9 +50,7 @@ public abstract class ResourceClassDiscoverImpl<T>
 
 
     /**
-     * Locate names of resources that are bound to <code>resourceName</code>.
-     *
-     * @return ResourceNameIterator
+     * {@inheritDoc}
      */
     @Override
     public ResourceNameIterator findResourceNames(String resourceName) {
@@ -58,9 +58,7 @@ public abstract class ResourceClassDiscoverImpl<T>
     }
 
     /**
-     * Locate names of resources that are bound to <code>resourceNames</code>.
-     *
-     * @return ResourceNameIterator
+     * {@inheritDoc}
      */
     @Override
     public ResourceNameIterator findResourceNames(ResourceNameIterator resourceNames) {
@@ -68,9 +66,7 @@ public abstract class ResourceClassDiscoverImpl<T>
     }
 
     /**
-     * Locate resources that are bound to <code>resourceName</code>.
-     *
-     * @return ResourceIterator
+     * {@inheritDoc}
      */
     @Override
     public ResourceIterator findResources(String resourceName) {
@@ -78,9 +74,7 @@ public abstract class ResourceClassDiscoverImpl<T>
     }
 
     /**
-     * Locate resources that are bound to <code>resourceNames</code>.
-     *
-     * @return ResourceIterator
+     * {@inheritDoc}
      */
     @Override
     public ResourceIterator findResources(ResourceNameIterator resourceNames) {
@@ -96,9 +90,10 @@ public abstract class ResourceClassDiscoverImpl<T>
     public abstract ResourceClassIterator<T> findResourceClasses(String className);
 
     /**
-     * Locate class resources that are bound to <code>resourceNames</code>.
-     * 
-     * @return ResourceIterator
+     * Locate class resources that are bound to {@code resourceNames}.
+     *
+     * @param inputNames The resource name iterator
+     * @return a new {@link ResourceClassIterator} over the given resource name iterator
      */
     public ResourceClassIterator<T> findResourceClasses(final ResourceNameIterator inputNames) {
         return new ResourceClassIterator<T>() {
