@@ -46,9 +46,9 @@ public class SPInterface<T> {
      */
     private final String propertyName;
 
-    private Class<?>  paramClasses[] = null;
+    private final Class<?>  paramClasses[];
 
-    private Object params[] = null;
+    private final Object params[];
 
     /**
      * Construct object representing Class <code>provider</code>.
@@ -72,6 +72,8 @@ public class SPInterface<T> {
     public SPInterface(Class<T> spi, String propertyName) {
         this.spi = spi;
         this.propertyName = propertyName;
+        this.paramClasses = null;
+        this.params = null;
     }
 
     /**
