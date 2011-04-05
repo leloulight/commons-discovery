@@ -21,15 +21,16 @@ import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.resource.classes.DiscoverClasses;
 import org.apache.commons.discovery.resource.ClassLoaders;
 
-
 /**
  * Holder for a default class.
- * 
+ *
  * Class may be specified by name (String) or class (Class).
  * Using the holder complicates the users job, but minimized # of API's.
  */
 public class DefaultClassHolder<T> {
-    private Class<? extends T>        defaultClass;
+
+    private Class<? extends T> defaultClass;
+
     private final String defaultName;
 
     /**
@@ -96,4 +97,5 @@ public class DefaultClassHolder<T> {
     public String getDefaultName() {
         return defaultName;
     }
+
 }
