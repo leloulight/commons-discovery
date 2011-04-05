@@ -24,16 +24,13 @@ import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.discovery.resource.ResourceDiscoverImpl;
 
-
 /**
  * Default {@link ResourceClassDiscover} implementation.
  *
  * @param <T> The SPI type
  */
-public abstract class ResourceClassDiscoverImpl<T>
-    extends ResourceDiscoverImpl
-    implements ResourceClassDiscover<T>
-{
+public abstract class ResourceClassDiscoverImpl<T> extends ResourceDiscoverImpl implements ResourceClassDiscover<T> {
+
     /**
      * Construct a new resource discoverer.
      */
@@ -49,7 +46,6 @@ public abstract class ResourceClassDiscoverImpl<T>
     public ResourceClassDiscoverImpl(ClassLoaders classLoaders) {
         super(classLoaders);
     }
-
 
     /**
      * {@inheritDoc}
@@ -82,7 +78,6 @@ public abstract class ResourceClassDiscoverImpl<T>
     public ResourceIterator findResources(ResourceNameIterator resourceNames) {
         return findResourceClasses(resourceNames);
     }
-
 
     /**
      * Locate class resources that are bound to <code>className</code>.
@@ -129,4 +124,5 @@ public abstract class ResourceClassDiscoverImpl<T>
             }
         };
     }
+
 }
