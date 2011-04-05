@@ -90,8 +90,9 @@ public class ResourceClass<T> extends Resource {
      */
     public <S extends T> Class<S> loadClass() {
         if (resourceClass == null  &&  getClassLoader() != null) {
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug("loadClass: Loading class '" + getName() + "' with " + getClassLoader());
+            }
 
             resourceClass = AccessController.doPrivileged(
                 new PrivilegedAction<Class<? extends T>>() {
