@@ -55,8 +55,7 @@ public class JDK11Hooks extends JDKHooks {
      * {@inheritDoc}
      */
     @Override
-    public Enumeration<URL> getResources(ClassLoader loader,
-                                    String resourceName) throws IOException {
+    public Enumeration<URL> getResources(ClassLoader loader, String resourceName) throws IOException {
         /*
          * The simple answer is/was:
          *    return loader.getResources(resourceName);
