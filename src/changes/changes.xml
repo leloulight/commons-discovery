@@ -28,6 +28,10 @@
     <action dev="simonetripodi" type="update" issue="DISCOVERY-14">
       Moved to Java5 APIs, used Generics.
     </action>
+    <action dev="simonetripodi" type="update" issue="DISCOVERY-15">
+      Custom org.apache.commons.discovery.log.Log implementation replaced by
+      default commons-logging behavior.
+    </action>
   </release>
   </body>
 </document>
