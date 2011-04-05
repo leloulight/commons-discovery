@@ -29,8 +29,6 @@ import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
-
 /**
  * <p>This class may disappear in the future, or be moved to another project..
  * </p>
@@ -78,6 +76,7 @@ import org.apache.commons.logging.LogFactory;
  * </p>
  */
 public class ManagedProperties {
+
     private static Log log = LogFactory.getLog(ManagedProperties.class);
 
     /**
@@ -96,7 +95,6 @@ public class ManagedProperties {
      */
     private static final Map<ClassLoader, Map<String, Value>> propertiesCache =
         new HashMap<ClassLoader, Map<String, Value>>();
-
 
     /**
      * Get value for property bound to the current thread context class loader.
@@ -206,7 +204,6 @@ public class ManagedProperties {
         setProperties(newProperties, false);
     }
 
-
     /**
      * Set property values for <code>Properties</code> bound to the
      * current thread context class loader.
@@ -230,7 +227,6 @@ public class ManagedProperties {
         }
     }
 
-    
     /**
      * Return list of all property names.  This is an expensive
      * operation: ON EACH CALL it walks through all property lists 
@@ -288,7 +284,6 @@ public class ManagedProperties {
 
         return p;
     }
-
 
     /***************** INTERNAL IMPLEMENTATION *****************/
 
@@ -360,4 +355,5 @@ public class ManagedProperties {
                     }
                 });
     }
+
 }
