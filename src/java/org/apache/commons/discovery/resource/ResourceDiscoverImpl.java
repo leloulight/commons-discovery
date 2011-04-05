@@ -22,16 +22,12 @@ import org.apache.commons.discovery.ResourceIterator;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.resource.names.ResourceNameDiscoverImpl;
 
-
 /**
  * Helper class for methods implementing the ResourceDiscover interface.
  */
-public abstract class ResourceDiscoverImpl
-    extends ResourceNameDiscoverImpl
-    implements ResourceDiscover
-{
-    private ClassLoaders classLoaders;
+public abstract class ResourceDiscoverImpl extends ResourceNameDiscoverImpl implements ResourceDiscover {
 
+    private ClassLoaders classLoaders;
 
     /**
      * Construct a new resource discoverer.
@@ -113,7 +109,9 @@ public abstract class ResourceDiscoverImpl
      */
     public ResourceIterator findResources(final ResourceNameIterator inputNames) {
         return new ResourceIterator() {
+
             private ResourceIterator resources = null;
+
             private Resource resource = null;
 
             public boolean hasNext() {
@@ -142,4 +140,5 @@ public abstract class ResourceDiscoverImpl
             }
         };
     }
+
 }
