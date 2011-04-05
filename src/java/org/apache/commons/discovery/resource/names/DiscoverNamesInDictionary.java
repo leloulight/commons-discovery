@@ -37,45 +37,74 @@ public class DiscoverNamesInDictionary
     implements ResourceNameDiscover
 {
     private static Log log = LogFactory.getLog(DiscoverNamesInDictionary.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
 
     private Dictionary<String, String[]> dictionary;
 
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer with an empty Dictionary.
      */
     public DiscoverNamesInDictionary() {
         setDictionary(new Hashtable<String, String[]>());
     }
 
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer with the given Dictionary.
+     *
+     * @param The initial Dictionary
      */
     public DiscoverNamesInDictionary(Dictionary<String, String[]> dictionary) {
         setDictionary(dictionary);
     }
 
+    /**
+     * Returns the current Dictionary for names mapping.
+     *
+     * @return The current Dictionary for names mapping
+     */
     protected Dictionary<String, String[]> getDictionary() {
         return dictionary;
     }
 
     /**
-     * Specify set of class loaders to be used in searching.
+     * Specify the Dictionary for names mapping.
+     *
+     * @param table The Dictionary for names mapping
      */
     public void setDictionary(Dictionary<String, String[]> table) {
         this.dictionary = table;
     }
 
+    /**
+     * Add a resource name to a single name mapping.
+     *
+     * @param resourceName The resource name
+     * @param resource The target name
+     */
     public void addResource(String resourceName, String resource) {
         addResource(resourceName, new String[]{ resource });
     }
 
+    /**
+     * Add a resource name to multiple names mapping.
+     *
+     * @param resourceName The resource name
+     * @param resources The target names
+     */
     public void addResource(String resourceName, String[] resources) {
         dictionary.put(resourceName, resources);
     }
 
     /**
-     * @return Enumeration of ResourceInfo
+     * {@inheritDoc}
      */
     @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
