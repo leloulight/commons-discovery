@@ -136,7 +136,9 @@ public class DiscoverClass {
      */
     public static final PropertiesHolder nullProperties = null;
 
-
+    /**
+     * The class loaders holder.
+     */
     private ClassLoaders classLoaders = null;
 
 
@@ -155,12 +157,19 @@ public class DiscoverClass {
      * (thread context class loader is determined on each call).
      *
      * Cache static list of class loaders for each call.
+     *
+     * @param classLoaders The class loaders holder
      */
     public DiscoverClass(ClassLoaders classLoaders) {
         this.classLoaders = classLoaders;
     }
 
-
+    /**
+     * Return the class loaders holder for the given SPI.
+     *
+     * @param spiClass The SPI type
+     * @return The class loaders holder for the given SPI
+     */
     public ClassLoaders getClassLoaders(@SuppressWarnings("unused") Class<?> spiClass) {
         return classLoaders;
     }
@@ -169,6 +178,8 @@ public class DiscoverClass {
     /**
      * Find class implementing SPI.
      *
+     * @param <T> The SPI type
+     * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
      *
      * @return Class implementing the SPI.
@@ -189,6 +200,8 @@ public class DiscoverClass {
     /**
      * Find class implementing SPI.
      *
+     * @param <T> The SPI type
+     * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
      *
      * @param properties Used to determine name of SPI implementation.
@@ -211,6 +224,8 @@ public class DiscoverClass {
     /**
      * Find class implementing SPI.
      *
+     * @param <T> The SPI type
+     * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
      *
      * @param defaultImpl Default implementation name.
@@ -233,6 +248,8 @@ public class DiscoverClass {
     /**
      * Find class implementing SPI.
      *
+     * @param <T> The SPI type
+     * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
      *
      * @param properties Used to determine name of SPI implementation,.
@@ -257,6 +274,8 @@ public class DiscoverClass {
     /**
      * Find class implementing SPI.
      *
+     * @param <T> The SPI type
+     * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
      *
      * @param propertiesFileName Used to determine name of SPI implementation,.
@@ -281,6 +300,8 @@ public class DiscoverClass {
     /**
      * Find class implementing SPI.
      *
+     * @param <T> The SPI type
+     * @param <S> Any class extending T
      * @param spi Service Provider Interface Class.
      *
      * @param properties Used to determine name of SPI implementation,.
@@ -359,6 +380,7 @@ public class DiscoverClass {
     /**
      * Create new instance of class implementing SPI.
      *
+     * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
      *
      * @return Instance of a class implementing the SPI.
@@ -384,6 +406,7 @@ public class DiscoverClass {
     /**
      * Create new instance of class implementing SPI.
      *
+     * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
      *
      * @param properties Used to determine name of SPI implementation,
@@ -413,6 +436,7 @@ public class DiscoverClass {
     /**
      * Create new instance of class implementing SPI.
      *
+     * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
      *
      * @param defaultImpl Default implementation.
@@ -440,6 +464,7 @@ public class DiscoverClass {
     /**
      * Create new instance of class implementing SPI.
      *
+     * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
      *
      * @param properties Used to determine name of SPI implementation,
@@ -471,6 +496,7 @@ public class DiscoverClass {
     /**
      * Create new instance of class implementing SPI.
      *
+     * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
      *
      * @param propertiesFileName Used to determine name of SPI implementation,
@@ -502,6 +528,8 @@ public class DiscoverClass {
     /**
      * Create new instance of class implementing SPI.
      *
+     * @param <T> The SPI type
+     * @param <S> Any class extending T
      * @param spi Service Provider Interface Class.
      *
      * @param properties Used to determine name of SPI implementation,
@@ -539,6 +567,7 @@ public class DiscoverClass {
      *     <li>properties.getProperty(SPI.class.getName());</li>
      *   </ul>
      *
+     * @param <T> The SPI type
      * @param properties Properties that may define the implementation
      *                   class name(s).
      *
