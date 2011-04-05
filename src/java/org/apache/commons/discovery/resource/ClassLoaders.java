@@ -21,15 +21,14 @@ import java.util.List;
 
 import org.apache.commons.discovery.jdk.JDKHooks;
 
-
 /**
  * There are many different contexts in which
  * loaders can be used.  This provides a holder
  * for a set of class loaders, so that they
  * don't have to be build back up everytime...
  */
-public class ClassLoaders
-{
+public class ClassLoaders {
+
     protected List<ClassLoader> classLoaders = new LinkedList<ClassLoader>();
 
     /**
@@ -72,7 +71,6 @@ public class ClassLoaders
         }
     }
 
-
     /**
      * Specify a new class loader to be used in searching.
      * The order of loaders determines the order of the result.
@@ -89,7 +87,6 @@ public class ClassLoaders
             classLoaders.add(classLoader);
         }
     }
-
 
     /**
      * Check to see if <code>classLoader</code> is an
@@ -108,14 +105,14 @@ public class ClassLoaders
      */
     public boolean isAncestor(final ClassLoader classLoader) {
         /* bootstrap classloader, at root of all trees! */
-        if (classLoader == null)
+        if (classLoader == null) {
             return true;
+        }
 
         for (int idx = 0; idx < size(); idx++) {
-            for(ClassLoader walker = get(idx);
-                walker != null;
-                walker = walker.getParent())
-            {
+            for (ClassLoader walker = get(idx);
+                    walker != null;
+                    walker = walker.getParent()) {
                 if (walker == classLoader) {
                     return true;
                 }
@@ -123,7 +120,6 @@ public class ClassLoaders
         }
         return false;
     }
-
 
     /**
      * Utility method.  Returns a preloaded ClassLoaders instance
@@ -147,8 +143,12 @@ public class ClassLoaders
     public static ClassLoaders getLibLoaders(Class<?> spi, Class<?> factory, boolean prune) {
         ClassLoaders loaders = new ClassLoaders();
 
-        if (spi != null) loaders.put(spi.getClassLoader());
-        if (factory != null) loaders.put(factory.getClassLoader(), prune);
+        if (spi != null) {
+            loaders.put(spi.getClassLoader());
+        }
+        if (factory != null) {
+            loaders.put(factory.getClassLoader(), prune);
+        }
         loaders.put(JDKHooks.getJDKHooks().getSystemClassLoader(), prune);
 
         return loaders;
@@ -178,10 +178,15 @@ public class ClassLoaders
         ClassLoaders loaders = new ClassLoaders();
 
         loaders.put(JDKHooks.getJDKHooks().getThreadContextClassLoader());
-        if (spi != null) loaders.put(spi.getClassLoader(), prune);
-        if (factory != null) loaders.put(factory.getClassLoader(), prune);
+        if (spi != null) {
+            loaders.put(spi.getClassLoader(), prune);
+        }
+        if (factory != null) {
+            loaders.put(factory.getClassLoader(), prune);
+        }
         loaders.put(JDKHooks.getJDKHooks().getSystemClassLoader(), prune);
 
         return loaders;
     }
+
 }
