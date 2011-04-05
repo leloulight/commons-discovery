@@ -53,8 +53,7 @@ public class JDK12Hooks extends JDKHooks {
      */
     @Override
     public String getSystemProperty(final String propName) {
-        return
-        AccessController.doPrivileged(new PrivilegedAction<String>() {
+        return AccessController.doPrivileged(new PrivilegedAction<String>() {
             public String run() {
                 try {
                     return System.getProperty(propName);
