@@ -50,7 +50,9 @@ public class DiscoverResources extends ResourceDiscoverImpl implements ResourceD
     }
 
     /**
-     *  Construct a new resource discoverer.
+     * Construct a new resource discoverer.
+     *
+     * @param classLoaders The class loaders holder
      */
     public DiscoverResources(ClassLoaders classLoaders) {
         super(classLoaders);
