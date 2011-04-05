@@ -32,23 +32,39 @@ public class ClassLoaders
 {
     protected List<ClassLoader> classLoaders = new LinkedList<ClassLoader>();
 
-    /** Construct a new class loader set
+    /**
+     * Construct a new class loader set.
      */
     public ClassLoaders() {
     }
 
+    /**
+     * Returns the size of class loaders set.
+     *
+     * @return The size of class loaders set
+     */
     public int size() {
         return classLoaders.size();
     }
 
+    /**
+     * Returns the class loader positioned at the given index.
+     *
+     * @param idx The index the class loader has to be retrieved from
+     * @return The class loader positioned at the given index
+     */
     public ClassLoader get(int idx) {
         return classLoaders.get(idx);
     }
 
     /**
      * Specify a new class loader to be used in searching.
+     *
      * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
+     * It is recommended to add the most specific loaders first;
+     * {@code null} class loaders are discarded.
+     *
+     * @param classLoader The class loader has to added in the set
      */
     public void put(ClassLoader classLoader) {
         if (classLoader != null) {
@@ -60,8 +76,10 @@ public class ClassLoaders
     /**
      * Specify a new class loader to be used in searching.
      * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
+     * It is recommended to add the most specific loaders first;
+     * {@code null} class loaders are discarded.
      *
+     * @param classLoader  The class loader has to added in the set
      * @param prune if true, verify that the class loader is
      *              not an Ancestor (@see isAncestor) before
      *              adding it to our list.
@@ -85,6 +103,8 @@ public class ClassLoaders
      * this check is not done internally to eliminate
      * redundant class loaders, but left to the discretion
      * of the user.
+     *
+     * @param classLoader The class loader under test
      */
     public boolean isAncestor(final ClassLoader classLoader) {
         /* bootstrap classloader, at root of all trees! */
