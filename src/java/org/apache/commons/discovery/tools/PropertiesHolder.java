@@ -20,7 +20,6 @@ import java.util.Properties;
 
 import org.apache.commons.discovery.resource.ClassLoaders;
 
-
 /**
  * Holder for a default class.
  *
@@ -28,7 +27,9 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  * Using the holder complicates the users job, but minimized # of API's.
  */
 public class PropertiesHolder {
-    private Properties   properties;
+
+    private Properties properties;
+
     private final String propertiesFileName;
 
     /**
@@ -79,4 +80,5 @@ public class PropertiesHolder {
     public String getPropertiesFileName() {
         return propertiesFileName;
     }
+
 }
