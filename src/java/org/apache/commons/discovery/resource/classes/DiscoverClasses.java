@@ -27,16 +27,13 @@ import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * The findResources() method will check every loader.
  *
  * @param <T> The SPI type
  */
-public class DiscoverClasses<T>
-    extends ResourceClassDiscoverImpl<T>
-    implements ResourceClassDiscover<T>
-{
+public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements ResourceClassDiscover<T> {
+
     private static Log log = LogFactory.getLog(DiscoverClasses.class);
 
     /**
@@ -120,4 +117,5 @@ public class DiscoverClasses<T>
             }
         };
     }
+
 }
