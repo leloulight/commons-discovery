@@ -446,8 +446,6 @@ public class DiscoverSingleton {
      * Implements first two levels of the cache (loader & groupContext).
      * Allows null keys, important as default groupContext is null.
      */
-    // FIXME: Why is this here? All the methods used are static.
-    //private static final EnvironmentCache root_cache = new EnvironmentCache();
 
     /**
      * Get service keyed by spi & classLoader.
