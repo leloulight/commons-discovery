@@ -18,6 +18,8 @@ package org.apache.commons.discovery.jdk;
 
 import java.io.IOException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -50,7 +52,7 @@ public class JDK12Hooks extends JDKHooks {
     @Override
     public String getSystemProperty(final String propName) {
         return
-        java.security.AccessController.doPrivileged(new java.security.PrivilegedAction<String>() {
+        AccessController.doPrivileged(new PrivilegedAction<String>() {
             public String run() {
                 try {
                     return System.getProperty(propName);
