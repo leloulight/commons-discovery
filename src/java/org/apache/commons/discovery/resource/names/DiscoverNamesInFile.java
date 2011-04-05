@@ -33,8 +33,6 @@ import org.apache.commons.discovery.resource.DiscoverResources;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
-
 /**
  * Discover ALL files of a given name, and return resource names
  * contained within the set of files:
@@ -47,10 +45,8 @@ import org.apache.commons.logging.LogFactory;
  * Default discoverer is DiscoverClassLoaderResources,
  * but it can be set to any other.
  */
-public class DiscoverNamesInFile
-    extends ResourceNameDiscoverImpl
-    implements ResourceNameDiscover
-{
+public class DiscoverNamesInFile extends ResourceNameDiscoverImpl implements ResourceNameDiscover {
+
     private static Log log = LogFactory.getLog(DiscoverNamesInFile.class);
 
     /**
@@ -65,6 +61,7 @@ public class DiscoverNamesInFile
     private ResourceDiscover _discoverResources;
 
     private final String _prefix;
+
     private final String _suffix;
 
     /**
@@ -185,8 +182,11 @@ public class DiscoverNamesInFile
             getDiscover().findResources(fileName);
 
         return new ResourceNameIterator() {
+
             private int idx = 0;
+
             private List<String> classNames = null;
+
             private String resource = null;
 
             public boolean hasNext() {
@@ -242,7 +242,7 @@ public class DiscoverNamesInFile
 
         InputStream is = info.getResourceAsStream();
 
-        if( is != null ) {
+        if (is != null) {
             try {
                 try {
                     // This code is needed by EBCDIC and other
@@ -281,4 +281,5 @@ public class DiscoverNamesInFile
 
         return results;
     }
+
 }
