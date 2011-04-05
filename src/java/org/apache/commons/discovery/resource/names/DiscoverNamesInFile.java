@@ -213,8 +213,9 @@ public class DiscoverNamesInFile extends ResourceNameDiscoverImpl implements Res
 
                 String className = classNames.get(idx++);
 
-                if (log.isDebugEnabled())
+                if (log.isDebugEnabled()) {
                     log.debug("getNextClassResource: next class='" + className + "'");
+                }
 
                 return className;
             }
