@@ -26,7 +26,6 @@ import org.apache.commons.discovery.ResourceIterator;
 import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.discovery.resource.DiscoverResources;
 
-
 /**
  * Mechanisms to locate and load a class.
  *
@@ -35,6 +34,7 @@ import org.apache.commons.discovery.resource.DiscoverResources;
  * class implements an given interface or extends a given class.
  */
 public class ResourceUtils {
+
     /**
      * Get package name.
      *
@@ -58,7 +58,6 @@ public class ResourceUtils {
         return packageName;
     }
 
-
     /**
      * Load the resource <code>resourceName</code>.
      *
@@ -76,16 +75,13 @@ public class ResourceUtils {
      */
     public static Resource getResource(Class<?> spi,
                                        String resourceName,
-                                       ClassLoaders loaders)
-        throws DiscoveryException
-    {
+                                       ClassLoaders loaders) throws DiscoveryException {
         DiscoverResources explorer = new DiscoverResources(loaders);
         ResourceIterator resources = explorer.findResources(resourceName);
 
         if (spi != null  &&
             !resources.hasNext()  &&
-            resourceName.charAt(0) != '/')
-        {
+            resourceName.charAt(0) != '/') {
             /**
              * If we didn't find the resource, and if the resourceName
              * isn't an 'absolute' path name, then qualify with
@@ -125,9 +121,7 @@ public class ResourceUtils {
      */
     public static Properties loadProperties(Class<?> spi,
                                             String propertiesFileName,
-                                            ClassLoaders classLoaders)
-        throws DiscoveryException
-    {
+                                            ClassLoaders classLoaders) throws DiscoveryException {
         Properties properties = null;
 
         if (propertiesFileName != null) {
@@ -154,4 +148,5 @@ public class ResourceUtils {
 
         return properties;
     }
+
 }
