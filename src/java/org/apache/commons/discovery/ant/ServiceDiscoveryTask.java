@@ -37,18 +37,38 @@ public class ServiceDiscoveryTask {
 
     String[] drivers = null;
 
-    public void setServiceName(String name ) {
+    /**
+     * Sets the service name has to be discovered.
+     *
+     * @param name The service name has to be discovered.
+     */
+    public void setServiceName(String name) {
         this.name=name;
     }
 
+    /**
+     * Sets the debug level.
+     *
+     * @param i The debug level
+     */
     public void setDebug(int i) {
         this.debug=i;
     }
 
+    /**
+     * Returns the discovered SPIs name.
+     *
+     * @return The discovered SPIs name
+     */
     public String[] getServiceInfo() {
         return drivers;
     }
 
+    /**
+     * Executes the Apache Ant task, discovering the set service name
+     *
+     * @throws Exception if any error occurs
+     */
     public void execute() throws Exception {
         System.out.printf("Discovering service '%s'...%n", name);
 
