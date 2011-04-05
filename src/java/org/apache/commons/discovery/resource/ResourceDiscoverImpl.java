@@ -69,6 +69,11 @@ public abstract class ResourceDiscoverImpl
         getClassLoaders().put(loader);
     }
 
+    /**
+     * Returns the class loaders holder.
+     *
+     * @return The class loaders holder
+     */
     protected ClassLoaders getClassLoaders() {
         if (classLoaders == null) {
             classLoaders = ClassLoaders.getLibLoaders(this.getClass(), null, true);
