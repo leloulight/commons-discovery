@@ -57,6 +57,10 @@ public class DiscoveryLogFactory {
     private static Log log = DiscoveryLogFactory._newLog(DiscoveryLogFactory.class);
 
     /**
+     * Creates a new {@code Log} instance for the input class.
+     *
+     * @param clazz The class the log has to be created for
+     * @return The input class logger
      */
     public static Log newLog(Class<?> clazz) {
         /**
@@ -69,7 +73,9 @@ public class DiscoveryLogFactory {
                                                               setLogParamClasses);
 
             if (setLog == null) {
-                String msg = "Internal Error: " + clazz.getName() + " required to implement 'public static void setLog(Log)'";
+                String msg = "Internal Error: "
+                    + clazz.getName()
+                    + " required to implement 'public static void setLog(Log)'";
                 log.fatal(msg);
                 throw new DiscoveryException(msg);
             }
@@ -79,14 +85,18 @@ public class DiscoveryLogFactory {
             throw new DiscoveryException(msg, se);
         }
 
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("Class meets requirements: " + clazz.getName());
+        }
 
         return _newLog(clazz);
     }
 
     /**
      * This method MUST not invoke any logging..
+     *
+     * @param clazz The class the log has to be created for
+     * @return The input class logger
      */
     public static Log _newLog(Class<?> clazz) {
         classRegistry.put(clazz, clazz);
@@ -96,12 +106,19 @@ public class DiscoveryLogFactory {
                : logFactory.getInstance(clazz.getName());
     }
 
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
 
     /**
      * Set logFactory, works ONLY on first call.
+     *
+     * @param factory The log factory
      */
     public static void setFactory(LogFactory factory) {
         if (logFactory == null) {
