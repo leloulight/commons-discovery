@@ -30,17 +30,24 @@ public class DiscoverNamesInSystemProperties
     implements ResourceNameDiscover
 {
     private static Log log = LogFactory.getLog(DiscoverNamesInSystemProperties.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
 
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer
      */
     public DiscoverNamesInSystemProperties() {
     }
 
     /**
-     * @return Enumeration of ResourceInfo
+     * {@inheritDoc}
      */
     @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
