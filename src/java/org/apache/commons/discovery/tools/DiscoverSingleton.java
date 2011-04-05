@@ -449,6 +449,10 @@ public class DiscoverSingleton {
 
     /**
      * Get service keyed by spi & classLoader.
+     *
+     * @param classLoader The class loader as key to retrieve the related cache
+     * @param spiName The SPI class name
+     * @return The object instance associated to the given class loader/SPI name
      */
     private static synchronized Object get(ClassLoader classLoader,
                                            String spiName) {
