@@ -62,7 +62,7 @@ public class ServiceDiscoveryTask {
         while (iterator.hasNext()) {
             String resourceInfo = iterator.nextResourceName();
             resources.add(resourceInfo);
-            if( debug > 0 ) {
+            if (debug > 0) {
                 System.out.printf("Found '%s'%n", resourceInfo);
             }
         }
