@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.discovery.DiscoveryException;
 
-
 /**
  * Represents a Service Programming Interface (spi).
  * - SPI's name
@@ -33,6 +32,7 @@ import org.apache.commons.discovery.DiscoveryException;
  * - expected constructor argument types and parameters values.
  */
 public class SPInterface<T> {
+
     /**
      * The service programming interface: intended to be
      * an interface or abstract class, but not limited
@@ -46,10 +46,9 @@ public class SPInterface<T> {
      */
     private final String propertyName;
 
-
     private Class<?>  paramClasses[] = null;
-    private Object params[] = null;
 
+    private Object params[] = null;
 
     /**
      * Construct object representing Class <code>provider</code>.
@@ -88,8 +87,7 @@ public class SPInterface<T> {
      */
     public SPInterface(Class<T> provider,
                        Class<?> constructorParamClasses[],
-                       Object constructorParams[])
-    {
+                       Object constructorParams[]) {
         this(provider,
              provider.getName(),
              constructorParamClasses,
@@ -115,8 +113,7 @@ public class SPInterface<T> {
     public SPInterface(Class<T> spi,
                        String propertyName,
                        Class<?> constructorParamClasses[],
-                       Object constructorParams[])
-    {
+                       Object constructorParams[]) {
         this.spi = spi;
         this.propertyName = propertyName;
         this.paramClasses = constructorParamClasses;
@@ -169,8 +166,7 @@ public class SPInterface<T> {
                InstantiationException,
                IllegalAccessException,
                NoSuchMethodException,
-               InvocationTargetException
-    {
+               InvocationTargetException {
         verifyAncestory(impl);
 
         return ClassUtils.newInstance(impl, paramClasses, params);
@@ -185,4 +181,5 @@ public class SPInterface<T> {
     public <S extends T> void verifyAncestory(Class<S> impl) {
         ClassUtils.verifyAncestory(spi, impl);
     }
+
 }
