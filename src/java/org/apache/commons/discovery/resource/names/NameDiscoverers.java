@@ -35,6 +35,12 @@ public class NameDiscoverers
     implements ResourceNameDiscover
 {
     private static Log log = LogFactory.getLog(NameDiscoverers.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
@@ -48,9 +54,11 @@ public class NameDiscoverers
     }
 
     /**
-     * Specify an additional class loader to be used in searching.
-     * The order of loaders determines the order of the result.
-     * It is recommended to add the most specific loaders first.
+     * Specify an discover to be used in searching.
+     * The order of discover determines the order of the result.
+     * It is recommended to add the most specific discover first.
+     *
+     * @param The discover to be added
      */
     public void addResourceNameDiscover(ResourceNameDiscover discover) {
         if (discover != null) {
@@ -58,18 +66,27 @@ public class NameDiscoverers
         }
     }
 
+    /**
+     * Retrieve the discover positioned at the given index.
+     *
+     * @param idx The discover index position client is requiring
+     * @return The discover positioned at the input index
+     */
     protected ResourceNameDiscover getResourceNameDiscover(int idx) {
         return discoverers.get(idx);
     }
 
+    /**
+     * Returns the current size of set discovers.
+     *
+     * @return The current size of set discovers
+     */
     protected int size() {
         return discoverers.size();
     }
 
     /**
-     * Set of results of all discoverers.
-     *
-     * @return ResourceIterator
+     * {@inheritDoc}
      */
     @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
