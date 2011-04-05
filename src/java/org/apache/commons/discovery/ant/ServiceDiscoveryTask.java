@@ -23,17 +23,18 @@ import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.resource.DiscoverResources;
 
-
 /**
  * Small ant task that will use discovery to locate a particular impl.
  * and display all values.
  *
  * You can execute this and save it with an id, then other classes can use it.
  */
-public class ServiceDiscoveryTask
-{
+public class ServiceDiscoveryTask {
+
     String name;
+
     int debug=0;
+
     String[] drivers = null;
 
     public void setServiceName(String name ) {
