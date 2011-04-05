@@ -102,6 +102,8 @@ public class ClassLoaders {
      * of the user.
      *
      * @param classLoader The class loader under test
+     * @return true, if the class loader under test is an ancestor
+     *         of any contained class loader, false otherwise
      */
     public boolean isAncestor(final ClassLoader classLoader) {
         /* bootstrap classloader, at root of all trees! */
