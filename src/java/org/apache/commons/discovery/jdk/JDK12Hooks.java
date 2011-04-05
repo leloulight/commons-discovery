@@ -135,7 +135,9 @@ public class JDK12Hooks extends JDKHooks {
         Enumeration<URL> resources;
 
         if (first == null) {
-            log.debug("Could not find resource: " + resourceName);
+            if (log.isDebugEnabled()) {
+                log.debug("Could not find resource: " + resourceName);
+            }
             List<URL> emptyURL = Collections.emptyList();
             resources = Collections.enumeration(emptyURL);
 
