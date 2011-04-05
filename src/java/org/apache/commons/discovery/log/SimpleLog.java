@@ -241,8 +241,9 @@ public class SimpleLog implements Log {
         // print to System.err
         out.println(buf.toString());
 
-        if (t != null)
+        if (t != null) {
             t.printStackTrace(System.err);
+        }
     }
 
     // -------------------------------------------------------- Log Implementation

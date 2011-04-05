@@ -128,8 +128,9 @@ public class DiscoveryLogFactory {
             // now, go back and reset loggers for all current classes..
             for (Class<?> clazz : classRegistry.values()) {
 
-                if (log.isDebugEnabled())
+                if (log.isDebugEnabled()) {
                     log.debug("Reset Log for: " + clazz.getName());
+                }
 
                 Method setLog = null;
 

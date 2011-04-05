@@ -472,7 +472,7 @@ public class DiscoverClass {
     /**
      * Create new instance of class implementing SPI.
      *
-     * @param <S> Any class extending T
+     * @param <T> The SPI type
      * @param loaders The class loaders holder
      * @param spi Service Provider Interface Class.
      * @param properties Used to determine name of SPI implementation,
