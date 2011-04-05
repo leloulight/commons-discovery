@@ -24,7 +24,6 @@ import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * Recover resources from a Dictionary.  This covers Properties as well,
  * since <code>Properties extends Hashtable extends Dictionary</code>.
@@ -32,10 +31,8 @@ import org.apache.commons.logging.LogFactory;
  * The recovered value is expected to be either a <code>String</code>
  * or a <code>String[]</code>.
  */
-public class DiscoverNamesInDictionary
-    extends ResourceNameDiscoverImpl
-    implements ResourceNameDiscover
-{
+public class DiscoverNamesInDictionary extends ResourceNameDiscoverImpl implements ResourceNameDiscover {
+
     private static Log log = LogFactory.getLog(DiscoverNamesInDictionary.class);
 
     /**
@@ -108,8 +105,9 @@ public class DiscoverNamesInDictionary
      */
     @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("find: resourceName='" + resourceName + "'");
+        }
 
         final String[] resources = dictionary.get(resourceName);
 
@@ -131,4 +129,5 @@ public class DiscoverNamesInDictionary
             }
         };
     }
+
 }
