@@ -33,40 +33,58 @@ public class DiscoverServiceNames
 {
     protected static final String SERVICE_HOME = "META-INF/services/";
 
-    /** Construct a new service discoverer
+    /**
+     * Construct a new service discoverer.
      */
     public DiscoverServiceNames() {
         super(SERVICE_HOME, null);
     }
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
+     *
+     * @param prefix The resource name prefix
+     * @param suffix The resource name suffix
      */
     public DiscoverServiceNames(String prefix, String suffix) {
         super((prefix == null) ? SERVICE_HOME : SERVICE_HOME + prefix, suffix);
     }
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
+     *
+     * @param loaders The class loaders holder
      */
     public DiscoverServiceNames(ClassLoaders loaders) {
         super(loaders, SERVICE_HOME, null);
     }
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
+     *
+     * @param loaders The class loaders holder
+     * @param prefix The resource name prefix
+     * @param suffix The resource name suffix
      */
     public DiscoverServiceNames(ClassLoaders loaders, String prefix, String suffix) {
         super(loaders, (prefix == null) ? SERVICE_HOME : SERVICE_HOME + prefix, suffix);
     }
 
-    /** Construct a new service discoverer
+    /**
+     * Construct a new service discoverer.
+     *
+     * @param discoverer The discoverer to resolve resources
      */
     public DiscoverServiceNames(ResourceDiscover discoverer) {
         super(discoverer, SERVICE_HOME, null);
     }
 
-    /** Construct a new service discoverer
+    /**
+     * Construct a new service discoverer.
+     *
+     * @param discoverer The discoverer to resolve resources
+     * @param prefix The resource name prefix
+     * @param suffix The resource name suffix
      */
     public DiscoverServiceNames(ResourceDiscover discoverer, String prefix, String suffix) {
         super(discoverer, (prefix == null) ? SERVICE_HOME : SERVICE_HOME + prefix, suffix);
