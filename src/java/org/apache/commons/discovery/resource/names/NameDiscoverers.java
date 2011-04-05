@@ -24,16 +24,14 @@ import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * Holder for multiple ResourceNameDiscover instances.
+ *
  * The result is the union of the results from each
  * (not a chained sequence, where results feed the next in line.
  */
-public class NameDiscoverers
-    extends ResourceNameDiscoverImpl
-    implements ResourceNameDiscover
-{
+public class NameDiscoverers extends ResourceNameDiscoverImpl implements ResourceNameDiscover {
+
     private static Log log = LogFactory.getLog(NameDiscoverers.class);
 
     /**
@@ -90,11 +88,14 @@ public class NameDiscoverers
      */
     @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("find: resourceName='" + resourceName + "'");
+        }
 
         return new ResourceNameIterator() {
+
             private int idx = 0;
+
             private ResourceNameIterator iterator = null;
 
             public boolean hasNext() {
@@ -124,4 +125,5 @@ public class NameDiscoverers
             }
         };
     }
+
 }
