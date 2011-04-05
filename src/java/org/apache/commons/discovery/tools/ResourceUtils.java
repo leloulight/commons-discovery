@@ -29,6 +29,7 @@ import org.apache.commons.discovery.resource.DiscoverResources;
 
 /**
  * Mechanisms to locate and load a class.
+ *
  * The load methods locate a class only.
  * The find methods locate a class and verify that the
  * class implements an given interface or extends a given class.
@@ -36,10 +37,14 @@ import org.apache.commons.discovery.resource.DiscoverResources;
 public class ResourceUtils {
     /**
      * Get package name.
+     *
      * Not all class loaders 'keep' package information,
      * in which case Class.getPackage() returns null.
      * This means that calling Class.getPackage().getName()
      * is unreliable at best.
+     *
+     * @param clazz The class from which the package has to be extracted
+     * @return The string representation of the input class package
      */
     public static String getPackageName(Class<?> clazz) {
         Package clazzPackage = clazz.getPackage();
@@ -56,6 +61,7 @@ public class ResourceUtils {
 
     /**
      * Load the resource <code>resourceName</code>.
+     *
      * Try each classloader in succession,
      * until first succeeds, or all fail.
      * If all fail and <code>resouceName</code> is not absolute
@@ -63,7 +69,10 @@ public class ResourceUtils {
      * <code>packageName/resourceName</code> after changing all
      * '.' to '/'.
      *
+     * @param spi The SPI type
      * @param resourceName The name of the resource to load.
+     * @param loaders the class loaders holder
+     * @return The discovered {@link Resource} instance
      */
     public static Resource getResource(Class<?> spi,
                                        String resourceName,
@@ -104,9 +113,10 @@ public class ResourceUtils {
      *     <li>System Class Loader</li>
      *   </ul>
      *
+     * @param spi The SPI type
      * @param propertiesFileName The property file name.
-     *
-     * @return Instance of a class implementing the SPI.
+     * @param loaders the class loaders holder
+     * @return The loaded named property file, in {@code Properties} format
      *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
