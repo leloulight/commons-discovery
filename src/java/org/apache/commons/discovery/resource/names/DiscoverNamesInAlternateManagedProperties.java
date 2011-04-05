@@ -25,7 +25,6 @@ import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * Recover resource name from Managed Properties,
  * using OLD property names.
@@ -36,10 +35,8 @@ import org.apache.commons.logging.LogFactory;
  *
  * @see org.apache.commons.discovery.tools.ManagedProperties
  */
-public class DiscoverNamesInAlternateManagedProperties
-    extends ResourceNameDiscoverImpl
-    implements ResourceNameDiscover
-{
+public class DiscoverNamesInAlternateManagedProperties extends ResourceNameDiscoverImpl implements ResourceNameDiscover {
+
     private static Log log = LogFactory.getLog(DiscoverNamesInAlternateManagedProperties.class);
 
     /**
@@ -47,7 +44,7 @@ public class DiscoverNamesInAlternateManagedProperties
      *
      * @param _log This class {@code Log}
      */
-        public static void setLog(Log _log) {
+    public static void setLog(Log _log) {
         log = _log;
     }
 
@@ -99,4 +96,5 @@ public class DiscoverNamesInAlternateManagedProperties
             }
         };
     }
+
 }
