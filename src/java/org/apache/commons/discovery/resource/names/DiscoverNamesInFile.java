@@ -52,6 +52,12 @@ public class DiscoverNamesInFile
     implements ResourceNameDiscover
 {
     private static Log log = LogFactory.getLog(DiscoverNamesInFile.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
@@ -62,7 +68,7 @@ public class DiscoverNamesInFile
     private final String _suffix;
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
      */
     public DiscoverNamesInFile() {
         _discoverResources = new DiscoverResources();
@@ -71,7 +77,10 @@ public class DiscoverNamesInFile
     }
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
+     *
+     * @param prefix The resource name prefix
+     * @param suffix The resource name suffix
      */
     public DiscoverNamesInFile(String prefix, String suffix) {
         _discoverResources = new DiscoverResources();
@@ -80,7 +89,9 @@ public class DiscoverNamesInFile
     }
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
+     *
+     * @param loaders The class loaders holder
      */
     public DiscoverNamesInFile(ClassLoaders loaders) {
         _discoverResources = new DiscoverResources(loaders);
@@ -89,7 +100,11 @@ public class DiscoverNamesInFile
     }
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
+     *
+     * @param loaders The class loaders holder
+     * @param prefix The resource name prefix
+     * @param suffix The resource name suffix
      */
     public DiscoverNamesInFile(ClassLoaders loaders, String prefix, String suffix) {
         _discoverResources = new DiscoverResources(loaders);
@@ -98,7 +113,9 @@ public class DiscoverNamesInFile
     }
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
+     *
+     * @param discoverer The discoverer to resolve resources
      */
     public DiscoverNamesInFile(ResourceDiscover discoverer) {
         _discoverResources = discoverer;
@@ -107,7 +124,11 @@ public class DiscoverNamesInFile
     }
 
     /**
-     *  Construct a new resource discoverer
+     * Construct a new resource discoverer.
+     *
+     * @param discoverer The discoverer to resolve resources
+     * @param prefix The resource name prefix
+     * @param suffix The resource name suffix
      */
     public DiscoverNamesInFile(ResourceDiscover discoverer, String prefix, String suffix) {
         _discoverResources = discoverer;
@@ -116,21 +137,27 @@ public class DiscoverNamesInFile
     }
 
     /**
-     * Specify set of class loaders to be used in searching.
+     * Set the discoverer to resolve resources.
+     *
+     * @param discover The discoverer to resolve resources
      */
     public void setDiscoverer(ResourceDiscover discover) {
         _discoverResources = discover;
     }
 
     /**
-     * To be used by downstream elements..
+     * Return the discoverer to resolve resources.
+     *
+     * To be used by downstream elements...
+     *
+     * @return The discoverer to resolve resources
      */
     public ResourceDiscover getDiscover() {
         return _discoverResources;
     }
 
     /**
-     * @return Enumeration of ServiceInfo
+     * {@inheritDoc}
      */
     @Override
     public ResourceNameIterator findResourceNames(final String serviceName) {
@@ -205,8 +232,10 @@ public class DiscoverNamesInFile
     }
 
     /**
-     * Read everything, no defering here..
-     * Ensure that files are closed before we leave.
+     * Parses the resource info file and store all the defined SPI implementation classes
+     *
+     * @param info The resource file
+     * @return The list with all SPI implementation names
      */
     private List<String> readServices(final Resource info) {
         List<String> results = new ArrayList<String>();
