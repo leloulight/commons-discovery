@@ -147,7 +147,9 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Get logging level. </p>
+     * Get logging level.
+     *
+     * @return The logging level
      */
     public static int getLevel() {
         return logLevel;
@@ -157,6 +159,7 @@ public class SimpleLog implements Log {
      * Is the given log level currently enabled?
      *
      * @param level is this level enabled?
+     * @return true, if the input level is enabled, false otherwise
      */
     protected static boolean isLevelEnabled(int level) {
         // log level are numerically ordered so can use simple numeric
@@ -185,9 +188,13 @@ public class SimpleLog implements Log {
     // -------------------------------------------------------- Logging Methods
 
     /**
-     * <p> Do the actual logging.
-     * This method assembles the message
-     * and then prints to <code>System.err</code>.</p>
+     * Do the actual logging.
+     *
+     * This method assembles the message and then prints to {@code System.err}.
+     *
+     * @param type The logging level
+     * @param message The message to log
+     * @param t The error cause, if any
      */
     protected void log(int type, Object message, Throwable t) {
         // use a string buffer for better performance
@@ -241,7 +248,9 @@ public class SimpleLog implements Log {
     // -------------------------------------------------------- Log Implementation
 
     /**
-     * <p> Log a message with debug log level.</p>
+     * Log a message with debug log level.
+     *
+     * @param message The message to log
      */
     public final void debug(Object message) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_DEBUG)) {
@@ -250,7 +259,10 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log an error with debug log level.</p>
+     * Log an error with debug log level.
+     *
+     * @param message The message to log
+     * @param t The error cause, if any
      */
     public final void debug(Object message, Throwable t) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_DEBUG)) {
@@ -259,7 +271,9 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log a message with debug log level.</p>
+     * Log a message with debug log level.
+     *
+     * @param message The message to log
      */
     public final void trace(Object message) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_TRACE)) {
@@ -268,7 +282,10 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log an error with debug log level.</p>
+     * Log an error with debug log level.
+     *
+     * @param message The message to log
+     * @param t The error cause, if any
      */
     public final void trace(Object message, Throwable t) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_TRACE)) {
@@ -277,7 +294,9 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log a message with info log level.</p>
+     * Log a message with info log level.
+     *
+     * @param message The message to log
      */
     public final void info(Object message) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_INFO)) {
@@ -286,7 +305,10 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log an error with info log level.</p>
+     * Log an error with info log level.
+     *
+     * @param message The message to log
+     * @param t The error cause, if any
      */
     public final void info(Object message, Throwable t) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_INFO)) {
@@ -295,7 +317,9 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log a message with warn log level.</p>
+     * Log a message with warn log level.
+     *
+     * @param message The message to log
      */
     public final void warn(Object message) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_WARN)) {
@@ -304,7 +328,10 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log an error with warn log level.</p>
+     * Log an error with warn log level.
+     *
+     * @param message The message to log
+     * @param t The error cause, if any
      */
     public final void warn(Object message, Throwable t) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_WARN)) {
@@ -313,7 +340,9 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log a message with error log level.</p>
+     * Log a message with error log level.
+     *
+     * @param message The message to log
      */
     public final void error(Object message) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_ERROR)) {
@@ -322,7 +351,10 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log an error with error log level.</p>
+     * Log an error with error log level.
+     *
+     * @param message The message to log
+     * @param t The error cause, if any
      */
     public final void error(Object message, Throwable t) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_ERROR)) {
@@ -331,7 +363,9 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log a message with fatal log level.</p>
+     * Log a message with fatal log level.
+     *
+     * @param message The message to log
      */
     public final void fatal(Object message) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_FATAL)) {
@@ -340,7 +374,10 @@ public class SimpleLog implements Log {
     }
 
     /**
-     * <p> Log an error with fatal log level.</p>
+     * Log an error with fatal log level.
+     *
+     * @param message The message to log
+     * @param t The error cause, if any
      */
     public final void fatal(Object message, Throwable t) {
         if (isLevelEnabled(SimpleLog.LOG_LEVEL_FATAL)) {
@@ -354,6 +391,8 @@ public class SimpleLog implements Log {
      * <p> This allows expensive operations such as <code>String</code>
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
+     *
+     * @return true, if the {@link SimpleLog.LOG_LEVEL_DEBUG} is enabled, false otherwise
      */
     public final boolean isDebugEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_DEBUG);
@@ -365,6 +404,8 @@ public class SimpleLog implements Log {
      * <p> This allows expensive operations such as <code>String</code>
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
+     *
+     * @return true, if the {@link SimpleLog.LOG_LEVEL_ERROR} is enabled, false otherwise
      */
     public final boolean isErrorEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_ERROR);
@@ -376,6 +417,8 @@ public class SimpleLog implements Log {
      * <p> This allows expensive operations such as <code>String</code>
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
+     *
+     * @return true, if the {@link SimpleLog.LOG_LEVEL_FATAL} is enabled, false otherwise
      */
     public final boolean isFatalEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_FATAL);
@@ -387,6 +430,8 @@ public class SimpleLog implements Log {
      * <p> This allows expensive operations such as <code>String</code>
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
+     *
+     * @return true, if the {@link SimpleLog.LOG_LEVEL_INFO} is enabled, false otherwise
      */
     public final boolean isInfoEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_INFO);
@@ -398,6 +443,8 @@ public class SimpleLog implements Log {
      * <p> This allows expensive operations such as <code>String</code>
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
+     *
+     * @return true, if the {@link SimpleLog.LOG_LEVEL_TRACE} is enabled, false otherwise
      */
     public final boolean isTraceEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_TRACE);
@@ -409,6 +456,8 @@ public class SimpleLog implements Log {
      * <p> This allows expensive operations such as <code>String</code>
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
+     *
+     * @return true, if the {@link SimpleLog.LOG_LEVEL_WARN} is enabled, false otherwise
      */
     public final boolean isWarnEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_WARN);
