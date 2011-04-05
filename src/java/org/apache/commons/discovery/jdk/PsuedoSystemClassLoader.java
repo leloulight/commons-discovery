@@ -26,17 +26,26 @@ import java.net.URL;
  */
 class PsuedoSystemClassLoader extends ClassLoader {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Class<?> loadClass(String className, @SuppressWarnings("unused") boolean resolve)
             throws ClassNotFoundException {
         return findSystemClass(className);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URL getResource(String resName) {
         return getSystemResource(resName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public InputStream getResourceAsStream(String resName) {
         return getSystemResourceAsStream(resName);
