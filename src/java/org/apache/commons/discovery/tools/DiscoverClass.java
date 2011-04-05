@@ -139,7 +139,7 @@ public class DiscoverClass {
     /**
      * The class loaders holder.
      */
-    private ClassLoaders classLoaders = null;
+    private final ClassLoaders classLoaders;
 
     /**
      * Create a class instance with dynamic environment
