@@ -40,7 +40,9 @@ public class JDK12Hooks extends JDKHooks {
     private static final ClassLoader systemClassLoader = findSystemClassLoader();
 
     /**
-     * Must be implemented to use DiscoveryLogFactory
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
      */
     public static void setLog(Log _log) {
         log = _log;
