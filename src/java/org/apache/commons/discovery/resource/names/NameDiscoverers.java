@@ -56,7 +56,7 @@ public class NameDiscoverers extends ResourceNameDiscoverImpl implements Resourc
      * The order of discover determines the order of the result.
      * It is recommended to add the most specific discover first.
      *
-     * @param The discover to be added
+     * @param discover The discover to be added
      */
     public void addResourceNameDiscover(ResourceNameDiscover discover) {
         if (discover != null) {
