@@ -276,6 +276,7 @@ public class DiscoverClass {
      *
      * @param <T> The SPI type
      * @param <S> Any class extending T
+     * @param loaders The class loaders holder
      * @param spi Service Provider Interface Class.
      * @param properties Used to determine name of SPI implementation,.
      * @param defaultImpl Default implementation class.
@@ -456,7 +457,8 @@ public class DiscoverClass {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public <T> T newInstance(Class<T> spiClass, String propertiesFileName, String defaultImpl) throws DiscoveryException,
+    public <T> T newInstance(Class<T> spiClass, String propertiesFileName, String defaultImpl)
+            throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
                NoSuchMethodException,
@@ -470,8 +472,8 @@ public class DiscoverClass {
     /**
      * Create new instance of class implementing SPI.
      *
-     * @param <T> The SPI type
      * @param <S> Any class extending T
+     * @param loaders The class loaders holder
      * @param spi Service Provider Interface Class.
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
@@ -504,6 +506,7 @@ public class DiscoverClass {
      *   </ul>
      *
      * @param <T> The SPI type
+     * @param spi The SPI representation
      * @param properties Properties that may define the implementation
      *                   class name(s).
      * @return String[] Name of classes implementing the SPI.
@@ -521,23 +524,31 @@ public class DiscoverClass {
 
         // Try the (managed) system property spiName
         String className = getManagedProperty(spiName);
-        if (className != null) names.add(className);
+        if (className != null) {
+            names.add(className);
+        }
 
         if (includeAltProperty) {
             // Try the (managed) system property propertyName
             className = getManagedProperty(propertyName);
-            if (className != null) names.add(className);
+            if (className != null) {
+                names.add(className);
+            }
         }
 
         if (properties != null) {
             // Try the properties parameter spiName
             className = properties.getProperty(spiName);
-            if (className != null) names.add(className);
+            if (className != null) {
+                names.add(className);
+            }
 
             if (includeAltProperty) {
                 // Try the properties parameter propertyName
                 className = properties.getProperty(propertyName);
-                if (className != null) names.add(className);
+                if (className != null) {
+                    names.add(className);
+                }
             }
         }
 
@@ -553,6 +564,7 @@ public class DiscoverClass {
      *
      * @param propertyName the name of the system property whose value is
      *        the name of the class to load.
+     * @return The managed property value
      * @see ManagedProperties
      */
     public static String getManagedProperty(String propertyName) {
