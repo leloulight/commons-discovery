@@ -22,7 +22,6 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-
 /**
  * 'Resource' located by discovery.
  * Naming of methods becomes a real pain ('getClass()')
@@ -30,10 +29,12 @@ import java.util.List;
  *
  * I think it works well as it will give users a point-of-reference.
  */
-public class Resource
-{
+public class Resource {
+
     protected final String      name;
+
     protected final URL         resource;
+
     protected final ClassLoader loader;
 
     /**
@@ -109,4 +110,5 @@ public class Resource
 
         return resources;
     }
+
 }

@@ -16,12 +16,11 @@
  */
 package org.apache.commons.discovery;
 
-
 /**
  * Iterator over discovered {@link Resource}.
  */
-public abstract class ResourceIterator implements ResourceNameIterator
-{
+public abstract class ResourceIterator implements ResourceNameIterator {
+
     /**
      * Returns the next {@link Resource} in the iteration.
      *
@@ -37,4 +36,5 @@ public abstract class ResourceIterator implements ResourceNameIterator
     public String nextResourceName() {
         return nextResource().getName();
     }
+
 }

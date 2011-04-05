@@ -16,14 +16,13 @@
  */
 package org.apache.commons.discovery;
 
-
 /**
  * SPI Discovery.
  *
  * @param <T> The SPI type
  */
-public interface ResourceClassDiscover<T> extends ResourceDiscover
-{
+public interface ResourceClassDiscover<T> extends ResourceDiscover {
+
     /**
      * Locate class resources that are bound to {@code className}.
      *
@@ -39,4 +38,5 @@ public interface ResourceClassDiscover<T> extends ResourceDiscover
      * @return The iterator over the located classes
      */
     ResourceClassIterator<T> findResourceClasses(ResourceNameIterator classNames);
+
 }

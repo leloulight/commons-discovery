@@ -16,7 +16,6 @@
  */
 package org.apache.commons.discovery;
 
-
 /**
  * Iterate over resource names.
  * The semantics are somewhat unusual, for better or worse.
@@ -27,8 +26,8 @@ package org.apache.commons.discovery;
  *
  * TODO: FIX iterator logic/semantics, possibly add 'currentResourceName()'.
  */
-public interface ResourceNameIterator
-{
+public interface ResourceNameIterator {
+
     /**
      * Returns true if the iteration has more elements.
      *

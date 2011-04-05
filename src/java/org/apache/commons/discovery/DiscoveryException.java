@@ -16,7 +16,6 @@
  */
 package org.apache.commons.discovery;
 
-
 /**
  * An exception that is thrown only if a suitable service
  * instance cannot be created by {@code ServiceFactory}.
@@ -24,7 +23,6 @@ package org.apache.commons.discovery;
  * @version $Revision$ $Date$
  */
 public class DiscoveryException extends RuntimeException {
-
 
     /**
      * 
@@ -66,4 +64,5 @@ public class DiscoveryException extends RuntimeException {
     public DiscoveryException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

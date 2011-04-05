@@ -23,7 +23,6 @@ import java.security.PrivilegedAction;
 import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
 
-
 /**
  * 'Resource' located by discovery.
  * Naming of methods becomes a real pain ('getClass()')
@@ -33,8 +32,8 @@ import org.apache.commons.logging.Log;
  *
  * @param <T> The SPI type
  */
-public class ResourceClass<T> extends Resource
-{
+public class ResourceClass<T> extends Resource {
+
     private static Log log = DiscoveryLogFactory.newLog(ResourceClass.class);
 
     /**
@@ -45,6 +44,7 @@ public class ResourceClass<T> extends Resource
     public static void setLog(Log _log) {
         log = _log;
     }
+
     protected Class<? extends T>       resourceClass;
 
     /**
@@ -119,4 +119,5 @@ public class ResourceClass<T> extends Resource
     public String toString() {
         return "ResourceClass[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
     }
+
 }
