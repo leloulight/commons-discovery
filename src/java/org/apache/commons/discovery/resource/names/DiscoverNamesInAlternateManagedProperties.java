@@ -35,7 +35,9 @@ import org.apache.commons.logging.LogFactory;
  *
  * @see org.apache.commons.discovery.tools.ManagedProperties
  */
-public class DiscoverNamesInAlternateManagedProperties extends ResourceNameDiscoverImpl implements ResourceNameDiscover {
+public class DiscoverNamesInAlternateManagedProperties
+        extends ResourceNameDiscoverImpl
+        implements ResourceNameDiscover {
 
     private static Log log = LogFactory.getLog(DiscoverNamesInAlternateManagedProperties.class);
 
