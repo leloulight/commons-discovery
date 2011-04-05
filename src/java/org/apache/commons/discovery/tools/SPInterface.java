@@ -123,20 +123,46 @@ public class SPInterface<T> {
         this.params = constructorParams;
     }
 
+    /**
+     * Returns the SPI class name.
+     *
+     * @return The SPI class name
+     */
     public String getSPName() {
         return spi.getName();
     }
 
+    /**
+     * Returns the SPI class.
+     *
+     * @return The SPI class
+     */
     public Class<T> getSPClass() {
         return spi;
     }
 
+    /**
+     * Returns the property name to be used for finding
+     * the name of the SPI implementation class.
+     *
+     * @return The property name to be used for finding
+     *         the name of the SPI implementation class
+     */
     public String getPropertyName() {
         return propertyName;
     }
 
     /**
-     * Instantiate a new 
+     * Creates a new instance of the given SPI class.
+     *
+     * @param <S> Any type extends T
+     * @param impl The SPI class has to be instantiated
+     * @return A new instance of the given SPI class
+     * @throws DiscoveryException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
      */
     public <S extends T> S newInstance(Class<S> impl)
         throws DiscoveryException,
@@ -150,6 +176,12 @@ public class SPInterface<T> {
         return ClassUtils.newInstance(impl, paramClasses, params);
     }
 
+    /**
+     * Verifies the given SPI implementation is a SPI specialization.
+     *
+     * @param <S> Any type extends T
+     * @param impl The SPI instantance
+     */
     public <S extends T> void verifyAncestory(Class<S> impl) {
         ClassUtils.verifyAncestory(spi, impl);
     }
