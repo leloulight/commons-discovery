@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.commons.discovery.jdk.JDKHooks;
 
-
 /**
  * Cache by a 'key' unique to the environment:
  *
@@ -40,6 +39,7 @@ import org.apache.commons.discovery.jdk.JDKHooks;
  * to identify cached entries to be released.
  */
 public class EnvironmentCache {
+
     /**
      * Allows null key, important as default groupContext is null.
      *
@@ -60,8 +60,7 @@ public class EnvironmentCache {
      * @param classLoader The class loader key
      * @return The SPI name/instance cache
      */
-    public static synchronized Map<String, Object> get(ClassLoader classLoader)
-    {
+    public static synchronized Map<String, Object> get(ClassLoader classLoader) {
         /**
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
@@ -75,8 +74,7 @@ public class EnvironmentCache {
      * @param classLoader The class loader key
      * @param spis The SPI name/instance cache
      */
-    public static synchronized void put(ClassLoader classLoader, Map<String, Object> spis)
-    {
+    public static synchronized void put(ClassLoader classLoader, Map<String, Object> spis) {
         /**
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
@@ -85,7 +83,6 @@ public class EnvironmentCache {
             root_cache.put(classLoader, spis);
         }
     }
-
 
     /********************** CACHE-MANAGEMENT SUPPORT **********************/
 
@@ -108,7 +105,6 @@ public class EnvironmentCache {
         root_cache.remove(JDKHooks.getJDKHooks().getThreadContextClassLoader());
     }
 
-
     /**
      * Release any internal references to a previously created service
      * instance associated with the current thread context class loader.
@@ -124,4 +120,5 @@ public class EnvironmentCache {
          */
         root_cache.remove(classLoader);
     }
+
 }
