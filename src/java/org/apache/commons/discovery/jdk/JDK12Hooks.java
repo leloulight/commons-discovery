@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -34,7 +34,7 @@ public class JDK12Hooks extends JDKHooks {
     /**
      * Logger
      */
-    private static Log log = DiscoveryLogFactory.newLog(JDK12Hooks.class);
+    private static Log log = LogFactory.getLog(JDK12Hooks.class);
 
 
     private static final ClassLoader systemClassLoader

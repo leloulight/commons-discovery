@@ -23,9 +23,9 @@ import java.util.List;
 import org.apache.commons.discovery.ResourceClass;
 import org.apache.commons.discovery.ResourceClassDiscover;
 import org.apache.commons.discovery.ResourceClassIterator;
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -37,7 +37,7 @@ public class DiscoverClasses<T>
     extends ResourceClassDiscoverImpl<T>
     implements ResourceClassDiscover<T>
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverClasses.class);
+    private static Log log = LogFactory.getLog(DiscoverClasses.class);
 
     /**
      * Sets the {@code Log} for this class.

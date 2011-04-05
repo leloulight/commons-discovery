@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.discovery.jdk.JDKHooks;
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 
@@ -78,7 +78,7 @@ import org.apache.commons.logging.Log;
  * </p>
  */
 public class ManagedProperties {
-    private static Log log = DiscoveryLogFactory.newLog(ManagedProperties.class);
+    private static Log log = LogFactory.getLog(ManagedProperties.class);
     public static void setLog(Log _log) {
         log = _log;
     }

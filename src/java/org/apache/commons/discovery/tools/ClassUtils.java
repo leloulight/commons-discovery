@@ -22,16 +22,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.apache.commons.discovery.DiscoveryException;
-
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
  * 
  */
 public class ClassUtils {
-    private static Log log = DiscoveryLogFactory.newLog(ClassUtils.class);
+    private static Log log = LogFactory.getLog(ClassUtils.class);
     public static void setLog(Log _log) {
         log = _log;
     }

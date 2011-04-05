@@ -20,8 +20,8 @@ import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 'Resource' located by discovery.
@@ -34,7 +34,7 @@ import org.apache.commons.logging.Log;
  */
 public class ResourceClass<T> extends Resource {
 
-    private static Log log = DiscoveryLogFactory.newLog(ResourceClass.class);
+    private static Log log = LogFactory.getLog(ResourceClass.class);
 
     /**
      * Sets the {@code Log} for this class.

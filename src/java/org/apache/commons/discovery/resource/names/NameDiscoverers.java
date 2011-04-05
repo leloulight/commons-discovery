@@ -21,8 +21,8 @@ import java.util.List;
 
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -34,7 +34,7 @@ public class NameDiscoverers
     extends ResourceNameDiscoverImpl
     implements ResourceNameDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(NameDiscoverers.class);
+    private static Log log = LogFactory.getLog(NameDiscoverers.class);
     public static void setLog(Log _log) {
         log = _log;
     }

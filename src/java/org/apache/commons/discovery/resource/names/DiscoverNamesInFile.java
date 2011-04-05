@@ -28,10 +28,10 @@ import org.apache.commons.discovery.ResourceDiscover;
 import org.apache.commons.discovery.ResourceIterator;
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.discovery.resource.DiscoverResources;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 
@@ -51,7 +51,7 @@ public class DiscoverNamesInFile
     extends ResourceNameDiscoverImpl
     implements ResourceNameDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverNamesInFile.class);
+    private static Log log = LogFactory.getLog(DiscoverNamesInFile.class);
     public static void setLog(Log _log) {
         log = _log;
     }

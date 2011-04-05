@@ -24,8 +24,8 @@ import org.apache.commons.discovery.Resource;
 import org.apache.commons.discovery.ResourceDiscover;
 import org.apache.commons.discovery.ResourceIterator;
 import org.apache.commons.discovery.jdk.JDKHooks;
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -35,7 +35,7 @@ public class DiscoverResources
     extends ResourceDiscoverImpl
     implements ResourceDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverResources.class);
+    private static Log log = LogFactory.getLog(DiscoverResources.class);
 
     /**
      * Sets the {@code Log} for this class.

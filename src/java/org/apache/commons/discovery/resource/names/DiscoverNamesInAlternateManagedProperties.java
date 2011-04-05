@@ -21,9 +21,9 @@ import java.util.Map;
 
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -40,7 +40,7 @@ public class DiscoverNamesInAlternateManagedProperties
     extends ResourceNameDiscoverImpl
     implements ResourceNameDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverNamesInAlternateManagedProperties.class);
+    private static Log log = LogFactory.getLog(DiscoverNamesInAlternateManagedProperties.class);
 
     /**
      * Sets the {@code Log} for this class.

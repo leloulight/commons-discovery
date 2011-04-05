@@ -45,13 +45,9 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class TestAll {
-    private static final int logLevel =
-        org.apache.commons.discovery.log.SimpleLog.LOG_LEVEL_INFO;
 
     @Test
     public void findDefaultImpl_1() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         TestInterface1 ti = null;
 
         try {
@@ -67,8 +63,6 @@ public class TestAll {
 
     @Test
     public void findDefaultImpl_2() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         TestInterface1 ti = null;
 
         try {
@@ -84,8 +78,6 @@ public class TestAll {
 
     @Test
     public void cacheAssertions() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         TestInterface1 ti = null;
 
         try {
@@ -110,8 +102,6 @@ public class TestAll {
 
     @Test
     public void releaseAssertions() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         TestInterface1 ti = null;
 
         try {
@@ -136,8 +126,6 @@ public class TestAll {
 
     @Test
     public void findPropertyImpl_1() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         TestInterface1 ti = null;
 
         try {
@@ -157,8 +145,6 @@ public class TestAll {
 
     @Test
     public void myFactoryManagedProperty() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         TestInterface1 ti = null;
 
         try {
@@ -182,8 +168,6 @@ public class TestAll {
 
     @Test
     public void findPropFileDefault() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         TestInterface1 ti = null;
 
         try {
@@ -201,8 +185,6 @@ public class TestAll {
 
     @Test
     public void findServiceFileDefault() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         TestInterface2 ti = null;
 
         try {
@@ -220,8 +202,6 @@ public class TestAll {
 
     @Test
     public void lowLevelFind() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
         String name = "org.apache.commons.discovery.test.TestImpl2_1";
 
@@ -245,8 +225,6 @@ public class TestAll {
 
     @Test
     public void findResources() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         ClassLoaders loaders = new ClassLoaders();
 
         /**
@@ -289,8 +267,6 @@ public class TestAll {
 
     @Test
     public void findViaDiscoverClass() {
-        org.apache.commons.discovery.log.SimpleLog.setLevel(logLevel);
-
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
 
         DiscoverClass discover = new DiscoverClass(loaders);

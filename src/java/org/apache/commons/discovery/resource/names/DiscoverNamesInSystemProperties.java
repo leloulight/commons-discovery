@@ -18,8 +18,8 @@ package org.apache.commons.discovery.resource.names;
 
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
-import org.apache.commons.discovery.log.DiscoveryLogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -29,7 +29,7 @@ public class DiscoverNamesInSystemProperties
     extends ResourceNameDiscoverImpl
     implements ResourceNameDiscover
 {
-    private static Log log = DiscoveryLogFactory.newLog(DiscoverNamesInSystemProperties.class);
+    private static Log log = LogFactory.getLog(DiscoverNamesInSystemProperties.class);
     public static void setLog(Log _log) {
         log = _log;
     }
