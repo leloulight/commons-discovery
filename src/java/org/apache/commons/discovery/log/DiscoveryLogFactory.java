@@ -25,7 +25,6 @@ import org.apache.commons.discovery.tools.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * <p>Simple implementation of Log that sends all enabled log messages,
  * for all defined loggers, to System.err.
@@ -45,8 +44,11 @@ import org.apache.commons.logging.LogFactory;
  */
 @Deprecated
 public class DiscoveryLogFactory {
+
     private static LogFactory logFactory = null;
+
     private static final Map<Class<?>, Class<?>>  classRegistry = new Hashtable<Class<?>, Class<?>>();
+
     private static final Class<?>[] setLogParamClasses = new Class<?>[] { Log.class };
 
     /**
@@ -136,4 +138,5 @@ public class DiscoveryLogFactory {
             }
         }
     }
+
 }

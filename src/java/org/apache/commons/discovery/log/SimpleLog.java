@@ -23,17 +23,16 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 
-
 /**
  * <p>Simple implementation of Log that sends all enabled log messages,
  * for all defined loggers, to System.err.
  * </p>
- * 
+ *
  * <p>Hacked from commons-logging SimpleLog for use in discovery.
  * This is intended to be enough of a Log implementation to bootstrap
  * Discovery.
  * </p>
- * 
+ *
  * <p>One property: <code>org.apache.commons.discovery.log.level</code>.
  * valid values: all, trace, debug, info, warn, error, fatal, off.
  * </p>
@@ -47,14 +46,19 @@ public class SimpleLog implements Log {
 
     /** "Trace" level logging. */
     public static final int LOG_LEVEL_TRACE  = 1;
+
     /** "Debug" level logging. */
     public static final int LOG_LEVEL_DEBUG  = 2;
+
     /** "Info" level logging. */
     public static final int LOG_LEVEL_INFO   = 3;
+
     /** "Warn" level logging. */
     public static final int LOG_LEVEL_WARN   = 4;
+
     /** "Error" level logging. */
     public static final int LOG_LEVEL_ERROR  = 5;
+
     /** "Fatal" level logging. */
     public static final int LOG_LEVEL_FATAL  = 6;
 
@@ -86,7 +90,6 @@ public class SimpleLog implements Log {
 
     /** The current log level */
     static protected int logLevel = LOG_LEVEL_INFO;
-
 
     /**
      * Use 'out' instead of 'err' for logging
@@ -161,15 +164,12 @@ public class SimpleLog implements Log {
         return (level >= getLevel());
     }
 
-
-
     // ------------------------------------------------------------- Attributes
 
     /** The name of this simple log instance */
     protected String logName = null;
 
     private String prefix=null;
-
 
     // ------------------------------------------------------------ Constructor
 
@@ -182,9 +182,7 @@ public class SimpleLog implements Log {
         logName = name;
     }
 
-
     // -------------------------------------------------------- Logging Methods
-
 
     /**
      * <p> Do the actual logging.
@@ -240,9 +238,7 @@ public class SimpleLog implements Log {
             t.printStackTrace(System.err);
     }
 
-
     // -------------------------------------------------------- Log Implementation
-
 
     /**
      * <p> Log a message with debug log level.</p>
@@ -253,7 +249,6 @@ public class SimpleLog implements Log {
         }
     }
 
-
     /**
      * <p> Log an error with debug log level.</p>
      */
@@ -262,7 +257,6 @@ public class SimpleLog implements Log {
             log(SimpleLog.LOG_LEVEL_DEBUG, message, t);
         }
     }
-
 
     /**
      * <p> Log a message with debug log level.</p>
@@ -273,7 +267,6 @@ public class SimpleLog implements Log {
         }
     }
 
-
     /**
      * <p> Log an error with debug log level.</p>
      */
@@ -282,7 +275,6 @@ public class SimpleLog implements Log {
             log(SimpleLog.LOG_LEVEL_TRACE, message, t);
         }
     }
-
 
     /**
      * <p> Log a message with info log level.</p>
@@ -293,7 +285,6 @@ public class SimpleLog implements Log {
         }
     }
 
-
     /**
      * <p> Log an error with info log level.</p>
      */
@@ -302,7 +293,6 @@ public class SimpleLog implements Log {
             log(SimpleLog.LOG_LEVEL_INFO, message, t);
         }
     }
-
 
     /**
      * <p> Log a message with warn log level.</p>
@@ -313,7 +303,6 @@ public class SimpleLog implements Log {
         }
     }
 
-
     /**
      * <p> Log an error with warn log level.</p>
      */
@@ -322,7 +311,6 @@ public class SimpleLog implements Log {
             log(SimpleLog.LOG_LEVEL_WARN, message, t);
         }
     }
-
 
     /**
      * <p> Log a message with error log level.</p>
@@ -333,7 +321,6 @@ public class SimpleLog implements Log {
         }
     }
 
-
     /**
      * <p> Log an error with error log level.</p>
      */
@@ -342,7 +329,6 @@ public class SimpleLog implements Log {
             log(SimpleLog.LOG_LEVEL_ERROR, message, t);
         }
     }
-
 
     /**
      * <p> Log a message with fatal log level.</p>
@@ -353,7 +339,6 @@ public class SimpleLog implements Log {
         }
     }
 
-
     /**
      * <p> Log an error with fatal log level.</p>
      */
@@ -362,7 +347,6 @@ public class SimpleLog implements Log {
             log(SimpleLog.LOG_LEVEL_FATAL, message, t);
         }
     }
-
 
     /**
      * <p> Are debug messages currently enabled? </p>
@@ -375,7 +359,6 @@ public class SimpleLog implements Log {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_DEBUG);
     }
 
-
     /**
      * <p> Are error messages currently enabled? </p>
      *
@@ -386,7 +369,6 @@ public class SimpleLog implements Log {
     public final boolean isErrorEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_ERROR);
     }
-
 
     /**
      * <p> Are fatal messages currently enabled? </p>
@@ -399,7 +381,6 @@ public class SimpleLog implements Log {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_FATAL);
     }
 
-
     /**
      * <p> Are info messages currently enabled? </p>
      *
@@ -410,7 +391,6 @@ public class SimpleLog implements Log {
     public final boolean isInfoEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_INFO);
     }
-
 
     /**
      * <p> Are trace messages currently enabled? </p>
@@ -423,7 +403,6 @@ public class SimpleLog implements Log {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_TRACE);
     }
 
-
     /**
      * <p> Are warn messages currently enabled? </p>
      *
@@ -434,4 +413,5 @@ public class SimpleLog implements Log {
     public final boolean isWarnEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_WARN);
     }
+
 }
