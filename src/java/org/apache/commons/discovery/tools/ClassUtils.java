@@ -25,11 +25,11 @@ import org.apache.commons.discovery.DiscoveryException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * Various utilities to interact with {@code Class} types.
  */
 public class ClassUtils {
+
     private static Log log = LogFactory.getLog(ClassUtils.class);
 
     /**
@@ -133,13 +133,11 @@ public class ClassUtils {
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      */
-    public static <T> T newInstance(Class<T> impl, Class<?> paramClasses[], Object params[])
-        throws DiscoveryException,
+    public static <T> T newInstance(Class<T> impl, Class<?> paramClasses[], Object params[]) throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
                NoSuchMethodException,
-               InvocationTargetException
-    {
+               InvocationTargetException {
         if (paramClasses == null || params == null) {
             return impl.newInstance();
         }
@@ -155,9 +153,7 @@ public class ClassUtils {
      * @param spi The SPI type
      * @param impl The class has to be verified is a SPI implementation/extension
      */
-    public static void verifyAncestory(Class<?> spi, Class<?> impl)
-        throws DiscoveryException
-    {
+    public static void verifyAncestory(Class<?> spi, Class<?> impl) throws DiscoveryException {
         if (spi == null) {
             throw new DiscoveryException("No interface defined!");
         }
@@ -167,8 +163,11 @@ public class ClassUtils {
         }
 
         if (!spi.isAssignableFrom(impl)) {
-            throw new DiscoveryException("Class " + impl.getName() +
-                                         " does not implement " + spi.getName());
+            throw new DiscoveryException("Class "
+                    + impl.getName()
+                    + " does not implement "
+                    + spi.getName());
         }
     }
+
 }
