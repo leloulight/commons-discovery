@@ -19,12 +19,11 @@ package org.apache.commons.discovery.resource.names;
 import org.apache.commons.discovery.ResourceNameDiscover;
 import org.apache.commons.discovery.ResourceNameIterator;
 
-
 /**
  * Helper class for methods implementing the ResourceNameDiscover interface.
  */
-public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover
-{
+public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover {
+
     /**
      * Locate names of resources that are bound to {@code resourceName}.
      *
@@ -41,7 +40,9 @@ public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover
      */
     public ResourceNameIterator findResourceNames(final ResourceNameIterator inputNames) {
         return new ResourceNameIterator() {
+
             private ResourceNameIterator resourceNames = null;
+
             private String resourceName = null;
 
             public boolean hasNext() {
@@ -69,4 +70,5 @@ public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover
             }
         };
     }
+
 }
