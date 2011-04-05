@@ -35,8 +35,6 @@ import org.apache.commons.logging.Log;
  * mechanism uses the class names as property names.
  *
  * @see org.apache.commons.discovery.tools.ManagedProperties
- *
- * @author Richard A. Sitze
  */
 public class DiscoverNamesInAlternateManagedProperties
     extends ResourceNameDiscoverImpl

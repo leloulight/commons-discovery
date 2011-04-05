@@ -18,8 +18,7 @@ package org.apache.commons.discovery.test;
 
 
 /**
-  * @author Richard A. Sitze
-  * @version $Revision$
+ * @version $Revision$
  */
 public class TestImpl1_1 implements TestInterface1 {
     public TestImpl1_1() {

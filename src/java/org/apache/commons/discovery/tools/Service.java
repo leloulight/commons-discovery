@@ -42,11 +42,6 @@ import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
  * we support loaders.
  *
  * The findResources() method will check every loader.
- *
- * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author James Strachan
  */
 public class Service
 {

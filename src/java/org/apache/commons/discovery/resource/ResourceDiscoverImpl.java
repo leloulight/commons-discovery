@@ -25,8 +25,6 @@ import org.apache.commons.discovery.resource.names.ResourceNameDiscoverImpl;
 
 /**
  * Helper class for methods implementing the ResourceDiscover interface.
- *
- * @author Richard A. Sitze
  */
 public abstract class ResourceDiscoverImpl
     extends ResourceNameDiscoverImpl

@@ -195,9 +195,6 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  * (corresponding to the JAXP pluggability APIs) found in Apache Xerces.
  * </p>
  *
- * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
  * @version $Revision$ $Date$
  */
 public class DiscoverSingleton {

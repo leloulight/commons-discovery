@@ -21,7 +21,6 @@ package org.apache.commons.discovery;
  * SPI Discovery.
  *
  * @param <T> The SPI type
- * @author Richard A. Sitze
  */
 public interface ResourceClassDiscover<T> extends ResourceDiscover
 {

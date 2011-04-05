@@ -22,8 +22,6 @@ import org.apache.commons.discovery.ResourceNameIterator;
 
 /**
  * Helper class for methods implementing the ResourceNameDiscover interface.
- *
- * @author Richard A. Sitze
  */
 public abstract class ResourceNameDiscoverImpl implements ResourceNameDiscover
 {

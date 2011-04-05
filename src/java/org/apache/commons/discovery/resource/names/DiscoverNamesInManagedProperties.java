@@ -26,8 +26,6 @@ import org.apache.commons.logging.Log;
 /**
  * Recover resource name from Managed Properties.
  * @see org.apache.commons.discovery.tools.ManagedProperties
- * 
- * @author Richard A. Sitze
  */
 public class DiscoverNamesInManagedProperties
     extends ResourceNameDiscoverImpl

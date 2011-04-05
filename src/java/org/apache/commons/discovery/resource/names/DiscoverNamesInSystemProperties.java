@@ -24,8 +24,6 @@ import org.apache.commons.logging.Log;
 
 /**
  * Recover resource name from System Properties.
- * 
- * @author Richard A. Sitze
  */
 public class DiscoverNamesInSystemProperties
     extends ResourceNameDiscoverImpl

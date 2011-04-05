@@ -29,8 +29,6 @@ import org.apache.commons.logging.Log;
  * Holder for multiple ResourceNameDiscover instances.
  * The result is the union of the results from each
  * (not a chained sequence, where results feed the next in line.
- *
- * @author Richard A. Sitze
  */
 public class NameDiscoverers
     extends ResourceNameDiscoverImpl

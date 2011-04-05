@@ -19,8 +19,6 @@ package org.apache.commons.discovery;
 
 /**
  * Iterator over discovered {@link Resource}.
- *
- * @author Richard A. Sitze
  */
 public abstract class ResourceIterator implements ResourceNameIterator
 {

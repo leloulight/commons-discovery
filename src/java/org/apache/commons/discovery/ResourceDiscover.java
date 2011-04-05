@@ -21,8 +21,6 @@ package org.apache.commons.discovery;
  * Interface representing a mapping
  * from a set of source resource names
  * to a resultant set of resource.
- *
- * @author Richard A. Sitze
  */
 public interface ResourceDiscover extends ResourceNameDiscover
 {

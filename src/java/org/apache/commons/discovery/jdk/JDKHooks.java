@@ -22,7 +22,7 @@ import java.util.Enumeration;
 
 
 /**
- * @author Richard A. Sitze
+ * 
  */
 public abstract class JDKHooks {
     private static final JDKHooks jdkHooks;

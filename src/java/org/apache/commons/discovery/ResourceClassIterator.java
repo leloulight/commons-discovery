@@ -21,8 +21,6 @@ package org.apache.commons.discovery;
  * Iterator over discovered SPI type.
  *
  * @param <T> The SPI type
- *
- * @author Richard A. Sitze
  */
 public abstract class ResourceClassIterator<T> extends ResourceIterator
 {

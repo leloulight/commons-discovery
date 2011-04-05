@@ -38,8 +38,6 @@ import org.apache.commons.discovery.jdk.JDKHooks;
  * When we 'release', it is expected that the caller of the 'release'
  * have the same thread context class loader... as that will be used
  * to identify cached entries to be released.
- *
- * @author Richard A. Sitze
  */
 public class EnvironmentCache {
     /**

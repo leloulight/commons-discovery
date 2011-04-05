@@ -42,8 +42,7 @@ import org.junit.Test;
 
 
 /**
-  * @author Richard A. Sitze
-  * @version $Revision$
+ * @version $Revision$
  */
 public class TestAll {
     private static final int logLevel =

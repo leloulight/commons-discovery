@@ -32,10 +32,6 @@ import org.apache.commons.discovery.resource.DiscoverResources;
  * The load methods locate a class only.
  * The find methods locate a class and verify that the
  * class implements an given interface or extends a given class.
- *
- * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
  */
 public class ResourceUtils {
     /**

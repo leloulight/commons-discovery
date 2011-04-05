@@ -32,11 +32,6 @@ import org.apache.commons.logging.Log;
  * The findResources() method will check every loader.
  *
  * @param <T> The SPI type
- *
- * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author James Strachan
  */
 public class DiscoverClasses<T>
     extends ResourceClassDiscoverImpl<T>

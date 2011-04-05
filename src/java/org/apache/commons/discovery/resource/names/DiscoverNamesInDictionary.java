@@ -31,8 +31,6 @@ import org.apache.commons.logging.Log;
  *
  * The recovered value is expected to be either a <code>String</code>
  * or a <code>String[]</code>.
- *
- * @author Richard A. Sitze
  */
 public class DiscoverNamesInDictionary
     extends ResourceNameDiscoverImpl

@@ -18,8 +18,7 @@ package org.apache.commons.discovery.test;
 
 
 /**
-  * @author Richard A. Sitze
-  * @version $Revision$
+ * @version $Revision$
  */
 public interface TestInterface1 {
     public void method();

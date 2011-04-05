@@ -29,10 +29,6 @@ import java.util.List;
  * so I've patterned this after ClassLoader...
  *
  * I think it works well as it will give users a point-of-reference.
- *
- * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author Richard A. Sitze
  */
 public class Resource
 {

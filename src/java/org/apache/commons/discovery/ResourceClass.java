@@ -32,8 +32,6 @@ import org.apache.commons.logging.Log;
  * I think it works well as it will give users a point-of-reference.
  *
  * @param <T> The SPI type
- *
- * @author Richard A. Sitze
  */
 public class ResourceClass<T> extends Resource
 {

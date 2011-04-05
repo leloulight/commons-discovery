@@ -29,8 +29,6 @@ import org.apache.commons.discovery.resource.DiscoverResources;
  * and display all values.
  *
  * You can execute this and save it with an id, then other classes can use it.
- *
- * @author Costin Manolache
  */
 public class ServiceDiscoveryTask
 {

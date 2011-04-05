@@ -26,8 +26,6 @@ package org.apache.commons.discovery;
  * it does not change the state.
  *
  * TODO: FIX iterator logic/semantics, possibly add 'currentResourceName()'.
- *
- * @author Richard A. Sitze
  */
 public interface ResourceNameIterator
 {

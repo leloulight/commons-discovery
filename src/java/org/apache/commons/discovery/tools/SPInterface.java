@@ -31,8 +31,6 @@ import org.apache.commons.discovery.DiscoveryException;
  * usefull, for those in which it is:
  *
  * - expected constructor argument types and parameters values.
- *
- * @author Richard A. Sitze
  */
 public class SPInterface<T> {
     /**

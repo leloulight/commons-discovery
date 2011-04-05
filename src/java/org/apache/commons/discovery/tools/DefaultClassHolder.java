@@ -27,8 +27,6 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  * 
  * Class may be specified by name (String) or class (Class).
  * Using the holder complicates the users job, but minimized # of API's.
- * 
- * @author Richard A. Sitze
  */
 public class DefaultClassHolder<T> {
     private Class<? extends T>        defaultClass;

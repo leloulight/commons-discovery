@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 
 
 /**
- * @author Richard A. Sitze
+ * 
  */
 public class ClassUtils {
     private static Log log = DiscoveryLogFactory.newLog(ClassUtils.class);

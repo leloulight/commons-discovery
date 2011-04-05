@@ -46,10 +46,6 @@ import org.apache.commons.logging.Log;
  *
  * Default discoverer is DiscoverClassLoaderResources,
  * but it can be set to any other.
- *
- * @author Richard A. Sitze
- * @author Costin Manolache
- * @author James Strachan
  */
 public class DiscoverNamesInFile
     extends ResourceNameDiscoverImpl

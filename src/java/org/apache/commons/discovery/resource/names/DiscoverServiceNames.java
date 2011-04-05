@@ -26,11 +26,6 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  *
  * The caller will first configure the discoverer by creating a
  * root Discoverer for the files.
- *
- * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
- * @author James Strachan
  */
 public class DiscoverServiceNames
     extends DiscoverNamesInFile

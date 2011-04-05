@@ -27,10 +27,6 @@ import org.apache.commons.discovery.jdk.JDKHooks;
  * loaders can be used.  This provides a holder
  * for a set of class loaders, so that they
  * don't have to be build back up everytime...
- *
- * @author Richard A. Sitze
- * @author Craig R. McClanahan
- * @author Costin Manolache
  */
 public class ClassLoaders
 {

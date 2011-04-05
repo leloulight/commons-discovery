@@ -23,7 +23,6 @@ package org.apache.commons.discovery;
  * 
  * <p>Copied from LogConfigurationException<p>
  *
- * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 public class DiscoveryException extends RuntimeException {

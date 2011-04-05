@@ -76,8 +76,6 @@ import org.apache.commons.logging.Log;
  * within the <code>ClassLoader</code> hierarchy, the more usefull
  * it will be.
  * </p>
- *
- * @author Richard A. Sitze
  */
 public class ManagedProperties {
     private static Log log = DiscoveryLogFactory.newLog(ManagedProperties.class);

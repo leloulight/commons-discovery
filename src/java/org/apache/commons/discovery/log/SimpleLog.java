@@ -37,11 +37,6 @@ import org.apache.commons.logging.Log;
  * <p>One property: <code>org.apache.commons.discovery.log.level</code>.
  * valid values: all, trace, debug, info, warn, error, fatal, off.
  * </p>
- * 
- * @author Richard A. Sitze
- * @author <a href="mailto:sanders@apache.org">Scott Sanders</a>
- * @author Rod Waldhoff
- * @author Robert Burrell Donkin
  *
  * @version $Id$
  */
