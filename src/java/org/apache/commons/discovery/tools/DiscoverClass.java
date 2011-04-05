@@ -29,7 +29,6 @@ import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.discovery.resource.classes.DiscoverClasses;
 import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
 
-
 /**
  * <p>Discover class that implements a given service interface,
  * with discovery and configuration features similar to that employed
@@ -131,6 +130,7 @@ import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
  * @version $Revision$ $Date$
  */
 public class DiscoverClass {
+
     /**
      * Readable placeholder for a null value.
      */
@@ -140,7 +140,6 @@ public class DiscoverClass {
      * The class loaders holder.
      */
     private ClassLoaders classLoaders = null;
-
 
     /**
      * Create a class instance with dynamic environment
@@ -174,23 +173,18 @@ public class DiscoverClass {
         return classLoaders;
     }
 
-
     /**
      * Find class implementing SPI.
      *
      * @param <T> The SPI type
      * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
-     *
      * @return Class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
-    public <T, S extends T> Class<S> find(Class<T> spiClass)
-        throws DiscoveryException
-    {
+    public <T, S extends T> Class<S> find(Class<T> spiClass) throws DiscoveryException {
         return find(getClassLoaders(spiClass),
                     new SPInterface<T>(spiClass),
                     nullProperties,
@@ -203,18 +197,13 @@ public class DiscoverClass {
      * @param <T> The SPI type
      * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
-     *
      * @param properties Used to determine name of SPI implementation.
-     *
      * @return Class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
-    public <T, S extends T> Class<S> find(Class<T> spiClass, Properties properties)
-        throws DiscoveryException
-    {
+    public <T, S extends T> Class<S> find(Class<T> spiClass, Properties properties) throws DiscoveryException {
         return find(getClassLoaders(spiClass),
                     new SPInterface<T>(spiClass),
                     new PropertiesHolder(properties),
@@ -227,18 +216,13 @@ public class DiscoverClass {
      * @param <T> The SPI type
      * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
-     *
      * @param defaultImpl Default implementation name.
-     *
      * @return Class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
-    public <T, S extends T> Class<S> find(Class<T> spiClass, String defaultImpl)
-        throws DiscoveryException
-    {
+    public <T, S extends T> Class<S> find(Class<T> spiClass, String defaultImpl) throws DiscoveryException {
         return find(getClassLoaders(spiClass),
                     new SPInterface<T>(spiClass),
                     nullProperties,
@@ -251,20 +235,15 @@ public class DiscoverClass {
      * @param <T> The SPI type
      * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
-     *
      * @param properties Used to determine name of SPI implementation,.
-     *
      * @param defaultImpl Default implementation class.
-     *
      * @return Class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
     public <T, S extends T> Class<S> find(Class<T> spiClass, Properties properties, String defaultImpl)
-        throws DiscoveryException
-    {
+            throws DiscoveryException {
         return find(getClassLoaders(spiClass),
                     new SPInterface<T>(spiClass),
                     new PropertiesHolder(properties),
@@ -277,20 +256,15 @@ public class DiscoverClass {
      * @param <T> The SPI type
      * @param <S> Any class extending T
      * @param spiClass Service Provider Interface Class.
-     *
      * @param propertiesFileName Used to determine name of SPI implementation,.
-     *
      * @param defaultImpl Default implementation class.
-     *
      * @return Class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
      */
     public <T, S extends T> Class<S> find(Class<T> spiClass, String propertiesFileName, String defaultImpl)
-        throws DiscoveryException
-    {
+            throws DiscoveryException {
         return find(getClassLoaders(spiClass),
                     new SPInterface<T>(spiClass),
                     new PropertiesHolder(propertiesFileName),
@@ -303,13 +277,9 @@ public class DiscoverClass {
      * @param <T> The SPI type
      * @param <S> Any class extending T
      * @param spi Service Provider Interface Class.
-     *
      * @param properties Used to determine name of SPI implementation,.
-     *
      * @param defaultImpl Default implementation class.
-     *
      * @return Class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded, or if
      *            the resulting class does not implement (or extend) the SPI.
@@ -317,9 +287,7 @@ public class DiscoverClass {
     public static <T, S extends T> Class<S> find(ClassLoaders loaders,
                              SPInterface<T> spi,
                              PropertiesHolder properties,
-                             DefaultClassHolder<T> defaultImpl)
-        throws DiscoveryException
-    {
+                             DefaultClassHolder<T> defaultImpl) throws DiscoveryException {
         if (loaders == null) {
             loaders = ClassLoaders.getLibLoaders(spi.getSPClass(),
                                                  DiscoverClass.class,
@@ -357,7 +325,6 @@ public class DiscoverClass {
             ResourceClassIterator<T> classes =
                 (new DiscoverClasses<T>(loaders)).findResourceClasses(classIter);
 
-
             if (!classes.hasNext()  &&  defaultImpl != null) {
                 return defaultImpl.getDefaultClass(spi, loaders);
             }
@@ -382,9 +349,7 @@ public class DiscoverClass {
      *
      * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
-     *
      * @return Instance of a class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
@@ -395,8 +360,7 @@ public class DiscoverClass {
                InstantiationException,
                IllegalAccessException,
                NoSuchMethodException,
-               InvocationTargetException
-    {
+               InvocationTargetException {
         return newInstance(getClassLoaders(spiClass),
                            new SPInterface<T>(spiClass),
                            nullProperties,
@@ -408,25 +372,20 @@ public class DiscoverClass {
      *
      * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
-     *
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
-     *
      * @return Instance of a class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public <T> T newInstance(Class<T> spiClass, Properties properties)
-        throws DiscoveryException,
+    public <T> T newInstance(Class<T> spiClass, Properties properties) throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
                NoSuchMethodException,
-               InvocationTargetException
-    {
+               InvocationTargetException {
         return newInstance(getClassLoaders(spiClass),
                            new SPInterface<T>(spiClass),
                            new PropertiesHolder(properties),
@@ -438,23 +397,18 @@ public class DiscoverClass {
      *
      * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
-     *
      * @param defaultImpl Default implementation.
-     *
      * @return Instance of a class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public <T> T newInstance(Class<T> spiClass, String defaultImpl)
-        throws DiscoveryException,
+    public <T> T newInstance(Class<T> spiClass, String defaultImpl) throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
                NoSuchMethodException,
-               InvocationTargetException
-    {
+               InvocationTargetException {
         return newInstance(getClassLoaders(spiClass),
                            new SPInterface<T>(spiClass),
                            nullProperties,
@@ -466,27 +420,21 @@ public class DiscoverClass {
      *
      * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
-     *
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
-     *
      * @param defaultImpl Default implementation.
-     *
      * @return Instance of a class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public <T> T newInstance(Class<T> spiClass, Properties properties, String defaultImpl)
-        throws DiscoveryException,
+    public <T> T newInstance(Class<T> spiClass, Properties properties, String defaultImpl) throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
                NoSuchMethodException,
-               InvocationTargetException
-    {
+               InvocationTargetException {
         return newInstance(getClassLoaders(spiClass),
                            new SPInterface<T>(spiClass),
                            new PropertiesHolder(properties),
@@ -498,27 +446,21 @@ public class DiscoverClass {
      *
      * @param <T> The SPI type
      * @param spiClass Service Provider Interface Class.
-     *
      * @param propertiesFileName Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
-     *
      * @param defaultImpl Default implementation.
-     *
      * @return Instance of a class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public <T> T newInstance(Class<T> spiClass, String propertiesFileName, String defaultImpl)
-        throws DiscoveryException,
+    public <T> T newInstance(Class<T> spiClass, String propertiesFileName, String defaultImpl) throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
                NoSuchMethodException,
-               InvocationTargetException
-    {
+               InvocationTargetException {
         return newInstance(getClassLoaders(spiClass),
                            new SPInterface<T>(spiClass),
                            new PropertiesHolder(propertiesFileName),
@@ -531,15 +473,11 @@ public class DiscoverClass {
      * @param <T> The SPI type
      * @param <S> Any class extending T
      * @param spi Service Provider Interface Class.
-     *
      * @param properties Used to determine name of SPI implementation,
      *                   and passed to implementation.init() method if
      *                   implementation implements Service interface.
-     *
      * @param defaultImpl Default implementation.
-     *
      * @return Instance of a class implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
@@ -548,13 +486,11 @@ public class DiscoverClass {
     public static <T> T newInstance(ClassLoaders loaders,
                                      SPInterface<T> spi,
                                      PropertiesHolder properties,
-                                     DefaultClassHolder<T> defaultImpl)
-        throws DiscoveryException,
+                                     DefaultClassHolder<T> defaultImpl) throws DiscoveryException,
                InstantiationException,
                IllegalAccessException,
                NoSuchMethodException,
-               InvocationTargetException
-    {
+               InvocationTargetException {
         return spi.newInstance(find(loaders, spi, properties, defaultImpl));
     }
 
@@ -570,15 +506,12 @@ public class DiscoverClass {
      * @param <T> The SPI type
      * @param properties Properties that may define the implementation
      *                   class name(s).
-     *
      * @return String[] Name of classes implementing the SPI.
-     *
      * @exception DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found.
      */
     public static <T> String[] discoverClassNames(SPInterface<T> spi,
-                                              Properties properties)
-    {
+                                              Properties properties) {
         List<String> names = new LinkedList<String>();
 
         String spiName = spi.getSPName();
@@ -614,15 +547,13 @@ public class DiscoverClass {
         return results;
     }
 
-
     /**
      * Load the class whose name is given by the value of a (Managed)
      * System Property.
      *
-     * @see ManagedProperties
-     *
      * @param propertyName the name of the system property whose value is
      *        the name of the class to load.
+     * @see ManagedProperties
      */
     public static String getManagedProperty(String propertyName) {
         String value;
@@ -633,4 +564,5 @@ public class DiscoverClass {
         }
         return value;
     }
+
 }
