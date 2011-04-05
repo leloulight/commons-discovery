@@ -57,7 +57,7 @@ public class JDK11Hooks extends JDKHooks {
     @Override
     public Enumeration<URL> getResources(ClassLoader loader,
                                     String resourceName) throws IOException {
-        /**
+        /*
          * The simple answer is/was:
          *    return loader.getResources(resourceName);
          * 
@@ -105,14 +105,14 @@ public class JDK11Hooks extends JDKHooks {
                 URL n;
 
                 if (!firstDone) {
-                    /**
+                    /*
                      * First time through, use results of getReference()
                      * if they were non-null.
                      */
                     firstDone = true;
                     n = first;
                 } else {
-                    /**
+                    /*
                      * Subsequent times through,
                      * use results of getReferences()
                      * but take out anything that matches 'first'.
