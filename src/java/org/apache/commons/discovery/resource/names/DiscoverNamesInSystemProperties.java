@@ -21,14 +21,11 @@ import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * Recover resource name from System Properties.
  */
-public class DiscoverNamesInSystemProperties
-    extends ResourceNameDiscoverImpl
-    implements ResourceNameDiscover
-{
+public class DiscoverNamesInSystemProperties extends ResourceNameDiscoverImpl implements ResourceNameDiscover {
+
     private static Log log = LogFactory.getLog(DiscoverNamesInSystemProperties.class);
 
     /**
@@ -51,10 +48,12 @@ public class DiscoverNamesInSystemProperties
      */
     @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("find: resourceName='" + resourceName + "'");
+        }
 
         return new ResourceNameIterator() {
+
             private String resource = System.getProperty(resourceName);
 
             public boolean hasNext() {
@@ -68,4 +67,5 @@ public class DiscoverNamesInSystemProperties
             }
         };
     }
+
 }
