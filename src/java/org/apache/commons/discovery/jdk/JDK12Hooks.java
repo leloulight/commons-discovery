@@ -25,7 +25,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * JDK 1.2 Style Hooks implementation.
  */
@@ -36,9 +35,7 @@ public class JDK12Hooks extends JDKHooks {
      */
     private static Log log = LogFactory.getLog(JDK12Hooks.class);
 
-
-    private static final ClassLoader systemClassLoader
-        = findSystemClassLoader();
+    private static final ClassLoader systemClassLoader = findSystemClassLoader();
 
     /**
      * Must be implemented to use DiscoveryLogFactory
@@ -74,7 +71,7 @@ public class JDK12Hooks extends JDKHooks {
         try {
             classLoader = Thread.currentThread().getContextClassLoader();
         } catch (SecurityException e) {
-            /**
+            /*
              * SecurityException is thrown when
              * a) the context class loader isn't an ancestor of the
              *    calling class's class loader, or
@@ -104,11 +101,8 @@ public class JDK12Hooks extends JDKHooks {
      * {@inheritDoc}
      */
     @Override
-    public Enumeration<URL> getResources(ClassLoader loader,
-                                    String resourceName)
-        throws IOException
-    {
-        /**
+    public Enumeration<URL> getResources(ClassLoader loader, String resourceName) throws IOException {
+        /*
          * The simple answer is/was:
          *    return loader.getResources(resourceName);
          *
@@ -138,7 +132,7 @@ public class JDK12Hooks extends JDKHooks {
 
         Enumeration<URL> resources;
 
-        if(first == null) {
+        if (first == null) {
             log.debug("Could not find resource: " + resourceName);
             List<URL> emptyURL = Collections.emptyList();
             resources = Collections.enumeration(emptyURL);
@@ -164,7 +158,9 @@ public class JDK12Hooks extends JDKHooks {
 
     private static Enumeration<URL> getResourcesFromUrl(final URL first, final Enumeration<URL> rest) {
         return new Enumeration<URL>() {
+
             private boolean firstDone = (first == null);
+
             private URL next = getNext();
 
             public URL nextElement() {
@@ -181,14 +177,14 @@ public class JDK12Hooks extends JDKHooks {
                 URL n;
 
                 if (!firstDone) {
-                    /**
+                    /*
                      * First time through, use results of getReference()
                      * if they were non-null.
                      */
                     firstDone = true;
                     n = first;
                 } else {
-                    /**
+                    /*
                      * Subsequent times through,
                      * use results of getReferences()
                      * but take out anything that matches 'first'.
@@ -214,12 +210,13 @@ public class JDK12Hooks extends JDKHooks {
     }
 
     static private ClassLoader findSystemClassLoader() {
+
         ClassLoader classLoader;
 
         try {
             classLoader = ClassLoader.getSystemClassLoader();
         } catch (SecurityException e) {
-            /**
+            /*
              * Ignore and keep going.
              */
             classLoader = null;
@@ -239,4 +236,5 @@ public class JDK12Hooks extends JDKHooks {
         // Return the selected class loader
         return classLoader;
     }
+
 }
