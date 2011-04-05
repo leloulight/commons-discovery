@@ -43,7 +43,7 @@ public class NameDiscoverers extends ResourceNameDiscoverImpl implements Resourc
         log = _log;
     }
 
-    private List<ResourceNameDiscover> discoverers = new ArrayList<ResourceNameDiscover>();
+    private final List<ResourceNameDiscover> discoverers = new ArrayList<ResourceNameDiscover>();
 
     /**
      *  Construct a new resource name discoverer
