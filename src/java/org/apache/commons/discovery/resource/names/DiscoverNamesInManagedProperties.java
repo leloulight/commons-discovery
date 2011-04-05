@@ -22,15 +22,12 @@ import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * Recover resource name from Managed Properties.
  * @see org.apache.commons.discovery.tools.ManagedProperties
  */
-public class DiscoverNamesInManagedProperties
-    extends ResourceNameDiscoverImpl
-    implements ResourceNameDiscover
-{
+public class DiscoverNamesInManagedProperties extends ResourceNameDiscoverImpl implements ResourceNameDiscover {
+
     private static Log log = LogFactory.getLog(DiscoverNamesInManagedProperties.class);
 
     /**
@@ -42,8 +39,8 @@ public class DiscoverNamesInManagedProperties
         log = _log;
     }
 
-
     private final String _prefix;
+
     private final String _suffix;
 
     /**
@@ -89,8 +86,11 @@ public class DiscoverNamesInManagedProperties
         }
 
         final String newResourcName = name;
+
         return new ResourceNameIterator() {
+
             private String resource = ManagedProperties.getProperty(newResourcName);
+
             public boolean hasNext() {
                 return resource != null;
             }
@@ -102,4 +102,5 @@ public class DiscoverNamesInManagedProperties
             }
         };
     }
+
 }
