@@ -31,6 +31,9 @@ public abstract class JDKHooks {
         jdkHooks = new JDK12Hooks();
     }
 
+    /**
+     * Hidden constructor, this class can't be directly instantiated.
+     */
     protected JDKHooks() { }
 
     /**
