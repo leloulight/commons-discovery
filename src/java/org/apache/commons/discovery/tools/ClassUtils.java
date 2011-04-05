@@ -27,10 +27,16 @@ import org.apache.commons.logging.LogFactory;
 
 
 /**
- * 
+ * Various utilities to interact with {@code Class} types.
  */
 public class ClassUtils {
     private static Log log = LogFactory.getLog(ClassUtils.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
@@ -41,6 +47,9 @@ public class ClassUtils {
      * in which case Class.getPackage() returns null.
      * This means that calling Class.getPackage().getName()
      * is unreliable at best.
+     *
+     * @param clazz The class from which the package has to be extracted
+     * @return The string representation of the input class package
      */
     public static String getPackageName(Class<?> clazz) {
         Package clazzPackage = clazz.getPackage();
@@ -55,7 +64,13 @@ public class ClassUtils {
     }
 
     /**
-     * @return Method 'public static returnType methodName(paramTypes)',
+     * Looks for {@code public static returnType methodName(paramTypes)}.
+     *
+     * @param clazz The class where looking for the method
+     * @param returnType The method return type
+     * @param methodName The method name
+     * @param paramTypes The method arguments types
+     * @return Method {@code public static returnType methodName(paramTypes)},
      *         if found to be <strong>directly</strong> implemented by clazz.
      */
     public static Method findPublicStaticMethod(Class<?> clazz,
@@ -98,7 +113,25 @@ public class ClassUtils {
     }
 
     /**
-     * Instantiate a new 
+     * Creates a new instance of the input class using the following policy:
+     *
+     * <ul>
+     * <li>if <code>paramClasses</code> or <code>params</code> is null,
+     * the default constructor will be used;</li>
+     * <li>the public constructor with <code>paramClasses</code> arguments type,
+     * with <code>params</code> as arguments value, will be used.</li>
+     * </ul>
+     *
+     * @param <T> The class type has to be instantiated
+     * @param impl The class has to be instantiated
+     * @param paramClasses The constructor arguments types (can be {@code null})
+     * @param params The constructor arguments values (can be {@code null})
+     * @return A new class instance
+     * @throws DiscoveryException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
      */
     public static <T> T newInstance(Class<T> impl, Class<?> paramClasses[], Object params[])
         throws DiscoveryException,
@@ -116,8 +149,11 @@ public class ClassUtils {
     }
 
     /**
-     * Throws exception if <code>impl</code> does not
+     * Throws exception if {@code impl} does not
      * implement or extend the SPI.
+     *
+     * @param spi The SPI type
+     * @param impl The class has to be verified is a SPI implementation/extension
      */
     public static void verifyAncestory(Class<?> spi, Class<?> impl)
         throws DiscoveryException
