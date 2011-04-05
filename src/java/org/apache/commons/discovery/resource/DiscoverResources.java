@@ -26,15 +26,11 @@ import org.apache.commons.discovery.ResourceIterator;
 import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-
 /**
  * 
  */
-public class DiscoverResources
-    extends ResourceDiscoverImpl
-    implements ResourceDiscover
-{
+public class DiscoverResources extends ResourceDiscoverImpl implements ResourceDiscover {
+
     private static Log log = LogFactory.getLog(DiscoverResources.class);
 
     /**
@@ -70,9 +66,13 @@ public class DiscoverResources
         }
 
         return new ResourceIterator() {
+
             private int idx = 0;
+
             private ClassLoader loader = null;
+
             private Enumeration<URL> resources = null;
+
             private Resource resource = null;
 
             public boolean hasNext() {
@@ -129,4 +129,5 @@ public class DiscoverResources
             }
         };
     }
+
 }
