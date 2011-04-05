@@ -101,7 +101,7 @@ public class ResourceUtils {
     }
 
     /**
-     * Load named property file, optionally qualifed by spi's package name
+     * Load named property file, optionally qualified by spi's package name
      * as per Class.getResource.
      *
      * A property file is loaded using the following sequence of class loaders:
