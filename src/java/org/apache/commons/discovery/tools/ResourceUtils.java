@@ -72,6 +72,7 @@ public class ResourceUtils {
      * @param resourceName The name of the resource to load.
      * @param loaders the class loaders holder
      * @return The discovered {@link Resource} instance
+     * @throws DiscoveryException
      */
     public static Resource getResource(Class<?> spi,
                                        String resourceName,
@@ -111,10 +112,9 @@ public class ResourceUtils {
      *
      * @param spi The SPI type
      * @param propertiesFileName The property file name.
-     * @param loaders the class loaders holder
+     * @param classLoaders The class loaders holder
      * @return The loaded named property file, in {@code Properties} format
-     *
-     * @exception DiscoveryException Thrown if the name of a class implementing
+     * @throws DiscoveryException Thrown if the name of a class implementing
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
