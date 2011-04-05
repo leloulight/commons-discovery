@@ -101,8 +101,14 @@ public class ClassUtils {
                     log.debug(methodName + "() is not static");
                 }
                 if (method.getReturnType() != returnType) {
-                    log.debug("Method returns: " + method.getReturnType().getName() + "@@" + method.getReturnType().getClassLoader());
-                    log.debug("Should return:  " + returnType.getName() + "@@" + returnType.getClassLoader());
+                    log.debug("Method returns: "
+                            + method.getReturnType().getName()
+                            + "@@"
+                            + method.getReturnType().getClassLoader());
+                    log.debug("Should return:  "
+                            + returnType.getName()
+                            + "@@"
+                            + returnType.getClassLoader());
                 }
             }
             problem = true;
