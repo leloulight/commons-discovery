@@ -40,8 +40,10 @@ import org.apache.commons.logging.LogFactory;
  * valid values: all, trace, debug, info, warn, error, fatal, off.
  * </p>
  *
+ * @deprecated Starting from commons-discovery-05, Log is totally delegated to commons-logging
  * @version $Id$
  */
+@Deprecated
 public class DiscoveryLogFactory {
     private static LogFactory logFactory = null;
     private static final Map<Class<?>, Class<?>>  classRegistry = new Hashtable<Class<?>, Class<?>>();

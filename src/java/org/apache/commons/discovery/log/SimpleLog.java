@@ -38,8 +38,10 @@ import org.apache.commons.logging.Log;
  * valid values: all, trace, debug, info, warn, error, fatal, off.
  * </p>
  *
+ * @deprecated Starting from commons-discovery-05, Log is totally delegated to commons-logging
  * @version $Id$
  */
+@Deprecated
 public class SimpleLog implements Log {
       // ---------------------------------------------------- Log Level Constants
 
