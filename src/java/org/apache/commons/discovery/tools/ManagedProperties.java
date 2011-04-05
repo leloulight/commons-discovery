@@ -232,6 +232,8 @@ public class ManagedProperties {
      * operation: ON EACH CALL it walks through all property lists 
      * associated with the current context class loader upto
      * and including the bootstrap class loader.
+     *
+     * @return The list of all property names
      */
     public static Enumeration<String> propertyNames() {
         Map<String, Value> allProps = new Hashtable<String, Value>();
@@ -253,7 +255,9 @@ public class ManagedProperties {
                 allProps.putAll(properties);
             }
 
-            if (classLoader == null) break;
+            if (classLoader == null) {
+                break;
+            }
 
             classLoader = getParent(classLoader);
         }
@@ -291,6 +295,13 @@ public class ManagedProperties {
         final String value;
         final boolean isDefault;
 
+        /**
+         * Creates a new Value instance with string value and
+         * the flag to mark is default value or not.
+         *
+         * @param value String representation of this value
+         * @param isDefault The default flag
+         */
         Value(String value, boolean isDefault) {
             this.value = value;
             this.isDefault = isDefault;
@@ -301,6 +312,11 @@ public class ManagedProperties {
      * Get value for properties bound to the class loader.
      * Explore up the tree first, as higher-level class
      * loaders take precedence over lower-level class loaders.
+     *
+     * 
+     * @param classLoader The class loader as key
+     * @param propertyName The property name to lookup
+     * @return The Value associated to the input class loader and property name
      */
     private static final Value getValueProperty(ClassLoader classLoader, String propertyName) {
         Value value = null;
@@ -340,10 +356,21 @@ public class ManagedProperties {
         return value;
     }
 
+    /**
+     * Returns the thread context class loader.
+     *
+     * @return The thread context class loader
+     */
     private static final ClassLoader getThreadContextClassLoader() {
         return JDKHooks.getJDKHooks().getThreadContextClassLoader();
     }
 
+    /**
+     * Return the parent class loader of the given class loader.
+     *
+     * @param classLoader The class loader from wich the parent has to be extracted
+     * @return The parent class loader of the given class loader
+     */
     private static final ClassLoader getParent(final ClassLoader classLoader) {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
                     public ClassLoader run() {
