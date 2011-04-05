@@ -36,6 +36,13 @@ public class Resource
     protected final URL         resource;
     protected final ClassLoader loader;
 
+    /**
+     * Create a new {@link Resource} instance.
+     *
+     * @param resourceName The resource name has to be located
+     * @param resource The resource URL has to be located
+     * @param loader The class loader used to locate the given resource
+     */
     public Resource(String resourceName, URL resource, ClassLoader loader) {
         this.name = resourceName;
         this.resource = resource;
@@ -94,12 +101,20 @@ public class Resource
 //        this.loader = loader;
 //    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "Resource[" + getName() +  ", " + getResource() + ", " + getClassLoader() + "]";
     }
 
-
+    /**
+     * Returns an array containing all of the elements in this {@link ResourceIterator} in proper sequence.
+     *
+     * @param iterator The {@link ResourceIterator} containing the 
+     * @return An array containing the elements of the given {@link ResourceIterator}
+     */
     public static Resource[] toArray(ResourceIterator iterator) {
         List<Resource> resourceList = new LinkedList<Resource>();
         while (iterator.hasNext()) {
