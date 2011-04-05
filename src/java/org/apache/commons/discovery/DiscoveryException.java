@@ -18,10 +18,8 @@ package org.apache.commons.discovery;
 
 
 /**
- * <p>An exception that is thrown only if a suitable service
- * instance cannot be created by <code>ServiceFactory</code></p>
- * 
- * <p>Copied from LogConfigurationException<p>
+ * An exception that is thrown only if a suitable service
+ * instance cannot be created by {@code ServiceFactory}.
  *
  * @version $Revision$ $Date$
  */
