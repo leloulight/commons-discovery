@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 
 
 /**
- * 
+ * JDK 1.2 Style Hooks implementation.
  */
 public class JDK12Hooks extends JDKHooks {
 
@@ -48,10 +48,7 @@ public class JDK12Hooks extends JDKHooks {
     }
 
     /**
-     * Get the system property
-     *
-     * @param propName name of the property
-     * @return value of the property
+     * {@inheritDoc}
      */
     @Override
     public String getSystemProperty(final String propName) {
@@ -68,11 +65,7 @@ public class JDK12Hooks extends JDKHooks {
     }
 
     /**
-     * The thread context class loader is available for JDK 1.2
-     * or later, if certain security conditions are met.
-     *
-     * @return The thread context class loader, if available.
-     *         Otherwise return null.
+     * {@inheritDoc}
      */
     @Override
     public ClassLoader getThreadContextClassLoader() {
@@ -100,11 +93,7 @@ public class JDK12Hooks extends JDKHooks {
     }
 
     /**
-     * The system class loader is available for JDK 1.2
-     * or later, if certain security conditions are met.
-     *
-     * @return The system class loader, if available.
-     *         Otherwise return null.
+     * {@inheritDoc}
      */
     @Override
     public ClassLoader getSystemClassLoader() {
@@ -112,7 +101,7 @@ public class JDK12Hooks extends JDKHooks {
     }
 
     /**
-     * Implement ClassLoader.getResources for JDK 1.2
+     * {@inheritDoc}
      */
     @Override
     public Enumeration<URL> getResources(ClassLoader loader,

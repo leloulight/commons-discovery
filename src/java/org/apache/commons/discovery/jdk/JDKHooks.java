@@ -22,7 +22,7 @@ import java.util.Enumeration;
 
 
 /**
- * 
+ * JDK Hooks to extract properties/resources.
  */
 public abstract class JDKHooks {
     private static final JDKHooks jdkHooks;
@@ -37,6 +37,8 @@ public abstract class JDKHooks {
      * Return singleton object representing JVM hooks/tools.
      *
      * TODO: add logic to detect JDK level.
+     *
+     * @return The detected {@code JDKHooks}
      */
     public static final JDKHooks getJDKHooks() {
         return jdkHooks;
@@ -68,6 +70,15 @@ public abstract class JDKHooks {
      */
     public abstract ClassLoader getSystemClassLoader();
 
+    /**
+     * Resolve resource with given names and make them available in
+     * the returned iterator.
+     *
+     * @param loader The class loader used to resolve resources
+     * @param resourceName The resource name to resolve
+     * @return The iterator over the URL resolved resources
+     * @throws IOException
+     */
     public abstract Enumeration<URL> getResources(ClassLoader loader,
                                              String resourceName)
         throws IOException;
