@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-
 /**
  * JDK Hooks to extract properties/resources.
  */
 public abstract class JDKHooks {
+
     private static final JDKHooks jdkHooks;
 
     static {
@@ -79,7 +79,6 @@ public abstract class JDKHooks {
      * @return The iterator over the URL resolved resources
      * @throws IOException
      */
-    public abstract Enumeration<URL> getResources(ClassLoader loader,
-                                             String resourceName)
-        throws IOException;
+    public abstract Enumeration<URL> getResources(ClassLoader loader, String resourceName) throws IOException;
+
 }
