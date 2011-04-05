@@ -139,6 +139,7 @@ public class ClassLoaders {
      *            a default property file related to this class).
      * @param factory WHO is performing the lookup.
      * @param prune Determines if ancestors are allowed to be loaded or not.
+     * @return The class loaders holder
      */    
     public static ClassLoaders getLibLoaders(Class<?> spi, Class<?> factory, boolean prune) {
         ClassLoaders loaders = new ClassLoaders();
@@ -173,6 +174,7 @@ public class ClassLoaders {
      *            a default property file related to this class).
      * @param factory WHO is performing the lookup (factory).
      * @param prune Determines if ancestors are allowed to be loaded or not.
+     * @return The class loaders holder
      */
     public static ClassLoaders getAppLoaders(Class<?> spi, Class<?> factory, boolean prune) {
         ClassLoaders loaders = new ClassLoaders();
