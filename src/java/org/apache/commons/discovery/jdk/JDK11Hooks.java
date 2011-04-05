@@ -20,13 +20,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-
 /**
  * JDK 1.1 Style Hooks implementation.
  */
 public class JDK11Hooks extends JDKHooks {
-    private static final ClassLoader systemClassLoader
-        = new PsuedoSystemClassLoader();
+
+    private static final ClassLoader systemClassLoader = new PsuedoSystemClassLoader();
 
     /**
      * {@inheritDoc}
@@ -57,9 +56,7 @@ public class JDK11Hooks extends JDKHooks {
      */
     @Override
     public Enumeration<URL> getResources(ClassLoader loader,
-                                    String resourceName)
-        throws IOException
-    {
+                                    String resourceName) throws IOException {
         /**
          * The simple answer is/was:
          *    return loader.getResources(resourceName);
@@ -85,10 +82,13 @@ public class JDK11Hooks extends JDKHooks {
          */
 
         final URL first = loader.getResource(resourceName);
+
         final Enumeration<URL> rest = loader.getResources(resourceName);
 
         return new Enumeration<URL>() {
+
             private boolean firstDone = (first == null);
+
             private URL next = getNext();
 
             public URL nextElement() {
@@ -136,4 +136,5 @@ public class JDK11Hooks extends JDKHooks {
             }
         };
     }
+
 }
