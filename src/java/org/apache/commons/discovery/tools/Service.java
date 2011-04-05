@@ -25,7 +25,6 @@ import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.discovery.resource.classes.DiscoverClasses;
 import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
 
-
 /**
  * [this was ServiceDiscovery12... the 1.1 versus 1.2 issue
  * has been abstracted to org.apache.commons.discover.jdk.JDKHooks]
@@ -43,9 +42,10 @@ import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
  *
  * The findResources() method will check every loader.
  */
-public class Service
-{
-    /** Construct a new service discoverer
+public class Service {
+
+    /**
+     * Construct a new service discoverer
      */
     protected Service() {
     }
@@ -76,8 +76,7 @@ public class Service
      * @return Enumeration of class instances ({@code S})
      */
     public static <T, S extends T> Enumeration<S> providers(final SPInterface<T> spi,
-                                        ClassLoaders loaders)
-    {
+                                                            ClassLoaders loaders) {
         if (loaders == null) {
             loaders = ClassLoaders.getAppLoaders(spi.getSPClass(),
                                                  Service.class,
@@ -119,4 +118,5 @@ public class Service
             }
         };
     }
+
 }
