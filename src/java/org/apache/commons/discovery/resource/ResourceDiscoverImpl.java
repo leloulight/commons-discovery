@@ -47,7 +47,7 @@ public abstract class ResourceDiscoverImpl extends ResourceNameDiscoverImpl impl
     /**
      * Specify set of class loaders to be used in searching.
      *
-     * @param classLoaders The class laoders holder
+     * @param loaders The class laoders holder
      */
     public void setClassLoaders(ClassLoaders loaders) {
         classLoaders = loaders;
@@ -59,7 +59,7 @@ public abstract class ResourceDiscoverImpl extends ResourceNameDiscoverImpl impl
      * The order of loaders determines the order of the result.
      * It is recommended to add the most specific loaders first.
      *
-     * @param The new class loader to be added
+     * @param loader The new class loader to be added
      */
     public void addClassLoader(ClassLoader loader) {
         getClassLoaders().put(loader);
