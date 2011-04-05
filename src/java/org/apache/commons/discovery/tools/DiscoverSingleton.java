@@ -24,7 +24,6 @@ import org.apache.commons.discovery.DiscoveryException;
 import org.apache.commons.discovery.jdk.JDKHooks;
 import org.apache.commons.discovery.resource.ClassLoaders;
 
-
 /**
  * <p>Discover singleton service providers.
  * This 
@@ -198,6 +197,7 @@ import org.apache.commons.discovery.resource.ClassLoaders;
  * @version $Revision$ $Date$
  */
 public class DiscoverSingleton {
+
     /********************** (RELATIVELY) SIMPLE FINDERS **********************
      *
      * These finders are suitable for direct use in components looking for a
@@ -218,9 +218,7 @@ public class DiscoverSingleton {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static <T> T find(Class<T> spiClass)
-        throws DiscoveryException
-    {
+    public static <T> T find(Class<T> spiClass) throws DiscoveryException {
         return find(null,
                     new SPInterface<T>(spiClass),
                     DiscoverClass.nullProperties,
@@ -245,9 +243,7 @@ public class DiscoverSingleton {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static <T> T find(Class<T> spiClass, Properties properties)
-        throws DiscoveryException
-    {
+    public static <T> T find(Class<T> spiClass, Properties properties) throws DiscoveryException {
         return find(null,
                     new SPInterface<T>(spiClass),
                     new PropertiesHolder(properties),
@@ -270,9 +266,7 @@ public class DiscoverSingleton {
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
      */
-    public static <T> T find(Class<T> spiClass, String defaultImpl)
-        throws DiscoveryException
-    {
+    public static <T> T find(Class<T> spiClass, String defaultImpl) throws DiscoveryException {
         return find(null,
                     new SPInterface<T>(spiClass),
                     DiscoverClass.nullProperties,
@@ -301,9 +295,7 @@ public class DiscoverSingleton {
      */
     public static <T> T find(Class<T> spiClass,
                               Properties properties,
-                              String defaultImpl)
-        throws DiscoveryException
-    {
+                              String defaultImpl) throws DiscoveryException {
         return find(null,
                     new SPInterface<T>(spiClass),
                     new PropertiesHolder(properties),
@@ -332,9 +324,7 @@ public class DiscoverSingleton {
      */
     public static <T> T find(Class<T> spiClass,
                               String propertiesFileName,
-                              String defaultImpl)
-        throws DiscoveryException
-    {
+                              String defaultImpl) throws DiscoveryException {
         return find(null,
                     new SPInterface<T>(spiClass),
                     new PropertiesHolder(propertiesFileName),
@@ -343,7 +333,6 @@ public class DiscoverSingleton {
 
     /*************** FINDERS FOR USE IN FACTORY/HELPER METHODS ***************
      */
-
 
     /**
      * Find implementation of SPI.
@@ -370,9 +359,7 @@ public class DiscoverSingleton {
     public static <T> T find(ClassLoaders loaders,
                               SPInterface<T> spi,
                               PropertiesHolder properties,
-                              DefaultClassHolder<T> defaultImpl)
-        throws DiscoveryException
-    {
+                              DefaultClassHolder<T> defaultImpl) throws DiscoveryException {
         ClassLoader contextLoader = JDKHooks.getJDKHooks().getThreadContextClassLoader();
 
         @SuppressWarnings("unchecked") // spiName is assignable from stored object class
@@ -428,7 +415,6 @@ public class DiscoverSingleton {
         }
     }
 
-
     /************************* SPI CACHE SUPPORT *************************
      *
      * Cache services by a 'key' unique to the requesting class/environment:
@@ -467,8 +453,7 @@ public class DiscoverSingleton {
      * Get service keyed by spi & classLoader.
      */
     private static synchronized Object get(ClassLoader classLoader,
-                                           String spiName)
-    {
+                                           String spiName) {
         Map<String, Object> spis = EnvironmentCache.get(classLoader);
 
         if (spis != null) {
@@ -486,10 +471,8 @@ public class DiscoverSingleton {
      */
     private static synchronized void put(ClassLoader classLoader,
                                          String spiName,
-                                         Object service)
-    {
-        if (service != null)
-        {
+                                         Object service) {
+        if (service != null) {
             Map<String, Object> spis = EnvironmentCache.get(classLoader);
 
             if (spis == null) {
@@ -500,4 +483,5 @@ public class DiscoverSingleton {
             spis.put(spiName, service);
         }
     }
+
 }
