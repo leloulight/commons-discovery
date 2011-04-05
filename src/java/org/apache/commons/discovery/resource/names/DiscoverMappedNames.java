@@ -40,27 +40,49 @@ public class DiscoverMappedNames
     implements ResourceNameDiscover
 {
     private static Log log = LogFactory.getLog(DiscoverMappedNames.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
 
-    private final Map<String, String[]> mapping = new Hashtable<String, String[]>();  // String name ==> String[] newNames
+    /**
+     * The String name ==> String[] newNames mapping
+     */
+    private final Map<String, String[]> mapping = new Hashtable<String, String[]>();
 
-    /** Construct a new resource discoverer
+    /**
+     * Construct a new resource discoverer
      */
     public DiscoverMappedNames() {
     }
 
+    /**
+     * Maps a name to another name.
+     *
+     * @param fromName The name has to be mapped
+     * @param toName The mapping target
+     */
     public void map(String fromName, String toName) {
         map(fromName, new String[]{ toName });
     }
 
+    /**
+     * Maps a name to multiple names.
+     *
+     * @param fromName The name has to be mapped
+     * @param toNames The mapping targets
+     */
     public void map(String fromName, String [] toNames) {
         mapping.put(fromName, toNames);
     }
 
     /**
-     * @return Enumeration of ResourceInfo
+     * {@inheritDoc}
      */
     @Override
     public ResourceNameIterator findResourceNames(final String resourceName) {
