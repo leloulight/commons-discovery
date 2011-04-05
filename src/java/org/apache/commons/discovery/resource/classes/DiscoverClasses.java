@@ -99,8 +99,9 @@ public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements 
                         if (!history.contains(url)) {
                             history.add(url);
 
-                            if (log.isDebugEnabled())
+                            if (log.isDebugEnabled()) {
                                 log.debug("getNextClass: next URL='" + url + "'");
+                            }
 
                             return new ResourceClass<T>(className, url, loader);
                         }
