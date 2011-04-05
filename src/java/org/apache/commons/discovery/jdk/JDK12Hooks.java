@@ -161,6 +161,13 @@ public class JDK12Hooks extends JDKHooks {
         return resources;
     }
 
+    /**
+     * Enumerates resources URL.
+     *
+     * @param first The first URL in the enumeration sequence
+     * @param rest The URL enumeration
+     * @return A new resources URL enumeration
+     */
     private static Enumeration<URL> getResourcesFromUrl(final URL first, final Enumeration<URL> rest) {
         return new Enumeration<URL>() {
 
@@ -214,6 +221,11 @@ public class JDK12Hooks extends JDKHooks {
         };
     }
 
+    /**
+     * Find the System {@code ClassLoader}.
+     *
+     * @return The System {@code ClassLoader}
+     */
     static private ClassLoader findSystemClassLoader() {
 
         ClassLoader classLoader;
