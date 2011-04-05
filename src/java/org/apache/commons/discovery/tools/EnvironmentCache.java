@@ -61,7 +61,7 @@ public class EnvironmentCache {
      * @return The SPI name/instance cache
      */
     public static synchronized Map<String, Object> get(ClassLoader classLoader) {
-        /**
+        /*
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
@@ -75,7 +75,7 @@ public class EnvironmentCache {
      * @param spis The SPI name/instance cache
      */
     public static synchronized void put(ClassLoader classLoader, Map<String, Object> spis) {
-        /**
+        /*
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
@@ -98,7 +98,7 @@ public class EnvironmentCache {
      * garbage collection.
      */
     public static synchronized void release() {
-        /**
+        /*
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
@@ -114,7 +114,7 @@ public class EnvironmentCache {
      * @param classLoader The class loader key
      */
     public static synchronized void release(ClassLoader classLoader) {
-        /**
+        /*
          * 'null' (bootstrap/system class loader) thread context class loader
          * is ok...  Until we learn otherwise.
          */
