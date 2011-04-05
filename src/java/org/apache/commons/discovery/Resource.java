@@ -57,14 +57,6 @@ public class Resource
         return name;
     }
 
-//    /**
-//     * Set the value of URL.
-//     * @param v  Value to assign to URL.
-//     */
-//    public void setResource(URL  resource) {
-//        this.resource = resource;
-//    }
-
     /**
      * Get the value of URL.
      * @return value of URL.
@@ -92,14 +84,6 @@ public class Resource
     public ClassLoader getClassLoader() {
         return loader ;
     }
-
-//    /**
-//     * Set the value of loader.
-//     * @param v  Value to assign to loader.
-//     */
-//    public void setClassLoader(ClassLoader  loader) {
-//        this.loader = loader;
-//    }
 
     /**
      * {@inheritDoc}
