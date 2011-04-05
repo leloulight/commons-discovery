@@ -32,23 +32,38 @@ public class DefaultClassHolder<T> {
     private Class<? extends T>        defaultClass;
     private final String defaultName;
 
+    /**
+     * Creates a new holder implementation given
+     * the input SPI implementation/extension class.
+     *
+     * @param <S> Any type extends the SPI type
+     * @param defaultClass The hold class
+     */
     public <S extends T> DefaultClassHolder(Class<S> defaultClass) {
         this.defaultClass = defaultClass;
         this.defaultName = defaultClass.getName();
     }
 
+    /**
+     * Creates a new holder implementation given
+     * the input SPI implementation/extension class name.
+     *
+     * @param defaultName The hold class name
+     */
     public DefaultClassHolder(String defaultName) {
         this.defaultClass = null;
         this.defaultName = defaultName;
     }
 
     /**
+     * Returns the default class, loading it if necessary
+     * and verifying that it implements the SPI
+     * (this forces the check, no way out..).
+     *
+     * @param <S>  Any type extends the SPI type
      * @param spi non-null SPI
      * @param loaders Used only if class needs to be loaded.
-     *
-     * @return Default Class.  Load the class if necessary,
-     *         and verify that it implements the SPI.
-     *         (this forces the check, no way out..).
+     * @return The default Class.
      */
     public <S extends T> Class<S> getDefaultClass(SPInterface<T> spi, ClassLoaders loaders) {
         if (defaultClass == null) {
@@ -73,6 +88,11 @@ public class DefaultClassHolder<T> {
         return returned;
     }
 
+    /**
+     * Returns the hold class name.
+     *
+     * @return The hold class name
+     */
     public String getDefaultName() {
         return defaultName;
     }
