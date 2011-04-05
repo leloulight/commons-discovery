@@ -82,7 +82,8 @@ public abstract class ResourceClassDiscoverImpl<T> extends ResourceDiscoverImpl 
     /**
      * Locate class resources that are bound to <code>className</code>.
      *
-     * @return ResourceClassIterator
+     * @param className The class name has to be located
+     * @return The located resources iterator
      */
     public abstract ResourceClassIterator<T> findResourceClasses(String className);
 
