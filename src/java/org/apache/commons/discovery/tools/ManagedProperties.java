@@ -79,6 +79,12 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ManagedProperties {
     private static Log log = LogFactory.getLog(ManagedProperties.class);
+
+    /**
+     * Sets the {@code Log} for this class.
+     *
+     * @param _log This class {@code Log}
+     */
     public static void setLog(Log _log) {
         log = _log;
     }
@@ -117,7 +123,7 @@ public class ManagedProperties {
     /**
      * Get value for property bound to the class loader.
      *
-     * @param classLoader
+     * @param classLoader The classloader used to load resources.
      * @param propertyName property name.
      * @return property value if found, otherwise default.
      */
@@ -139,7 +145,7 @@ public class ManagedProperties {
      * Get value for property bound to the class loader.
      * If not found, then return default.
      *
-     * @param classLoader
+     * @param classLoader The classloader used to load resources.
      * @param propertyName property name.
      * @param dephault default value.
      * @return property value if found, otherwise default.
