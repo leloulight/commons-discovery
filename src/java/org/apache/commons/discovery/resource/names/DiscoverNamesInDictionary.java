@@ -56,7 +56,7 @@ public class DiscoverNamesInDictionary extends ResourceNameDiscoverImpl implemen
     /**
      * Construct a new resource discoverer with the given Dictionary.
      *
-     * @param The initial Dictionary
+     * @param dictionary The initial Dictionary
      */
     public DiscoverNamesInDictionary(Dictionary<String, String[]> dictionary) {
         setDictionary(dictionary);
