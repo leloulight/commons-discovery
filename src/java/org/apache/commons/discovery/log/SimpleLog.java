@@ -393,7 +393,7 @@ public class SimpleLog implements Log {
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
      *
-     * @return true, if the {@link SimpleLog.LOG_LEVEL_DEBUG} is enabled, false otherwise
+     * @return true, if the {@link SimpleLog#LOG_LEVEL_DEBUG} is enabled, false otherwise
      */
     public final boolean isDebugEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_DEBUG);
@@ -406,7 +406,7 @@ public class SimpleLog implements Log {
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
      *
-     * @return true, if the {@link SimpleLog.LOG_LEVEL_ERROR} is enabled, false otherwise
+     * @return true, if the {@link SimpleLog#LOG_LEVEL_ERROR} is enabled, false otherwise
      */
     public final boolean isErrorEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_ERROR);
@@ -419,7 +419,7 @@ public class SimpleLog implements Log {
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
      *
-     * @return true, if the {@link SimpleLog.LOG_LEVEL_FATAL} is enabled, false otherwise
+     * @return true, if the {@link SimpleLog#LOG_LEVEL_FATAL} is enabled, false otherwise
      */
     public final boolean isFatalEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_FATAL);
@@ -432,7 +432,7 @@ public class SimpleLog implements Log {
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
      *
-     * @return true, if the {@link SimpleLog.LOG_LEVEL_INFO} is enabled, false otherwise
+     * @return true, if the {@link SimpleLog#LOG_LEVEL_INFO} is enabled, false otherwise
      */
     public final boolean isInfoEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_INFO);
@@ -445,7 +445,7 @@ public class SimpleLog implements Log {
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
      *
-     * @return true, if the {@link SimpleLog.LOG_LEVEL_TRACE} is enabled, false otherwise
+     * @return true, if the {@link SimpleLog#LOG_LEVEL_TRACE} is enabled, false otherwise
      */
     public final boolean isTraceEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_TRACE);
@@ -458,7 +458,7 @@ public class SimpleLog implements Log {
      * concatenation to be avoided when the message will be ignored by the
      * logger. </p>
      *
-     * @return true, if the {@link SimpleLog.LOG_LEVEL_WARN} is enabled, false otherwise
+     * @return true, if the {@link SimpleLog#LOG_LEVEL_WARN} is enabled, false otherwise
      */
     public final boolean isWarnEnabled() {
         return isLevelEnabled(SimpleLog.LOG_LEVEL_WARN);
