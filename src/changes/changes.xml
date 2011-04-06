@@ -34,6 +34,9 @@
       Custom org.apache.commons.discovery.log.Log implementation replaced by
       default commons-logging behavior.
     </action>
+    <action dev="simonetripodi" type="update" issue="DISCOVERY-16">
+      The setLog() methods are not thread-safe and should be deprecated.
+    </action>
   </release>
   </body>
 </document>

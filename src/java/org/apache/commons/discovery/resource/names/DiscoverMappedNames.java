@@ -42,7 +42,9 @@ public class DiscoverMappedNames extends ResourceNameDiscoverImpl implements Res
      * Sets the {@code Log} for this class.
      *
      * @param _log This class {@code Log}
+     * @deprecated This method is not thread-safe
      */
+    @Deprecated
     public static void setLog(Log _log) {
         log = _log;
     }
