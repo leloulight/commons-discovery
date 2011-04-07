@@ -72,7 +72,10 @@ public class ResourceUtils {
      * @param resourceName The name of the resource to load.
      * @param loaders the class loaders holder
      * @return The discovered {@link Resource} instance
-     * @throws DiscoveryException
+     * @throws DiscoveryException if the class implementing
+     *            the SPI cannot be found, cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI
      */
     public static Resource getResource(Class<?> spi,
                                        String resourceName,

@@ -157,11 +157,14 @@ public class SPInterface<T> {
      * @param <S> Any type extends T
      * @param impl The SPI class has to be instantiated
      * @return A new instance of the given SPI class
-     * @throws DiscoveryException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @throws DiscoveryException if the class implementing
+     *            the SPI cannot be found, cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI
+     * @throws InstantiationException see {@link Class#newInstance()}
+     * @throws IllegalAccessException see {@link Class#newInstance()}
+     * @throws NoSuchMethodException see {@link Class#newInstance()}
+     * @throws InvocationTargetException see {@link Class#newInstance()}
      */
     public <S extends T> S newInstance(Class<S> impl)
         throws DiscoveryException,

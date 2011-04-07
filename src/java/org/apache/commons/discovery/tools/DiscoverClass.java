@@ -355,6 +355,10 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
+     * @throws InstantiationException see {@link Class#newInstance()}
+     * @throws IllegalAccessException see {@link Class#newInstance()}
+     * @throws NoSuchMethodException see {@link Class#newInstance()}
+     * @throws InvocationTargetException see {@link Class#newInstance()}
      */
     public <T> T newInstance(Class<T> spiClass)
         throws DiscoveryException,
@@ -381,6 +385,10 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
+     * @throws InstantiationException see {@link Class#newInstance()}
+     * @throws IllegalAccessException see {@link Class#newInstance()}
+     * @throws NoSuchMethodException see {@link Class#newInstance()}
+     * @throws InvocationTargetException see {@link Class#newInstance()}
      */
     public <T> T newInstance(Class<T> spiClass, Properties properties) throws DiscoveryException,
                InstantiationException,
@@ -404,6 +412,10 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
+     * @throws InstantiationException see {@link Class#newInstance()}
+     * @throws IllegalAccessException see {@link Class#newInstance()}
+     * @throws NoSuchMethodException see {@link Class#newInstance()}
+     * @throws InvocationTargetException see {@link Class#newInstance()}
      */
     public <T> T newInstance(Class<T> spiClass, String defaultImpl) throws DiscoveryException,
                InstantiationException,
@@ -430,6 +442,10 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
+     * @throws InstantiationException see {@link Class#newInstance()}
+     * @throws IllegalAccessException see {@link Class#newInstance()}
+     * @throws NoSuchMethodException see {@link Class#newInstance()}
+     * @throws InvocationTargetException see {@link Class#newInstance()}
      */
     public <T> T newInstance(Class<T> spiClass, Properties properties, String defaultImpl) throws DiscoveryException,
                InstantiationException,
@@ -456,6 +472,10 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
+     * @throws InstantiationException see {@link Class#newInstance()}
+     * @throws IllegalAccessException see {@link Class#newInstance()}
+     * @throws NoSuchMethodException see {@link Class#newInstance()}
+     * @throws InvocationTargetException see {@link Class#newInstance()}
      */
     public <T> T newInstance(Class<T> spiClass, String propertiesFileName, String defaultImpl)
             throws DiscoveryException,
@@ -484,6 +504,10 @@ public class DiscoverClass {
      *            the SPI cannot be found, if the class cannot be loaded and
      *            instantiated, or if the resulting class does not implement
      *            (or extend) the SPI.
+     * @throws InstantiationException see {@link Class#newInstance()}
+     * @throws IllegalAccessException see {@link Class#newInstance()}
+     * @throws NoSuchMethodException see {@link Class#newInstance()}
+     * @throws InvocationTargetException see {@link Class#newInstance()}
      */
     public static <T> T newInstance(ClassLoaders loaders,
                                      SPInterface<T> spi,

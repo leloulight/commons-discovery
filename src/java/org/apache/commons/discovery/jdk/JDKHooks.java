@@ -80,7 +80,7 @@ public abstract class JDKHooks {
      * @param loader The class loader used to resolve resources
      * @param resourceName The resource name to resolve
      * @return The iterator over the URL resolved resources
-     * @throws IOException
+     * @throws IOException if any error occurs while loading the resource
      */
     public abstract Enumeration<URL> getResources(ClassLoader loader, String resourceName) throws IOException;
 

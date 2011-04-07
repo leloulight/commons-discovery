@@ -135,11 +135,14 @@ public class ClassUtils {
      * @param paramClasses The constructor arguments types (can be {@code null})
      * @param params The constructor arguments values (can be {@code null})
      * @return A new class instance
-     * @throws DiscoveryException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @throws DiscoveryException if the class implementing
+     *            the SPI cannot be found, cannot be loaded and
+     *            instantiated, or if the resulting class does not implement
+     *            (or extend) the SPI
+     * @throws InstantiationException see {@link Class#newInstance()}
+     * @throws IllegalAccessException see {@link Class#newInstance()}
+     * @throws NoSuchMethodException see {@link Class#newInstance()}
+     * @throws InvocationTargetException see {@link Class#newInstance()}
      */
     public static <T> T newInstance(Class<T> impl, Class<?> paramClasses[], Object params[]) throws DiscoveryException,
                InstantiationException,
@@ -160,6 +163,7 @@ public class ClassUtils {
      *
      * @param spi The SPI type
      * @param impl The class has to be verified is a SPI implementation/extension
+     * @throws DiscoveryException if the input implementation class is not an SPI implementation
      */
     public static void verifyAncestory(Class<?> spi, Class<?> impl) throws DiscoveryException {
         if (spi == null) {
