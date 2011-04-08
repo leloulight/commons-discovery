@@ -114,6 +114,10 @@ public class Service {
                         return spi.newInstance(info.loadClass());
                     } catch (Exception e) {
                         // ignore
+                    } catch (UnsatisfiedLinkError ule) {
+                        // ignore
+                    } catch (ExceptionInInitializerError eiie) {
+                        // ignore
                     }
                 }
                 return null;
