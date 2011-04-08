@@ -40,7 +40,6 @@ import org.apache.commons.discovery.tools.PropertiesHolder;
 import org.apache.commons.discovery.tools.SPInterface;
 import org.junit.Test;
 
-
 /**
  * @version $Revision$
  */
@@ -51,8 +50,7 @@ public class TestAll {
         TestInterface1 ti = null;
 
         try {
-            ti = DiscoverSingleton.find(TestInterface1.class,
-                                                        TestImpl1_1.class.getName());
+            ti = DiscoverSingleton.find(TestInterface1.class, TestImpl1_1.class.getName());
 
             assertTrue(ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_1.class.getName()));
@@ -66,8 +64,7 @@ public class TestAll {
         TestInterface1 ti = null;
 
         try {
-            ti = DiscoverSingleton.find(TestInterface1.class,
-                                                        TestImpl1_2.class.getName());
+            ti = DiscoverSingleton.find(TestInterface1.class, TestImpl1_2.class.getName());
 
             assertTrue(ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_2.class.getName()));
@@ -81,16 +78,14 @@ public class TestAll {
         TestInterface1 ti = null;
 
         try {
-            ti = DiscoverSingleton.find(TestInterface1.class,
-                                                        TestImpl1_1.class.getName());
+            ti = DiscoverSingleton.find(TestInterface1.class, TestImpl1_1.class.getName());
 
             assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_1.class.getName()));
 
             // no release, should get cached value..
 
-            ti = DiscoverSingleton.find(TestInterface1.class,
-                                                        TestImpl1_2.class.getName());
+            ti = DiscoverSingleton.find(TestInterface1.class, TestImpl1_2.class.getName());
 
             // factory should be cached
             assertTrue("2. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
@@ -105,16 +100,14 @@ public class TestAll {
         TestInterface1 ti = null;
 
         try {
-            ti = DiscoverSingleton.find(TestInterface1.class,
-                                                        TestImpl1_1.class.getName());
+            ti = DiscoverSingleton.find(TestInterface1.class, TestImpl1_1.class.getName());
 
             assertTrue("1. " + ti.getClass().getName() + "!=" + TestImpl1_1.class.getName(),
                        ti.getClass().getName().equals(TestImpl1_1.class.getName()));
 
             DiscoverSingleton.release();
 
-            ti = DiscoverSingleton.find(TestInterface1.class,
-                                                        TestImpl1_2.class.getName());
+            ti = DiscoverSingleton.find(TestInterface1.class, TestImpl1_2.class.getName());
 
             // factory should be cached
             assertTrue("2. " + ti.getClass().getName() + "!=" + TestImpl1_2.class.getName(),
@@ -131,8 +124,7 @@ public class TestAll {
         try {
             Properties props = new Properties();
 
-            props.setProperty(TestInterface1.class.getName(),
-                              TestImpl1_2.class.getName());
+            props.setProperty(TestInterface1.class.getName(), TestImpl1_2.class.getName());
 
             ti = DiscoverSingleton.find(TestInterface1.class, props);
 
@@ -148,8 +140,7 @@ public class TestAll {
         TestInterface1 ti = null;
 
         try {
-            ManagedProperties.setProperty(TestInterface1.class.getName(),
-                                          TestImpl1_2.class.getName());
+            ManagedProperties.setProperty(TestInterface1.class.getName(), TestImpl1_2.class.getName());
 
             ti = DiscoverSingleton.find(TestInterface1.class);
 
@@ -164,7 +155,6 @@ public class TestAll {
             ManagedProperties.setProperty(TestInterface1.class.getName(), null);
         }
     }
-
 
     @Test
     public void findPropFileDefault() {
@@ -215,8 +205,7 @@ public class TestAll {
                     assertEquals("org.apache.commons.discovery.test.TestImpl2_1", implClass.getName());
                     return;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 fail("Could not load service: " + resource );
             }
         }
@@ -299,4 +288,5 @@ public class TestAll {
         assertNotNull(serviceImpl);
         assertEquals(TestImpl2_1.class, serviceImpl.getClass());
     }
+
 }
