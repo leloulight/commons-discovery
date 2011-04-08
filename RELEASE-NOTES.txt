@@ -43,4 +43,9 @@ JIRA Issues Addressed
 
 DEPRECATIONS
 ============
-None
+Classes in org.apache.commons.discovery.log package have been deprecated,
+depending on Apache Commons Logging 1.1.1 there is no more circular dependency
+between Apache Commons Discovery and Apache Commons Logging.
+
+setLog(org.apache.commons.logging.Log) methods have been deprecated too,
+they are not thread-safe.
