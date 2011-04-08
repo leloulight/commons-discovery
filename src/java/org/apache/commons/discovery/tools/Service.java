@@ -17,6 +17,7 @@
 package org.apache.commons.discovery.tools;
 
 import java.util.Enumeration;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.discovery.ResourceClass;
 import org.apache.commons.discovery.ResourceClassIterator;
@@ -90,18 +91,19 @@ public class Service {
             (new DiscoverClasses<T>(loaders)).findResourceClasses(servicesIter);
 
         return new Enumeration<S>() {
-            private S object = null;
+            private S object = getNextClassInstance();
 
             public boolean hasMoreElements() {
-                if (object == null) {
-                    object = getNextClassInstance();
-                }
                 return object != null;
             }
 
             public S nextElement() {
+                if (object == null) {
+                    throw new NoSuchElementException();
+                }
+
                 S obj = object;
-                object = null;
+                object = getNextClassInstance();
                 return obj;
             }
 
