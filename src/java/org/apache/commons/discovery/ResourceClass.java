@@ -47,7 +47,7 @@ public class ResourceClass<T> extends Resource {
         log = _log;
     }
 
-    protected Class<? extends T>       resourceClass;
+    protected Class<? extends T> resourceClass;
 
     /**
      * Create a new {@code Resource} class located by discovery.
