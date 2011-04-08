@@ -149,7 +149,7 @@ public class TestAll {
         } finally {
             DiscoverSingleton.release();
 
-            /**
+            /*
              * Cleanup, don't want to affect next test..
              */
             ManagedProperties.setProperty(TestInterface1.class.getName(), null);
@@ -216,7 +216,7 @@ public class TestAll {
     public void findResources() {
         ClassLoaders loaders = new ClassLoaders();
 
-        /**
+        /*
          * To many class loaders when searching for multiple
          * resources means that we can find the same (same URL)
          * resource for each loader...
