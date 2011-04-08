@@ -223,11 +223,11 @@ public class TestAll {
          * let's keep this to a minimum.
          */
         ClassLoader cl = getClass().getClassLoader();
-        if (cl != null)
+        if (cl != null) {
             loaders.put(getClass().getClassLoader(), true);
-        else
+        } else {
             loaders.put(JDKHooks.getJDKHooks().getSystemClassLoader(), true);
-
+        }
 
         String name = "testResource";
 
@@ -263,7 +263,6 @@ public class TestAll {
 
         assertTrue("Failed to find an implementation class", implClass != null);
         assertEquals("org.apache.commons.discovery.test.TestImpl2_1", implClass.getName());
-
     }
 
     @Test
