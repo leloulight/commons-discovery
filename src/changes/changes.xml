@@ -23,6 +23,9 @@
   </properties>
   <body>
   <release version="0.5" date="TBD" description="Maintainance release.">
+    <action dev="simonetripodi" type="fix" issue="DISCOVERY-3">
+      Enumeration in Service class is broken.
+    </action>
     <action dev="simonetripodi" type="fix" issue="DISCOVERY-12">
       SPI implementation class searching logic has some issues: it discards all errors;
       it only considers first className in supplied classNames array.
