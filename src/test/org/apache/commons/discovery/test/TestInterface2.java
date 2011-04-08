@@ -16,10 +16,11 @@
  */
 package org.apache.commons.discovery.test;
 
-
 /**
  * @version $Revision$
  */
 public interface TestInterface2 {
+
     public void method();
+
 }
