@@ -96,7 +96,18 @@ public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements 
             private ResourceClass<T> getNextClass() {
                 while (idx < getClassLoaders().size()) {
                     ClassLoader loader = getClassLoaders().get(idx++);
-                    URL url = loader.getResource(resourceName);
+
+                    URL url = null;
+                    try {
+                        url = loader.getResource(resourceName);
+                    } catch (UnsupportedOperationException e) {
+                        try {
+                            url = loader.loadClass(className).getProtectionDomain().getCodeSource().getLocation();
+                        } catch (Exception le) {
+                            // keep url null
+                        }
+                    }
+
                     if (url != null) {
                         if (!history.contains(url)) {
                             history.add(url);
