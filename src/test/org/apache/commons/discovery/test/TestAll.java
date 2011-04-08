@@ -241,7 +241,7 @@ public class TestAll {
         while (iter.hasNext()) {
             Resource resource = iter.nextResource();
             URL url = resource.getResource();
-            if ( url != null ) {
+            if (url != null) {
                 if (url.getFile().indexOf(partialPaths[count]) == -1) {
                     fail(url + " does not contain " + partialPaths[count]);
                 }
