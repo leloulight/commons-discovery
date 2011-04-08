@@ -278,6 +278,18 @@ public class TestAll {
     }
 
     @Test
+    public void findInnerImplViaDiscoverClass() {
+        ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface3.class, getClass(), false);
+
+        DiscoverClass discover = new DiscoverClass(loaders);
+        Class<? extends TestInterface3> implClass = discover.find(TestInterface3.class);
+
+        assertTrue("Failed to find an implementation class", implClass != null);
+        assertEquals("org.apache.commons.discovery.test.TestImpl3$InnerTestImpl", implClass.getName());
+
+    }
+
+    @Test
     public void instantiateViaDiscoverClass() throws Exception {
         ClassLoaders loaders = ClassLoaders.getAppLoaders(TestInterface2.class, getClass(), false);
 
