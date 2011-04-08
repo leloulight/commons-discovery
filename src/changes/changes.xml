@@ -29,6 +29,9 @@
     <action dev="simonetripodi" type="update" issue="DISCOVERY-7">
       Discovery failed to load an inner class.
     </action>
+    <action dev="simonetripodi" type="update" issue="DISCOVERY-9">
+      Documentation of other use cases.
+    </action>
     <action dev="simonetripodi" type="fix" issue="DISCOVERY-11">
       Service.providers Enumeration does not catch and discard
       UnsatisfiedLinkErrors and ExceptionInInitializerErrors.

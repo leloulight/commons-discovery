@@ -36,6 +36,7 @@ JIRA Issues Addressed
 ---------------------
 * DISCOVERY-3 (https://issues.apache.org/jira/browse/DISCOVERY-3)
 * DISCOVERY-7 (https://issues.apache.org/jira/browse/DISCOVERY-7)
+* DISCOVERY-9 (https://issues.apache.org/jira/browse/DISCOVERY-9)
 * DISCOVERY-11 (https://issues.apache.org/jira/browse/DISCOVERY-11)
 * DISCOVERY-12 (https://issues.apache.org/jira/browse/DISCOVERY-12)
 * DISCOVERY-14 (https://issues.apache.org/jira/browse/DISCOVERY-14)
