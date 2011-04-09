@@ -26,6 +26,9 @@
     <action dev="simonetripodi" type="fix" issue="DISCOVERY-3">
       Enumeration in Service class is broken.
     </action>
+    <action dev="simonetripodi" type="fix" issue="DISCOVERY-6">
+      [discovery] Doesn't work with ClassLoaders that do not support getResource()
+    </action>
     <action dev="simonetripodi" type="update" issue="DISCOVERY-7">
       Discovery failed to load an inner class.
     </action>

@@ -102,7 +102,10 @@ public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements 
                         url = loader.getResource(resourceName);
                     } catch (UnsupportedOperationException e) {
                         try {
-                            url = loader.loadClass(className).getProtectionDomain().getCodeSource().getLocation();
+                            url = new URL(loader.loadClass(className)
+                                    .getProtectionDomain()
+                                    .getCodeSource()
+                                    .getLocation(), resourceName);
                         } catch (Exception le) {
                             // keep url null
                         }
