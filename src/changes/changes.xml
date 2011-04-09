@@ -50,6 +50,9 @@
     <action dev="simonetripodi" type="update" issue="DISCOVERY-16">
       The setLog() methods are not thread-safe and should be deprecated.
     </action>
+    <action dev="simonetripodi" type="fix" issue="DISCOVERY-17">
+      Enumeration returned by Service.providers has a broken behavior.
+    </action>
   </release>
   </body>
 </document>
