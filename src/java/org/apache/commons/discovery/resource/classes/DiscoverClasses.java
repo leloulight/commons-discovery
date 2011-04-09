@@ -77,7 +77,7 @@ public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements 
 
         return new ResourceClassIterator<T>() {
 
-            private List<URL> history = new ArrayList<URL>();
+            private final List<URL> history = new ArrayList<URL>();
 
             private int idx = 0;
 
