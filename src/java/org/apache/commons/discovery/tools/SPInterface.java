@@ -34,6 +34,75 @@ import org.apache.commons.discovery.DiscoveryException;
 public class SPInterface<T> {
 
     /**
+     * Construct object representing Class {@code provider}.
+     *
+     * @param <T> The SPI type
+     * @param provider The SPI class
+     * @return A new object representing Class {@code provider}
+     * @since 0.5
+     */
+    public static <T> SPInterface<T> newSPInterface(Class<T> provider) {
+        return newSPInterface(provider, provider.getName());
+    }
+
+    /**
+     * Construct object representing Class {@code provider}.
+     *
+     * @param <T> The SPI type
+     * @param provider The SPI class
+     * @param propertyName when looking for the name of a class implementing
+     *        the provider class, a discovery strategy may involve looking for
+     *        (system or other) properties having either the name of the class
+     *        (provider) or the <code>propertyName</code>.
+     * @return A new object representing Class {@code provider}
+     * @since 0.5
+     */
+    public static <T> SPInterface<T> newSPInterface(Class<T> provider, String propertyName) {
+        return new SPInterface<T>(provider, propertyName);
+    }
+
+    /**
+     * Construct object representing Class {@code provider}.
+     *
+     * @param <T> The SPI type
+     * @param provider The SPI class
+     * @param constructorParamClasses classes representing the
+     *        constructor argument types
+     * @param constructorParams objects representing the
+     *        constructor arguments
+     * @return A new object representing Class {@code provider}
+     * @since 0.5
+     */
+    public static <T> SPInterface<T> newSPInterface(Class<T> provider,
+            Class<?> constructorParamClasses[],
+            Object constructorParams[]) {
+        return newSPInterface(provider, provider.getName(), constructorParamClasses, constructorParams);
+    }
+
+    /**
+     * Construct object representing Class {@code provider}.
+     *
+     * @param <T> The SPI type
+     * @param provider The SPI class
+     * @param propertyName when looking for the name of a class implementing
+     *        the provider class, a discovery strategy may involve looking for
+     *        (system or other) properties having either the name of the class
+     *        (provider) or the <code>propertyName</code>.
+     * @param constructorParamClasses classes representing the
+     *        constructor argument types
+     * @param constructorParams objects representing the
+     *        constructor arguments
+     * @return A new object representing Class {@code provider}
+     * @since 0.5
+     */
+    public static <T> SPInterface<T> newSPInterface(Class<T> provider,
+            String propertyName,
+            Class<?> constructorParamClasses[],
+            Object constructorParams[]) {
+        return new SPInterface<T>(provider, propertyName, constructorParamClasses, constructorParams);
+    }
+
+    /**
      * The service programming interface: intended to be
      * an interface or abstract class, but not limited
      * to those two.
