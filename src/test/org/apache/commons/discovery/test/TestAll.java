@@ -294,7 +294,7 @@ public class TestAll {
 
     @Test
     public void findImplementationsViaService() {
-        final int expectedLogImplementations = 3;
+        final int expectedLogImplementations = 2;
         int actualLogImplementations = 0;
 
         Enumeration<? extends Log> logImplementations = providers(newSPInterface(Log.class,

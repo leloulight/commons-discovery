@@ -92,23 +92,32 @@ public class Service {
 
         return new Enumeration<S>() {
 
+            private S object = getNextClassInstance();
+
             public boolean hasMoreElements() {
-                return services.hasNext();
+                return object != null;
             }
 
             public S nextElement() {
-                ResourceClass<S> info = services.nextResourceClass();
-
-                if (info == null) {
+                if (object == null) {
                     throw new NoSuchElementException();
                 }
 
-                try {
-                    return spi.newInstance(info.loadClass());
-                } catch (Exception e) {
-                    // ignore
-                } catch (LinkageError le) {
-                    // ignore
+                S obj = object;
+                object = getNextClassInstance();
+                return obj;
+            }
+
+            private S getNextClassInstance() {
+                while (services.hasNext()) {
+                    ResourceClass<S> info = services.nextResourceClass();
+                    try {
+                        return spi.newInstance(info.loadClass());
+                    } catch (Exception e) {
+                        // ignore
+                    } catch (LinkageError le) {
+                        // ignore
+                    }
                 }
                 return null;
             }
