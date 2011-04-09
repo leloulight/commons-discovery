@@ -20,6 +20,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static org.apache.commons.discovery.tools.SPInterface.newSPInterface;
+import static org.apache.commons.discovery.tools.Service.providers;
 
 import java.net.URL;
 import java.util.Enumeration;
@@ -39,7 +41,6 @@ import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.discovery.tools.PropertiesHolder;
 import org.apache.commons.discovery.tools.SPInterface;
-import org.apache.commons.discovery.tools.Service;
 import org.apache.commons.logging.Log;
 import org.junit.Test;
 
@@ -296,7 +297,7 @@ public class TestAll {
         final int expectedLogImplementations = 3;
         int actualLogImplementations = 0;
 
-        Enumeration<? extends Log> logImplementations = Service.providers(new SPInterface<Log>(Log.class,
+        Enumeration<? extends Log> logImplementations = providers(newSPInterface(Log.class,
                 new Class<?>[]{ String.class },
                 new Object[]{ getClass().getName() }),
                 null);
