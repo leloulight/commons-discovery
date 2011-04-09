@@ -99,15 +99,14 @@ public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements 
                     ClassLoader loader = getClassLoaders().get(idx++);
 
                     URL url = null;
-                    boolean getResourceUnsupported = false;
 
                     try {
                         url = loader.getResource(resourceName);
                     } catch (UnsupportedOperationException e) {
-                        getResourceUnsupported = true;
+                        // ignore
                     }
 
-                    if (url == null || getResourceUnsupported) {
+                    if (url == null) {
                         try {
                             CodeSource codeSource = loader.loadClass(className)
                                 .getProtectionDomain()
