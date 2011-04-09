@@ -200,7 +200,7 @@ public class TestAll {
         while (iter.hasNext()) {
             ResourceClass<TestInterface2> resource = iter.nextResourceClass();
             try {
-                Class<TestInterface2> implClass = resource.loadClass();
+                Class<? extends TestInterface2> implClass = resource.loadClass();
                 if ( implClass != null ) {
                     assertEquals("org.apache.commons.discovery.test.TestImpl2_1", implClass.getName());
                     return;
