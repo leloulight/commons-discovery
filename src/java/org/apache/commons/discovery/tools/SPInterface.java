@@ -30,6 +30,8 @@ import org.apache.commons.discovery.DiscoveryException;
  * usefull, for those in which it is:
  *
  * - expected constructor argument types and parameters values.
+ *
+ * @param <T> The SPI type
  */
 public class SPInterface<T> {
 
