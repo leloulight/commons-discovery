@@ -22,6 +22,7 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.commons.discovery.Resource;
@@ -38,6 +39,8 @@ import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.discovery.tools.ManagedProperties;
 import org.apache.commons.discovery.tools.PropertiesHolder;
 import org.apache.commons.discovery.tools.SPInterface;
+import org.apache.commons.discovery.tools.Service;
+import org.apache.commons.logging.Log;
 import org.junit.Test;
 
 /**
@@ -286,6 +289,25 @@ public class TestAll {
 
         assertNotNull(serviceImpl);
         assertEquals(TestImpl2_1.class, serviceImpl.getClass());
+    }
+
+    @Test
+    public void findImplementationsViaService() {
+        final int expectedLogImplementations = 3;
+        int actualLogImplementations = 0;
+
+        Enumeration<? extends Log> logImplementations = Service.providers(new SPInterface<Log>(Log.class,
+                new Class<?>[]{ String.class },
+                new Object[]{ getClass().getName() }),
+                null);
+
+        while (logImplementations.hasMoreElements()) {
+            Log log = logImplementations.nextElement();
+            assertNotNull(log);
+            actualLogImplementations++;
+        }
+
+        assertEquals(expectedLogImplementations, actualLogImplementations);
     }
 
 }
