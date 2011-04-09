@@ -18,8 +18,8 @@ package org.apache.commons.discovery.resource.classes;
 
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.discovery.ResourceClass;
 import org.apache.commons.discovery.ResourceClassDiscover;
@@ -77,7 +77,7 @@ public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements 
 
         return new ResourceClassIterator<T>() {
 
-            private final List<URL> history = new ArrayList<URL>();
+            private final Set<URL> history = new HashSet<URL>();
 
             private int idx = 0;
 
@@ -124,9 +124,7 @@ public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements 
                     }
 
                     if (url != null) {
-                        if (!history.contains(url)) {
-                            history.add(url);
-
+                        if (history.add(url)) {
                             if (log.isDebugEnabled()) {
                                 log.debug("getNextClass: next URL='" + url + "'");
                             }
