@@ -76,8 +76,11 @@ public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements 
         }
 
         return new ResourceClassIterator<T>() {
+
             private List<URL> history = new ArrayList<URL>();
+
             private int idx = 0;
+
             private ResourceClass<T> resource = null;
 
             public boolean hasNext() {
