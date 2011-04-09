@@ -17,6 +17,7 @@
 package org.apache.commons.discovery.resource.classes;
 
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,10 +103,13 @@ public class DiscoverClasses<T> extends ResourceClassDiscoverImpl<T> implements 
                         url = loader.getResource(resourceName);
                     } catch (UnsupportedOperationException e) {
                         try {
-                            url = new URL(loader.loadClass(className)
-                                    .getProtectionDomain()
-                                    .getCodeSource()
-                                    .getLocation(), resourceName);
+                            CodeSource codeSource = loader.loadClass(className)
+                                .getProtectionDomain()
+                                .getCodeSource();
+                            if (codeSource != null) {
+                                url = new URL(codeSource.getLocation(), resourceName);
+                            }
+                            // else keep url null
                         } catch (Exception le) {
                             // keep url null
                         }
