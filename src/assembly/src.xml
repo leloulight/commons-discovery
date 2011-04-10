@@ -27,7 +27,6 @@
     <fileSets>
         <fileSet>
             <includes>
-                <include>build.xml</include>
                 <include>checkstyle.xml</include>
                 <include>LICENSE.txt</include>
                 <include>NOTICE.txt</include>
@@ -35,11 +34,8 @@
                 <include>PROPOSAL.html</include>
                 <include>RELEASE-NOTES.txt</include>
                 <include>TODO</include>
-
+                <include>findbugs-exclude-filter.xml</include>
             </includes>
-        </fileSet>
-        <fileSet>
-            <directory>lib</directory>
         </fileSet>
         <fileSet>
             <directory>src</directory>
