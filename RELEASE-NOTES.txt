@@ -47,8 +47,8 @@ JIRA Issues Addressed
 
 Known bugs/limitations
 ---------------------
-Apache Commons-Discovery doesn't work with Oracle embedded JVM in DBMS,
-see DISCOVERY-13 (https://issues.apache.org/jira/broese/DISCOVERY-13)
+resource.classes.DiscoverClasses doesn't work with Oracle embedded JVM in DBMS,
+see DISCOVERY-13 (https://issues.apache.org/jira/browse/DISCOVERY-13)
 
 DEPRECATIONS
 ============
