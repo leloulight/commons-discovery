@@ -95,7 +95,7 @@ limitations under the License.
       </p>
     </subsection>
     </section>
-    <section name="Commons Discovery 0.5 ">
+    <section name="Commons Discovery 0.5 (minium JDK 1.5)">
       <subsection name="Binaries">
         <table>
           <tr>
