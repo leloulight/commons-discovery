@@ -9,6 +9,9 @@ $Id$
 INTRODUCTION
 ============
 
+The Apache Commons Discovery component is about discovering, or finding,
+implementations for pluggable interfaces.
+
 This is an APIs update and maintenance release.
 New projects are encouraged to use this release of discovery.
 
