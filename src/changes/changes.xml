@@ -22,6 +22,11 @@
     <title>Apache Commons Discovery Changes</title>
   </properties>
   <body>
+  <release version="0.6" date="TBD" description="Maintainance release.">
+    <action dev="simonetripodi" type="fix" issue="DISCOVERY-18">
+      Discovery fails to compile with opendjk6's javac.
+    </action>
+  </release>
   <release version="0.5" date="2011-05-05" description="Maintainance release.">
     <action dev="simonetripodi" type="fix" issue="DISCOVERY-3">
       Enumeration in Service class is broken.
