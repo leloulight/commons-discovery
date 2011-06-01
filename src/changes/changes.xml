@@ -48,9 +48,6 @@
       SPI implementation class searching logic has some issues: it discards all errors;
       it only considers first className in supplied classNames array.
     </action>
-    <action dev="simonetripodi" type="fix" issue="DISCOVERY-13">
-      Problem with Oracle JVM classLoader.
-    </action>
     <action dev="simonetripodi" type="update" issue="DISCOVERY-14">
       Moved to Java5 APIs, used Generics.
     </action>
