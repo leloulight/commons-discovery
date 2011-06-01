@@ -185,10 +185,10 @@ public class DiscoverClass {
      *            the resulting class does not implement (or extend) the SPI.
      */
     public <T, S extends T> Class<S> find(Class<T> spiClass) throws DiscoveryException {
-        return find(getClassLoaders(spiClass),
-                    new SPInterface<T>(spiClass),
-                    nullProperties,
-                    (DefaultClassHolder<T>) null);
+        return DiscoverClass.<T, S>find(getClassLoaders(spiClass),
+                                        new SPInterface<T>(spiClass),
+                                        nullProperties,
+                                        (DefaultClassHolder<T>) null);
     }
 
     /**
@@ -204,10 +204,10 @@ public class DiscoverClass {
      *            the resulting class does not implement (or extend) the SPI.
      */
     public <T, S extends T> Class<S> find(Class<T> spiClass, Properties properties) throws DiscoveryException {
-        return find(getClassLoaders(spiClass),
-                    new SPInterface<T>(spiClass),
-                    new PropertiesHolder(properties),
-                    (DefaultClassHolder<T>) null);
+        return DiscoverClass.<T, S>find(getClassLoaders(spiClass),
+                                        new SPInterface<T>(spiClass),
+                                        new PropertiesHolder(properties),
+                                        (DefaultClassHolder<T>) null);
     }
 
     /**
@@ -223,10 +223,10 @@ public class DiscoverClass {
      *            the resulting class does not implement (or extend) the SPI.
      */
     public <T, S extends T> Class<S> find(Class<T> spiClass, String defaultImpl) throws DiscoveryException {
-        return find(getClassLoaders(spiClass),
-                    new SPInterface<T>(spiClass),
-                    nullProperties,
-                    new DefaultClassHolder<T>(defaultImpl));
+        return DiscoverClass.<T, S>find(getClassLoaders(spiClass),
+                                        new SPInterface<T>(spiClass),
+                                        nullProperties,
+                                        new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -244,10 +244,10 @@ public class DiscoverClass {
      */
     public <T, S extends T> Class<S> find(Class<T> spiClass, Properties properties, String defaultImpl)
             throws DiscoveryException {
-        return find(getClassLoaders(spiClass),
-                    new SPInterface<T>(spiClass),
-                    new PropertiesHolder(properties),
-                    new DefaultClassHolder<T>(defaultImpl));
+        return DiscoverClass.<T, S>find(getClassLoaders(spiClass),
+                                        new SPInterface<T>(spiClass),
+                                        new PropertiesHolder(properties),
+                                        new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -265,10 +265,10 @@ public class DiscoverClass {
      */
     public <T, S extends T> Class<S> find(Class<T> spiClass, String propertiesFileName, String defaultImpl)
             throws DiscoveryException {
-        return find(getClassLoaders(spiClass),
-                    new SPInterface<T>(spiClass),
-                    new PropertiesHolder(propertiesFileName),
-                    new DefaultClassHolder<T>(defaultImpl));
+        return DiscoverClass.<T, S>find(getClassLoaders(spiClass),
+                                        new SPInterface<T>(spiClass),
+                                        new PropertiesHolder(propertiesFileName),
+                                        new DefaultClassHolder<T>(defaultImpl));
     }
 
     /**
@@ -517,7 +517,7 @@ public class DiscoverClass {
                IllegalAccessException,
                NoSuchMethodException,
                InvocationTargetException {
-        return spi.newInstance(find(loaders, spi, properties, defaultImpl));
+        return spi.newInstance(DiscoverClass.<T, T>find(loaders, spi, properties, defaultImpl));
     }
 
     /**

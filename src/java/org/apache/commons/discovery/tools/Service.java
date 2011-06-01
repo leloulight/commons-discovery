@@ -63,7 +63,7 @@ public class Service {
      * @return Enumeration of class instances ({@code S})
      */
     public static <T, S extends T> Enumeration<S> providers(Class<T> spiClass) {
-        return providers(new SPInterface<T>(spiClass), null);
+        return Service.<T, S>providers(new SPInterface<T>(spiClass), null);
     }
 
     /**
