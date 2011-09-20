@@ -132,19 +132,11 @@
   </distributionManagement>
 
   <build>
-    <sourceDirectory>src/java</sourceDirectory>
-    <testSourceDirectory>src/test</testSourceDirectory>
-      <testResources>
-        <testResource>
-          <directory>${basedir}/src/test</directory>
-          <includes>
-            <include>**/*.properties</include>
-            <include>**/testResource</include>
-            <include>META-INF/**</include>
-          </includes>
-        </testResource>
-      </testResources>
-
+    <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -154,8 +146,8 @@
               <include>**/TestAll.java</include>
             </includes>
             <additionalClasspathElements>
-              <additionalClasspathElement>${basedir}/src/testAlt1</additionalClasspathElement>
-              <additionalClasspathElement>${basedir}/src/testAlt2</additionalClasspathElement>
+              <additionalClasspathElement>${basedir}/src/test/testAlt1</additionalClasspathElement>
+              <additionalClasspathElement>${basedir}/src/test/testAlt2</additionalClasspathElement>
             </additionalClasspathElements>
           </configuration>
         </plugin>
@@ -172,8 +164,8 @@
           <configuration>
             <attach>false</attach>
             <descriptors>
-              <descriptor>src/assembly/bin.xml</descriptor>
-              <descriptor>src/assembly/src.xml</descriptor>
+              <descriptor>${basedir}/src/main/assembly/bin.xml</descriptor>
+              <descriptor>${basedir}/src/main/assembly/src.xml</descriptor>
             </descriptors>
             <tarLongFileMode>gnu</tarLongFileMode>
           </configuration>
