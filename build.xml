@@ -64,10 +64,10 @@
   <property name="dist.home"               value="dist"/>
 
   <!-- The base directory for component sources -->
-  <property name="source.home"             value="src/java"/>
+  <property name="source.home"             value="src/main/java"/>
 
   <!-- The base directory for unit test sources -->
-  <property name="test.home"               value="src/test"/>
+  <property name="test.home"               value="src/test/java"/>
 
 <!-- ========== Compiler Defaults ========================================= -->
 
@@ -93,8 +93,8 @@
 
     <!-- test depends on the order of the following 3 lines: -->
     <pathelement location="${build.home}/test-classes"/>
-    <pathelement location="${build.home}/testAlt1"/>
-    <pathelement location="${build.home}/testAlt2"/>
+    <pathelement location="${basedir}/src/test/testAlt1"/>
+    <pathelement location="${basedir}/src/test/testAlt2"/>
 
     <pathelement location="${logger.jar}"/>
     <pathelement location="${junit.jar}"/>
