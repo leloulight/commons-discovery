@@ -99,14 +99,14 @@ limitations under the License.
       <subsection name="Binaries">
         <table>
           <tr>
-              <td><a href="[preferred]/commons/discovery/binaries/commons-discovery-0.5.tar.gz">commons-discovery-0.5.tar.gz</a></td>
-              <td><a href="http://www.apache.org/dist/commons/discovery/binaries/commons-discovery-0.5.tar.gz.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/commons/discovery/binaries/commons-discovery-0.5.tar.gz.asc">pgp</a></td>
+              <td><a href="[preferred]/commons/discovery/binaries/commons-discovery-0.5-bin.tar.gz">commons-discovery-0.5-bin.tar.gz</a></td>
+              <td><a href="http://www.apache.org/dist/commons/discovery/binaries/commons-discovery-0.5-bin.tar.gz.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/commons/discovery/binaries/commons-discovery-0.5-bin.tar.gz.asc">pgp</a></td>
           </tr>
           <tr>
-              <td><a href="[preferred]/commons/discovery/binaries/commons-discovery-0.5.zip">commons-discovery-0.5.zip</a></td>
-              <td><a href="http://www.apache.org/dist/commons/discovery/binaries/commons-discovery-0.5.zip.md5">md5</a></td>
-              <td><a href="http://www.apache.org/dist/commons/discovery/binaries/commons-discovery-0.5.zip.asc">pgp</a></td>
+              <td><a href="[preferred]/commons/discovery/binaries/commons-discovery-0.5-bin.zip">commons-discovery-0.5-bin.zip</a></td>
+              <td><a href="http://www.apache.org/dist/commons/discovery/binaries/commons-discovery-0.5-bin.zip.md5">md5</a></td>
+              <td><a href="http://www.apache.org/dist/commons/discovery/binaries/commons-discovery-0.5-bin.zip.asc">pgp</a></td>
           </tr>
         </table>
       </subsection>
