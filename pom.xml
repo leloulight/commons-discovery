@@ -25,7 +25,7 @@
   <groupId>commons-discovery</groupId>
   <artifactId>commons-discovery</artifactId>
   <version>0.6-SNAPSHOT</version>
-  <name>Commons Discovery</name>
+  <name>Apache Commons Discovery</name>
 
   <inceptionYear>2002</inceptionYear>
   <description>The Apache Commons Discovery component is about discovering, or finding,
